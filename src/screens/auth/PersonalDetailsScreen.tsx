@@ -276,6 +276,17 @@ const PersonalDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
       );
       return;
     }
+
+    if (!activityLevel || !ethnicity || !travelPercentage || !goalType) {
+      dispatch(
+        showModal({
+          type: "error",
+          message: "Please complete all required activity sections (Activity Level, Ethnicity, Travel Frequency, and Goal)",
+        })
+      );
+      return;
+    }
+
     if (age < 13) {
       dispatch(
         showModal({
