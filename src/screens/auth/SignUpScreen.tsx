@@ -38,9 +38,39 @@ const SignUpScreen: React.FC<Props> = ({ navigation }) => {
   const dispatch = useAppDispatch();
   const authState = useSelector((state: RootState) => state.auth);
 
+  // Helper function to retry API calls with exponential backoff
+  const retryWithBackoff = async (
+    apiCall: () => Promise<any>,
+    maxRetries: number = 3,
+    baseDelay: number = 1000
+  ): Promise<any> => {
+    for (let attempt = 0; attempt < maxRetries; attempt++) {
+      try {
+        return await apiCall();
+      } catch (error: any) {
+        const isLastAttempt = attempt === maxRetries - 1;
+        const isNetworkError = !error.response; // No response = network issue
+        const isServerError = error.response?.status >= 500;
+
+        // Only retry on network errors or server errors (500+)
+        if (!isLastAttempt && (isNetworkError || isServerError)) {
+          const delay = baseDelay * Math.pow(2, attempt); // Exponential backoff
+          console.log(`⏳ Retry attempt ${attempt + 1}/${maxRetries} after ${delay}ms...`);
+          await new Promise((resolve) => setTimeout(resolve, delay));
+          continue;
+        }
+
+        // Don't retry on client errors (4xx) or if it's the last attempt
+        throw error;
+      }
+    }
+  };
+
   const handleContinue = async () => {
     try {
       setLoading(true);
+
+      // Validate name fields
       if (!firstName.trim() || !lastName.trim()) {
         dispatch(
           showModal({
@@ -51,32 +81,43 @@ const SignUpScreen: React.FC<Props> = ({ navigation }) => {
         return;
       }
 
+      // Validate email and password format
       await SignUpSchema.validate({ email, password }, { abortEarly: true });
 
-      // Check if email already exists in backend - STRICT CHECK
+      // COMPREHENSIVE EMAIL VALIDATION WITH RETRY
       const deviceId = await DeviceInfo.getUniqueId();
       const checkEmailUrl = `${Config.API_BASE_URL}${
         Endpoints.AUTH.EMAIL_EXIST
       }?email=${encodeURIComponent(email.trim())}`;
 
+      console.log("========================================");
+      console.log("🔍 Starting comprehensive email validation");
+      console.log("Email:", email.trim());
+      console.log("========================================");
+
       try {
-        const emailCheckResponse = await axios.post(
-          checkEmailUrl,
-          {},
-          {
-            headers: {
-              "X-Device-ID": deviceId,
-              "Content-Type": "application/json",
-            },
-          }
+        // Retry email check up to 3 times with exponential backoff
+        const emailCheckResponse = await retryWithBackoff(
+          () =>
+            axios.post(
+              checkEmailUrl,
+              {},
+              {
+                headers: {
+                  "X-Device-ID": deviceId,
+                  "Content-Type": "application/json",
+                },
+                timeout: 10000, // 10 second timeout
+              }
+            ),
+          3, // Max 3 attempts
+          2000 // Start with 2 second delay
         );
 
-        console.log("📧 Email check response:", emailCheckResponse.data);
-
-        // Check multiple response formats
+        console.log("✅ Email validation API response:", emailCheckResponse.data);
         const responseData = emailCheckResponse.data;
 
-        // Check if email exists (various response formats)
+        // Check if email already exists (multiple response formats)
         if (
           responseData?.exists === true ||
           responseData?.userExists === true ||
@@ -84,6 +125,7 @@ const SignUpScreen: React.FC<Props> = ({ navigation }) => {
           responseData?.message?.toLowerCase().includes("already") ||
           responseData?.message?.toLowerCase().includes("exists")
         ) {
+          console.log("🚫 Email already registered");
           dispatch(
             showModal({
               type: "error",
@@ -92,71 +134,95 @@ const SignUpScreen: React.FC<Props> = ({ navigation }) => {
                 "This email is already registered. Please sign in or use a different email.",
             })
           );
-          return;
+          return; // BLOCK - email exists
         }
 
-        // If response indicates success and email is available, proceed
+        // Email is available - proceed
         console.log("✅ Email is available, proceeding to registration");
 
       } catch (apiError: any) {
-        // Handle API errors - log detailed information
+        // Detailed error logging
         console.log("========================================");
-        console.log("📧 Email Validation API Error Details:");
+        console.log("❌ Email Validation Failed After Retries");
         console.log("========================================");
-        console.log("Attempted URL:", checkEmailUrl);
-        console.log("Email being checked:", email.trim());
-        console.log("Error Type:", apiError.name || "Unknown");
-        console.log("Error Message:", apiError.message);
+        console.log("URL:", checkEmailUrl);
+        console.log("Email:", email.trim());
+        console.log("Error:", apiError.message);
 
         if (apiError.response) {
-          console.log("Response Status:", apiError.response.status);
-          console.log("Response Data:", apiError.response.data);
-          console.log("Response Headers:", apiError.response.headers);
-
-          const errorMessage = apiError.response.data?.message || "";
           const statusCode = apiError.response.status;
+          const errorMessage = apiError.response.data?.message || "";
 
-          // ONLY block if we're CERTAIN the email is already registered
+          console.log("Status Code:", statusCode);
+          console.log("Response Data:", apiError.response.data);
+
+          // STRICT BLOCKING: Email already exists
           if (
-            statusCode === 409 || // HTTP 409 Conflict - email exists
+            statusCode === 409 || // HTTP 409 Conflict
             errorMessage.toLowerCase().includes("already registered") ||
             errorMessage.toLowerCase().includes("email already exists") ||
             errorMessage.toLowerCase().includes("user already exists")
           ) {
-            console.log("🚫 Email already exists - blocking user");
+            console.log("🚫 Email already exists - BLOCKING");
             dispatch(
               showModal({
                 type: "error",
-                message: errorMessage || "This email is already registered. Please sign in or use a different email.",
+                message:
+                  errorMessage ||
+                  "This email is already registered. Please sign in or use a different email.",
               })
             );
-            return; // BLOCK - email definitely exists
+            return; // BLOCK
           }
 
-          // For 500 errors (server issues), ALLOW user to continue
+          // STRICT BLOCKING: Server errors (after retries failed)
           if (statusCode >= 500) {
-            console.warn(
-              "⚠️ Backend server error (500+). Allowing user to continue - final signup will validate."
+            console.log("🚫 Server error after retries - BLOCKING");
+            dispatch(
+              showModal({
+                type: "error",
+                message:
+                  "Unable to verify email availability due to server issues. Please try again in a moment.",
+              })
             );
-            // Don't block - it's a backend problem, not a duplicate email
-            // The final signup endpoint will catch duplicates if they exist
-          } else {
-            // For other client errors (400, 403, etc), show error but don't block
-            console.warn(
-              `⚠️ Client error (${statusCode}). Allowing user to continue.`
-            );
+            return; // BLOCK - can't verify email
           }
+
+          // Other client errors (400, 401, 403, etc.)
+          console.log("🚫 Client error - BLOCKING");
+          dispatch(
+            showModal({
+              type: "error",
+              message:
+                errorMessage || "Unable to validate email. Please check your email and try again.",
+            })
+          );
+          return; // BLOCK
         } else if (apiError.request) {
-          console.log("No Response Received - Network/CORS issue");
-          console.warn("⚠️ Network error. Allowing user to continue.");
-          // Network error - allow to continue, final signup will validate
+          // Network error after all retries
+          console.log("🚫 Network error after retries - BLOCKING");
+          dispatch(
+            showModal({
+              type: "error",
+              message:
+                "Unable to connect to the server. Please check your internet connection and try again.",
+            })
+          );
+          return; // BLOCK - no network
         } else {
-          console.log("Request Setup Error:", apiError.message);
+          // Request setup error
+          console.log("🚫 Request error - BLOCKING");
+          dispatch(
+            showModal({
+              type: "error",
+              message: "An error occurred. Please try again.",
+            })
+          );
+          return; // BLOCK
         }
-        console.log("========================================");
-        // Continue to next screen despite API errors (except confirmed duplicates)
       }
 
+      // All validations passed - proceed to next screen
       navigation.navigate("PersonalDetails", {
         firstName: firstName.trim(),
         lastName: lastName.trim(),
