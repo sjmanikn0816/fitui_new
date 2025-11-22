@@ -555,53 +555,77 @@ const GoalCustomizationScreen = ({ navigation, route }) => {
 
                     <Text style={styles.macrosTitle}>Macros Breakdown</Text>
                     <View style={styles.macrosGrid}>
-                      <View
-                        style={[
-                          styles.macroItem,
-                          { backgroundColor: "#fee2e2" },
-                        ]}
-                      >
-                        <Icon name="zap" size={20} color="#dc2626" />
-                        <Text style={styles.macroLabel}>Protein</Text>
-                        <Text style={styles.macroValue}>
-                          {customization.nutrition_targets?.protein_g ||
-                            customization.macro_breakdown?.protein?.grams?.toFixed(
-                              0
-                            )}
-                          g
-                        </Text>
+                      <View style={styles.macroItemImage}>
+                        <ImageBackground
+                          source={{
+                            uri: "https://images.unsplash.com/photo-1483721310020-03333e577078?w=400&q=80",
+                          }}
+                          style={styles.macroImageBg}
+                          imageStyle={styles.macroImageStyle}
+                        >
+                          <LinearGradient
+                            colors={["rgba(239, 68, 68, 0.88)", "rgba(220, 38, 38, 0.85)"]}
+                            style={styles.macroOverlay}
+                          >
+                            <Ionicons name="fitness" size={24} color="#fff" />
+                            <Text style={styles.macroLabelWithBg}>Protein</Text>
+                            <Text style={styles.macroValueWithBg}>
+                              {customization.nutrition_targets?.protein_g ||
+                                customization.macro_breakdown?.protein?.grams?.toFixed(
+                                  0
+                                )}
+                              g
+                            </Text>
+                          </LinearGradient>
+                        </ImageBackground>
                       </View>
-                      <View
-                        style={[
-                          styles.macroItem,
-                          { backgroundColor: "#dbeafe" },
-                        ]}
-                      >
-                        <Icon name="droplet" size={20} color="#2563eb" />
-                        <Text style={styles.macroLabel}>Carbs</Text>
-                        <Text style={styles.macroValue}>
-                          {customization.nutrition_targets?.carbs_g ||
-                            customization.macro_breakdown?.carbohydrates?.grams?.toFixed(
-                              0
-                            )}
-                          g
-                        </Text>
+                      <View style={styles.macroItemImage}>
+                        <ImageBackground
+                          source={{
+                            uri: "https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=400&q=80",
+                          }}
+                          style={styles.macroImageBg}
+                          imageStyle={styles.macroImageStyle}
+                        >
+                          <LinearGradient
+                            colors={["rgba(59, 130, 246, 0.88)", "rgba(37, 99, 235, 0.85)"]}
+                            style={styles.macroOverlay}
+                          >
+                            <Ionicons name="restaurant" size={24} color="#fff" />
+                            <Text style={styles.macroLabelWithBg}>Carbs</Text>
+                            <Text style={styles.macroValueWithBg}>
+                              {customization.nutrition_targets?.carbs_g ||
+                                customization.macro_breakdown?.carbohydrates?.grams?.toFixed(
+                                  0
+                                )}
+                              g
+                            </Text>
+                          </LinearGradient>
+                        </ImageBackground>
                       </View>
-                      <View
-                        style={[
-                          styles.macroItem,
-                          { backgroundColor: "#fef3c7" },
-                        ]}
-                      >
-                        <Icon name="sun" size={20} color="#ca8a04" />
-                        <Text style={styles.macroLabel}>Fats</Text>
-                        <Text style={styles.macroValue}>
-                          {customization.nutrition_targets?.fat_g ||
-                            customization.macro_breakdown?.fat?.grams?.toFixed(
-                              0
-                            )}
-                          g
-                        </Text>
+                      <View style={styles.macroItemImage}>
+                        <ImageBackground
+                          source={{
+                            uri: "https://images.unsplash.com/photo-1628348068343-c6a848d2b6dd?w=400&q=80",
+                          }}
+                          style={styles.macroImageBg}
+                          imageStyle={styles.macroImageStyle}
+                        >
+                          <LinearGradient
+                            colors={["rgba(245, 158, 11, 0.88)", "rgba(202, 138, 4, 0.85)"]}
+                            style={styles.macroOverlay}
+                          >
+                            <Ionicons name="water" size={24} color="#fff" />
+                            <Text style={styles.macroLabelWithBg}>Fats</Text>
+                            <Text style={styles.macroValueWithBg}>
+                              {customization.nutrition_targets?.fat_g ||
+                                customization.macro_breakdown?.fat?.grams?.toFixed(
+                                  0
+                                )}
+                              g
+                            </Text>
+                          </LinearGradient>
+                        </ImageBackground>
                       </View>
                     </View>
                   </View>
@@ -614,28 +638,69 @@ const GoalCustomizationScreen = ({ navigation, route }) => {
                     </View>
 
                     <View style={styles.metricsGrid}>
-                      <View style={styles.metricItem}>
-                        <Text style={styles.metricLabel}>BMR</Text>
-                        <Text style={styles.metricValue}>
-                          {customization.bmr?.toFixed(0)} cal
-                        </Text>
+                      <View style={styles.metricItemImage}>
+                        <ImageBackground
+                          source={{
+                            uri: "https://images.unsplash.com/photo-1628348068343-c6a848d2b6dd?w=400&q=80",
+                          }}
+                          style={styles.metricImageBg}
+                          imageStyle={styles.metricImageStyle}
+                        >
+                          <LinearGradient
+                            colors={["rgba(239, 68, 68, 0.88)", "rgba(220, 38, 38, 0.85)"]}
+                            style={styles.metricOverlay}
+                          >
+                            <Text style={styles.metricLabelWithBg}>BMR</Text>
+                            <Text style={styles.metricValueWithBg}>
+                              {customization.bmr?.toFixed(0)}
+                            </Text>
+                            <Text style={styles.metricUnitWithBg}>cal/day</Text>
+                          </LinearGradient>
+                        </ImageBackground>
                       </View>
-                      <View style={styles.metricItem}>
-                        <Text style={styles.metricLabel}>TDEE</Text>
-                        <Text style={styles.metricValue}>
-                          {customization.tdee?.toFixed(0)} cal
-                        </Text>
+                      <View style={styles.metricItemImage}>
+                        <ImageBackground
+                          source={{
+                            uri: "https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=400&q=80",
+                          }}
+                          style={styles.metricImageBg}
+                          imageStyle={styles.metricImageStyle}
+                        >
+                          <LinearGradient
+                            colors={["rgba(236, 72, 153, 0.88)", "rgba(251, 146, 60, 0.85)"]}
+                            style={styles.metricOverlay}
+                          >
+                            <Text style={styles.metricLabelWithBg}>TDEE</Text>
+                            <Text style={styles.metricValueWithBg}>
+                              {customization.tdee?.toFixed(0)}
+                            </Text>
+                            <Text style={styles.metricUnitWithBg}>cal/day</Text>
+                          </LinearGradient>
+                        </ImageBackground>
                       </View>
-                      <View style={styles.metricItem}>
-                        <Text style={styles.metricLabel}>Daily Deficit</Text>
-                        <Text style={styles.metricValue}>
-                          {customization.timeline_details
-                            ?.daily_calorie_deficit ||
-                            Math.abs(
-                              customization.calorie_adjustment || 0
-                            )}{" "}
-                          cal
-                        </Text>
+                      <View style={styles.metricItemImage}>
+                        <ImageBackground
+                          source={{
+                            uri: "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=400&q=80",
+                          }}
+                          style={styles.metricImageBg}
+                          imageStyle={styles.metricImageStyle}
+                        >
+                          <LinearGradient
+                            colors={["rgba(16, 185, 129, 0.88)", "rgba(5, 150, 105, 0.85)"]}
+                            style={styles.metricOverlay}
+                          >
+                            <Text style={styles.metricLabelWithBg}>Daily Deficit</Text>
+                            <Text style={styles.metricValueWithBg}>
+                              {customization.timeline_details
+                                ?.daily_calorie_deficit ||
+                                Math.abs(
+                                  customization.calorie_adjustment || 0
+                                )}
+                            </Text>
+                            <Text style={styles.metricUnitWithBg}>cal</Text>
+                          </LinearGradient>
+                        </ImageBackground>
                       </View>
                     </View>
                   </View>
