@@ -420,46 +420,111 @@ const handleMenuPress = () => {
               showsHorizontalScrollIndicator={false}
               contentContainerStyle={styles.statsScrollContent}
             >
-              <View style={[styles.statCard, { backgroundColor: "#dbeafe" }]}>
-                <Ionicons name="scale-outline" size={32} color="#3b82f6" />
-                <Text style={styles.statLabel}>Weight</Text>
-                <Text style={styles.statValue}>{assessment.weight_lbs}</Text>
-                <Text style={styles.statUnit}>lbs</Text>
+              <View style={styles.statCard}>
+                <ImageBackground
+                  source={{
+                    uri: "https://images.unsplash.com/photo-1483721310020-03333e577078?w=400&q=80",
+                  }}
+                  style={styles.statImageBg}
+                  imageStyle={styles.statImageStyle}
+                >
+                  <LinearGradient
+                    colors={["rgba(59, 130, 246, 0.88)", "rgba(37, 99, 235, 0.85)"]}
+                    style={styles.statOverlay}
+                  >
+                    <Ionicons name="scale-outline" size={32} color="#fff" />
+                    <Text style={styles.statLabelWithBg}>Weight</Text>
+                    <Text style={styles.statValueWithBg}>{assessment.weight_lbs}</Text>
+                    <Text style={styles.statUnitWithBg}>lbs</Text>
+                  </LinearGradient>
+                </ImageBackground>
               </View>
-              <View style={[styles.statCard, { backgroundColor: "#dcfce7" }]}>
-                <Ionicons name="fitness-outline" size={32} color="#10b981" />
-                <Text style={styles.statLabel}>BMI</Text>
-                <Text style={styles.statValue}>
-                  {assessment.user_assessment?.current_bmi}
-                </Text>
-                <Text style={styles.statUnit}>index</Text>
+              <View style={styles.statCard}>
+                <ImageBackground
+                  source={{
+                    uri: "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=400&q=80",
+                  }}
+                  style={styles.statImageBg}
+                  imageStyle={styles.statImageStyle}
+                >
+                  <LinearGradient
+                    colors={["rgba(16, 185, 129, 0.88)", "rgba(5, 150, 105, 0.85)"]}
+                    style={styles.statOverlay}
+                  >
+                    <Ionicons name="fitness-outline" size={32} color="#fff" />
+                    <Text style={styles.statLabelWithBg}>BMI</Text>
+                    <Text style={styles.statValueWithBg}>
+                      {assessment.user_assessment?.current_bmi}
+                    </Text>
+                    <Text style={styles.statUnitWithBg}>index</Text>
+                  </LinearGradient>
+                </ImageBackground>
               </View>
-              <View style={[styles.statCard, { backgroundColor: "#f3e8ff" }]}>
-                <Ionicons name="flame-outline" size={32} color="#a855f7" />
-                <Text style={styles.statLabel}>TDEE</Text>
-                <Text style={styles.statValue}>
-                  {Math.round(assessment.tdee)}
-                </Text>
-                <Text style={styles.statUnit}>cal/day</Text>
+              <View style={styles.statCard}>
+                <ImageBackground
+                  source={{
+                    uri: "https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=400&q=80",
+                  }}
+                  style={styles.statImageBg}
+                  imageStyle={styles.statImageStyle}
+                >
+                  <LinearGradient
+                    colors={["rgba(236, 72, 153, 0.88)", "rgba(251, 146, 60, 0.85)"]}
+                    style={styles.statOverlay}
+                  >
+                    <Ionicons name="flame-outline" size={32} color="#fff" />
+                    <Text style={styles.statLabelWithBg}>TDEE</Text>
+                    <Text style={styles.statValueWithBg}>
+                      {Math.round(assessment.tdee)}
+                    </Text>
+                    <Text style={styles.statUnitWithBg}>cal/day</Text>
+                  </LinearGradient>
+                </ImageBackground>
               </View>
-              <View style={[styles.statCard, { backgroundColor: "#fed7aa" }]}>
-                <Ionicons
-                  name="speedometer-outline"
-                  size={32}
-                  color="#f59e0b"
-                />
-                <Text style={styles.statLabel}>BMR</Text>
-                <Text style={styles.statValue}>
-                  {Math.round(assessment.bmr)}
-                </Text>
-                <Text style={styles.statUnit}>cal/day</Text>
+              <View style={styles.statCard}>
+                <ImageBackground
+                  source={{
+                    uri: "https://images.unsplash.com/photo-1628348068343-c6a848d2b6dd?w=400&q=80",
+                  }}
+                  style={styles.statImageBg}
+                  imageStyle={styles.statImageStyle}
+                >
+                  <LinearGradient
+                    colors={["rgba(239, 68, 68, 0.88)", "rgba(220, 38, 38, 0.85)"]}
+                    style={styles.statOverlay}
+                  >
+                    <Ionicons
+                      name="speedometer-outline"
+                      size={32}
+                      color="#fff"
+                    />
+                    <Text style={styles.statLabelWithBg}>BMR</Text>
+                    <Text style={styles.statValueWithBg}>
+                      {Math.round(assessment.bmr)}
+                    </Text>
+                    <Text style={styles.statUnitWithBg}>cal/day</Text>
+                  </LinearGradient>
+                </ImageBackground>
               </View>
-              <View style={[styles.statCard, { backgroundColor: "#fce7f3" }]}>
-                <Ionicons name="walk" size={32} color="#ec4899" />
-                <Text style={styles.statLabel}>Activity</Text>
-                <Text style={[styles.statValue, { fontSize: 16 }]}>
-                  {assessment.activity_level}
-                </Text>
+              <View style={styles.statCard}>
+                <ImageBackground
+                  source={{
+                    uri: "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=400&q=80",
+                  }}
+                  style={styles.statImageBg}
+                  imageStyle={styles.statImageStyle}
+                >
+                  <LinearGradient
+                    colors={["rgba(168, 85, 247, 0.88)", "rgba(139, 92, 246, 0.85)"]}
+                    style={styles.statOverlay}
+                  >
+                    <Ionicons name="walk" size={32} color="#fff" />
+                    <Text style={styles.statLabelWithBg}>Activity</Text>
+                    <Text style={[styles.statValueWithBg, { fontSize: 18 }]}>
+                      {assessment.activity_level}
+                    </Text>
+                  </LinearGradient>
+                </ImageBackground>
               </View>
             </ScrollView>
           </View>
