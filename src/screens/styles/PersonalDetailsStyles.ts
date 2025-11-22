@@ -5,6 +5,7 @@ import { scale, verticalScale } from "@/utils/responsive";
 import { StyleSheet } from "react-native";
 
 export const styles = StyleSheet.create({
+  // Legacy styles (keeping for compatibility)
   container: {
     flex: 1,
     backgroundColor: Colors.white,
@@ -200,11 +201,9 @@ export const styles = StyleSheet.create({
     borderColor: Colors.primary,
   },
   buttonContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
     marginTop: "auto",
-    marginBottom: verticalScale(16),
-    gap: scale(12),
+    paddingTop: verticalScale(20),
+    paddingBottom: verticalScale(16),
   },
   backButton: {
     flex: 0.35,
@@ -212,8 +211,8 @@ export const styles = StyleSheet.create({
     borderColor: Colors.gray400,
   },
   continueButton: {
-    flex: 0.65,
     backgroundColor: Colors.primary,
+    paddingVertical: verticalScale(14),
   },
   backText: {
     color: Colors.black,
@@ -257,5 +256,204 @@ export const styles = StyleSheet.create({
   },
   stepLineActive: {
     backgroundColor: Colors.primary,
+  },
+
+  // ===== MODERN STEP-BASED STYLES =====
+  modernContainer: {
+    flex: 1,
+    paddingHorizontal: Spacing.lg,
+    paddingTop: verticalScale(10),
+  },
+
+  // Progress Bar
+  progressBarContainer: {
+    marginBottom: verticalScale(30),
+  },
+  progressBarBackground: {
+    height: 6,
+    backgroundColor: "#E5E7EB",
+    borderRadius: 3,
+    overflow: "hidden",
+  },
+  progressBarFill: {
+    height: "100%",
+    backgroundColor: Colors.primary,
+    borderRadius: 3,
+  },
+  progressText: {
+    ...Typography.caption,
+    color: Colors.textSecondary,
+    marginTop: Spacing.xs,
+    textAlign: "center",
+    fontWeight: "600",
+    fontSize: 12,
+  },
+
+  // Step Container
+  stepContainer: {
+    flex: 1,
+  },
+
+  // Step Emoji & Title
+  stepEmoji: {
+    fontSize: 64,
+    textAlign: "center",
+    marginBottom: verticalScale(16),
+  },
+  stepTitle: {
+    ...Typography.h2,
+    fontSize: 26,
+    fontWeight: "800",
+    color: Colors.text,
+    textAlign: "center",
+    marginBottom: verticalScale(8),
+    lineHeight: 34,
+  },
+  stepSubtitle: {
+    ...Typography.body,
+    fontSize: 15,
+    color: Colors.textSecondary,
+    textAlign: "center",
+    marginBottom: verticalScale(32),
+    paddingHorizontal: Spacing.md,
+    lineHeight: 22,
+  },
+
+  // Input Group
+  inputGroup: {
+    gap: Spacing.md,
+  },
+
+  // Modern Cards Container
+  cardsContainer: {
+    gap: Spacing.md,
+  },
+  cardsContainerGrid: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: Spacing.sm,
+  },
+
+  // Modern Card
+  modernCard: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingVertical: verticalScale(18),
+    paddingHorizontal: scale(16),
+    borderWidth: 2,
+    borderColor: "#E5E7EB",
+    borderRadius: 16,
+    backgroundColor: Colors.white,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.03,
+    shadowRadius: 8,
+    elevation: 1,
+  },
+  modernCardActive: {
+    borderColor: Colors.primary,
+    backgroundColor: "#F0F9FF",
+    shadowColor: Colors.primary,
+    shadowOpacity: 0.12,
+    shadowRadius: 12,
+    elevation: 3,
+  },
+
+  modernCardContent: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: scale(14),
+    flex: 1,
+  },
+
+  modernIconContainer: {
+    justifyContent: "center",
+    alignItems: "center",
+    width: 52,
+    height: 52,
+    borderRadius: 14,
+    backgroundColor: "#F3F4F6",
+  },
+  modernIconContainerActive: {
+    backgroundColor: "#DBEAFE",
+  },
+
+  emojiIcon: {
+    fontSize: 28,
+  },
+
+  modernCardTextContainer: {
+    flex: 1,
+  },
+
+  modernCardTitle: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: Colors.text,
+    marginBottom: 2,
+  },
+  modernCardTitleActive: {
+    color: Colors.primary,
+    fontWeight: "700",
+  },
+
+  modernCardSubtitle: {
+    fontSize: 13,
+    color: Colors.textSecondary,
+    fontWeight: "400",
+  },
+  modernCardSubtitleActive: {
+    color: "#3B82F6",
+  },
+
+  checkmarkBadge: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    backgroundColor: Colors.primary,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+
+  // Toggle Question (for Yes/No)
+  toggleQuestion: {
+    marginTop: verticalScale(24),
+    paddingTop: verticalScale(20),
+    borderTopWidth: 1,
+    borderTopColor: "#E5E7EB",
+  },
+  toggleLabel: {
+    fontSize: 15,
+    fontWeight: "600",
+    color: Colors.text,
+    marginBottom: Spacing.sm,
+    textAlign: "center",
+  },
+  toggleButtons: {
+    flexDirection: "row",
+    gap: Spacing.sm,
+  },
+  toggleButton: {
+    flex: 1,
+    paddingVertical: verticalScale(14),
+    backgroundColor: Colors.white,
+    borderRadius: 12,
+    borderWidth: 2,
+    borderColor: "#E5E7EB",
+    alignItems: "center",
+  },
+  toggleButtonActive: {
+    borderColor: Colors.primary,
+    backgroundColor: "#F0F9FF",
+  },
+  toggleButtonText: {
+    fontSize: 15,
+    fontWeight: "600",
+    color: Colors.text,
+  },
+  toggleButtonTextActive: {
+    color: Colors.primary,
+    fontWeight: "700",
   },
 });

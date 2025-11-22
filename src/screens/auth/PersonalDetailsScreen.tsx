@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from "react";
-import { View, Text, TouchableOpacity } from "react-native";
+import React, { useState, useEffect, useRef } from "react";
+import { View, Text, TouchableOpacity, Animated, Dimensions } from "react-native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { AuthStackParamList } from "../../navigation/AuthNavigator";
 import Button from "../../components/ui/Button";
 import Input from "../../components/ui/Input";
-import Logo from "../../components/ui/Logo";
 
 import { Colors } from "@/constants/Colors";
 import { useAppDispatch, useAppSelector } from "@/redux/store/hooks";
@@ -13,9 +12,6 @@ import { signupUser } from "@/redux/slice/auth/authSlice";
 import MainHeader from "@/components/ui/MainHeaderNav";
 import ScrollContainer from "@/components/ui/ScrollContainer";
 import { styles } from "@/screens/styles/PersonalDetailsStyles";
-import { ToggleCardSelector } from "./components/ToggleCardSelector";
-import ProgressSteps from "./components/ProgressSteps";
-import { scale, verticalScale } from "@/utils/responsive";
 import Dropdown from "@/components/ui/Dropdown";
 import { showModal } from "@/redux/slice/modalSlice";
 
@@ -25,13 +21,16 @@ import {
   Zap,
   Flame,
   Globe,
-  Target,
-  Clock,
-  Briefcase,
   Plane,
   Calendar,
+  Clock,
+  Briefcase,
+  ChevronRight,
+  Check,
+  TrendingDown,
+  TrendingUp,
+  Minus,
 } from "lucide-react-native";
-import { Linking } from "react-native";
 
 type PersonalDetailsScreenNavigationProp = StackNavigationProp<
   AuthStackParamList,
@@ -47,6 +46,8 @@ interface CardOption {
   label: string;
   icon?: React.ReactNode;
   value?: string;
+  subtitle?: string;
+  emoji?: string;
 }
 
 const PersonalDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
@@ -59,6 +60,8 @@ const PersonalDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
     password = "",
     provider = "",
   } = route.params || {};
+
+  // State variables (keeping same keys for backend compatibility)
   const [birthYear, setBirthYear] = useState("");
   const [birthMonth, setBirthMonth] = useState("");
   const [heightFeet, setHeightFeet] = useState("");
@@ -69,114 +72,82 @@ const PersonalDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
     "Veg" | "Non-Veg" | "Vegan" | null
   >(null);
   const [onDiet, setOnDiet] = useState<boolean | null>(null);
-
-  const [exerciseHabits, setExerciseHabits] = useState<string | null>(null);
   const [activityLevel, setActivityLevel] = useState<string | null>(null);
   const [ethnicity, setEthnicity] = useState<string | null>(null);
   const [travelPercentage, setTravelPercentage] = useState("");
-  const [medicalCondition, setMedicalCondition] = useState("");
-  const [acceptedTerms, setAcceptedTerms] = useState(false);
+  const [goalType, setGoalType] = useState<"LOSE" | "GAIN" | "MAINTAIN" | null>(null);
 
-  const [goalType, setGoalType] = useState<"LOSE" | "GAIN" | "MAINTAIN" | null>(
-    null
-  );
-  const [targetWeight, setTargetWeight] = useState("");
-  const [targetCalories, setTargetCalories] = useState("");
+  // Step management
+  const [currentStep, setCurrentStep] = useState(1);
+  const totalSteps = 8;
 
-  const [showExerciseHabits, setShowExerciseHabits] = useState(false);
-  const [showActivityLevel, setShowActivityLevel] = useState(true);
-  const [showEthnicity, setShowEthnicity] = useState(true);
-  const [showTravelFrequency, setShowTravelFrequency] = useState(true);
-  const [showGoal, setShowGoal] = useState(true);
+  // Animation values
+  const fadeAnim = useRef(new Animated.Value(1)).current;
+  const slideAnim = useRef(new Animated.Value(0)).current;
+  const progressAnim = useRef(new Animated.Value(0)).current;
 
   const dispatch = useAppDispatch();
-  const { loading, user } = useAppSelector((state: RootState) => state.auth);
-  console.log("User in PersonalDetailsScreen:", user);
+  const { loading } = useAppSelector((state: RootState) => state.auth);
 
-  const genders: ("M" | "F" | "O")[] = ["M", "F", "O"];
-  const dietOptions: ("Veg" | "Non-Veg" | "Vegan")[] = [
-    "Veg",
-    "Non-Veg",
-    "Vegan",
+  // Options data
+  const genders: CardOption[] = [
+    { label: "Male", value: "M", emoji: "👨" },
+    { label: "Female", value: "F", emoji: "👩" },
+    { label: "Other", value: "O", emoji: "⚧️" },
   ];
 
-  const exerciseOptions: string[] = ["Rarely", "Sometimes", "Regularly"];
+  const dietOptions: CardOption[] = [
+    { label: "Vegetarian", value: "Veg", emoji: "🥦", subtitle: "Plant-based meals" },
+    { label: "Non-Vegetarian", value: "Non-Veg", emoji: "🍗", subtitle: "Includes meat" },
+    { label: "Vegan", value: "Vegan", emoji: "🌱", subtitle: "100% plant-based" },
+  ];
+
   const activityOptions: CardOption[] = [
     {
       label: "Not Active",
-      icon: <ZapOff size={24} color={Colors.primary} />,
+      icon: <ZapOff size={28} color={Colors.primary} />,
       value: "NOT_ACTIVE",
+      subtitle: "Little to no exercise",
     },
     {
       label: "Somewhat Active",
-      icon: <Activity size={24} color={Colors.primary} />,
+      icon: <Activity size={28} color={Colors.primary} />,
       value: "SOMEWHAT_ACTIVE",
+      subtitle: "Light exercise 1-3 days/week",
     },
     {
       label: "Active",
-      icon: <Zap size={24} color={Colors.primary} />,
+      icon: <Zap size={28} color={Colors.primary} />,
       value: "ACTIVE",
+      subtitle: "Moderate exercise 3-5 days/week",
     },
     {
       label: "Very Active",
-      icon: <Flame size={24} color={Colors.primary} />,
+      icon: <Flame size={28} color={Colors.primary} />,
       value: "VERY_ACTIVE",
+      subtitle: "Intense exercise 6-7 days/week",
     },
     {
       label: "Extra Active",
-      icon: <Flame size={24} color={Colors.primary} />,
+      icon: <Flame size={28} color="#FF4500" />,
       value: "EXTRA_ACTIVE",
-    },
-  ];
-  const ethnicityOptions: CardOption[] = [
-    {
-      label: "Asian",
-      icon: <Globe size={24} color={Colors.primary} />,
-      value: "Asian",
-    },
-    {
-      label: "Black",
-      icon: <Globe size={24} color={Colors.primary} />,
-      value: "Black",
-    },
-    {
-      label: "White",
-      icon: <Globe size={24} color={Colors.primary} />,
-      value: "White",
-    },
-    {
-      label: "Hispanic",
-      icon: <Globe size={24} color={Colors.primary} />,
-      value: "Hispanic",
-    },
-    {
-      label: "Mixed",
-      icon: <Globe size={24} color={Colors.primary} />,
-      value: "Mixed",
-    },
-    {
-      label: "Other",
-      icon: <Globe size={24} color={Colors.primary} />,
-      value: "Other",
+      subtitle: "Athlete level training",
     },
   ];
 
+  const ethnicityOptions: CardOption[] = [
+    { label: "Asian", icon: <Globe size={24} color={Colors.primary} />, value: "Asian" },
+    { label: "Black", icon: <Globe size={24} color={Colors.primary} />, value: "Black" },
+    { label: "White", icon: <Globe size={24} color={Colors.primary} />, value: "White" },
+    { label: "Hispanic", icon: <Globe size={24} color={Colors.primary} />, value: "Hispanic" },
+    { label: "Mixed", icon: <Globe size={24} color={Colors.primary} />, value: "Mixed" },
+    { label: "Other", icon: <Globe size={24} color={Colors.primary} />, value: "Other" },
+  ];
+
   const travelFrequencyOptions: CardOption[] = [
-    {
-      label: "Daily",
-      icon: <Plane size={24} color={Colors.primary} />,
-      value: "Daily",
-    },
-    {
-      label: "Weekly",
-      icon: <Calendar size={24} color={Colors.primary} />,
-      value: "Weekly",
-    },
-    {
-      label: "Monthly",
-      icon: <Briefcase size={24} color={Colors.primary} />,
-      value: "Monthly",
-    },
+    { label: "Daily", icon: <Plane size={24} color={Colors.primary} />, value: "Daily" },
+    { label: "Weekly", icon: <Calendar size={24} color={Colors.primary} />, value: "Weekly" },
+    { label: "Monthly", icon: <Briefcase size={24} color={Colors.primary} />, value: "Monthly" },
     {
       label: "A few times a year",
       icon: <Clock size={24} color={Colors.primary} />,
@@ -189,22 +160,27 @@ const PersonalDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
     },
   ];
 
-  // Goal options with icons
   const goalOptions: CardOption[] = [
     {
-      label: "Loss",
-      icon: <Activity size={24} color={Colors.primary} />,
-      value: "Lose",
+      label: "Lose Weight",
+      icon: <TrendingDown size={32} color="#10B981" />,
+      value: "LOSE",
+      subtitle: "Burn fat and get lean",
+      emoji: "📉",
     },
     {
-      label: "Gain",
-      icon: <Zap size={24} color={Colors.primary} />,
-      value: "Gain",
+      label: "Gain Weight",
+      icon: <TrendingUp size={32} color="#3B82F6" />,
+      value: "GAIN",
+      subtitle: "Build muscle mass",
+      emoji: "📈",
     },
     {
       label: "Maintain",
-      icon: <Target size={24} color={Colors.primary} />,
-      value: "Maintain",
+      icon: <Minus size={32} color="#8B5CF6" />,
+      value: "MAINTAIN",
+      subtitle: "Stay healthy & fit",
+      emoji: "⚖️",
     },
   ];
 
@@ -224,79 +200,148 @@ const PersonalDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
     value: (i + 1).toString(),
   }));
 
-  const age = (() => {
-    if (!birthYear || !birthMonth) return 0;
-    const today = new Date();
-    const year = parseInt(birthYear);
-    const month = parseInt(birthMonth);
-
-    if (isNaN(year) || isNaN(month)) return 0;
-
-    let calculatedAge = today.getFullYear() - year;
-    const monthDiff = today.getMonth() + 1 - month;
-
-    if (monthDiff < 0) {
-      calculatedAge--;
-    }
-    return calculatedAge;
-  })();
-
   const inchesOptions = Array.from({ length: 12 }, (_, i) => ({
     label: `${i} in`,
     value: i.toString(),
   }));
 
-  const totalSteps = 6;
-  let currentStep = 1;
-  if (exerciseHabits) currentStep = 2;
-  if (activityLevel) currentStep = 3;
-  if (travelPercentage) currentStep = 4;
-  if (ethnicity) currentStep = 5;
-  if (goalType) currentStep = 6;
-  const backendActivityLevel = activityOptions.find(
-    (opt) => opt.value === activityLevel
-  )?.value;
+  // Calculate age
+  const age = (() => {
+    if (!birthYear || !birthMonth) return 0;
+    const today = new Date();
+    const year = parseInt(birthYear);
+    const month = parseInt(birthMonth);
+    if (isNaN(year) || isNaN(month)) return 0;
+    let calculatedAge = today.getFullYear() - year;
+    const monthDiff = today.getMonth() + 1 - month;
+    if (monthDiff < 0) calculatedAge--;
+    return calculatedAge;
+  })();
 
-  const handleContinue = async () => {
-    if (
-      !birthYear ||
-      !birthMonth ||
-      !heightFeet ||
-      !heightInches ||
-      !weight ||
-      !gender ||
-      !dietPreference ||
-      onDiet === null
-    ) {
-      dispatch(
-        showModal({
-          type: "error",
-          message: "Please fill in all required basic information",
-        })
-      );
-      return;
+  // Animate progress bar
+  useEffect(() => {
+    Animated.spring(progressAnim, {
+      toValue: (currentStep / totalSteps) * 100,
+      useNativeDriver: false,
+      tension: 50,
+      friction: 7,
+    }).start();
+  }, [currentStep]);
+
+  // Step transition animation
+  const animateStepTransition = (direction: "forward" | "backward") => {
+    Animated.sequence([
+      Animated.parallel([
+        Animated.timing(fadeAnim, {
+          toValue: 0,
+          duration: 150,
+          useNativeDriver: true,
+        }),
+        Animated.timing(slideAnim, {
+          toValue: direction === "forward" ? -50 : 50,
+          duration: 150,
+          useNativeDriver: true,
+        }),
+      ]),
+      Animated.parallel([
+        Animated.timing(fadeAnim, {
+          toValue: 1,
+          duration: 200,
+          useNativeDriver: true,
+        }),
+        Animated.timing(slideAnim, {
+          toValue: 0,
+          duration: 200,
+          useNativeDriver: true,
+        }),
+      ]),
+    ]).start();
+  };
+
+  const goToNextStep = () => {
+    if (currentStep < totalSteps) {
+      animateStepTransition("forward");
+      setTimeout(() => setCurrentStep(currentStep + 1), 150);
+    } else {
+      handleSubmit();
     }
+  };
 
-    if (!activityLevel || !ethnicity || !travelPercentage || !goalType) {
-      dispatch(
-        showModal({
-          type: "error",
-          message: "Please complete all required activity sections (Activity Level, Ethnicity, Travel Frequency, and Goal)",
-        })
-      );
-      return;
+  const goToPreviousStep = () => {
+    if (currentStep > 1) {
+      animateStepTransition("backward");
+      setTimeout(() => setCurrentStep(currentStep - 1), 150);
+    } else {
+      navigation.goBack();
     }
+  };
 
-    if (age < 13) {
-      dispatch(
-        showModal({
-          type: "error",
-          message: "You must be at least 13 years old to use this app.",
-        })
-      );
-      return;
+  const validateCurrentStep = (): boolean => {
+    switch (currentStep) {
+      case 1:
+        if (!birthYear || !birthMonth) {
+          dispatch(showModal({ type: "error", message: "Please select your birth year and month" }));
+          return false;
+        }
+        if (age < 13) {
+          dispatch(showModal({ type: "error", message: "You must be at least 13 years old to use this app" }));
+          return false;
+        }
+        return true;
+      case 2:
+        if (!weight || !heightFeet || !heightInches) {
+          dispatch(showModal({ type: "error", message: "Please enter your weight and height" }));
+          return false;
+        }
+        return true;
+      case 3:
+        if (!gender) {
+          dispatch(showModal({ type: "error", message: "Please select your biological sex" }));
+          return false;
+        }
+        return true;
+      case 4:
+        if (!dietPreference || onDiet === null) {
+          dispatch(showModal({ type: "error", message: "Please complete your food preferences" }));
+          return false;
+        }
+        return true;
+      case 5:
+        if (!activityLevel) {
+          dispatch(showModal({ type: "error", message: "Please select your activity level" }));
+          return false;
+        }
+        return true;
+      case 6:
+        if (!ethnicity) {
+          dispatch(showModal({ type: "error", message: "Please select your ethnicity" }));
+          return false;
+        }
+        return true;
+      case 7:
+        if (!travelPercentage) {
+          dispatch(showModal({ type: "error", message: "Please select your travel frequency" }));
+          return false;
+        }
+        return true;
+      case 8:
+        if (!goalType) {
+          dispatch(showModal({ type: "error", message: "Please select your fitness goal" }));
+          return false;
+        }
+        return true;
+      default:
+        return true;
     }
+  };
 
+  const handleContinue = () => {
+    if (validateCurrentStep()) {
+      goToNextStep();
+    }
+  };
+
+  const handleSubmit = async () => {
     const payload: any = {
       firstName,
       lastName,
@@ -304,44 +349,29 @@ const PersonalDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
       password,
       provider: provider,
       age: age,
-
       heightInFeet: parseInt(heightFeet),
       heightInInches: parseInt(heightInches),
       gender,
       weightInLbs: Number(weight),
       dietPreference,
       isOnDiet: onDiet,
-      exerciseHabits: exerciseHabits || null,
+      exerciseHabits: null,
       healthAppUsage: null,
       usageFrequency: null,
       isAppHelpful: true,
       isSleepMonitoring: false,
-      targetCalories: targetCalories || null,
-      targetWeight: targetWeight || null,
+      targetCalories: null,
+      targetWeight: null,
       travelPercentage,
-      hasMedicalCondition: medicalCondition ? true : false,
+      hasMedicalCondition: false,
       watchesDietContent: false,
       ethnicity,
       goal: goalType ? goalType.toUpperCase() : null,
       birthMonth,
       birthYear,
-      activityLevel: backendActivityLevel,
-      timeZone:
-        Intl.DateTimeFormat().resolvedOptions().timeZone || "Asia/Kolkata",
+      activityLevel,
+      timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone || "Asia/Kolkata",
     };
-
-    // if (password) {
-    //   payload.password = password;
-    // }
-
-    // if (appJwt) {
-    //   payload.appJwt = appJwt;
-    // }
-    // if (refreshToken) {
-    //   payload.refreshToken = refreshToken;
-    // }
-
-    console.log("Final signup payload:", payload);
 
     try {
       const resultAction = await dispatch(signupUser(payload));
@@ -352,299 +382,287 @@ const PersonalDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
           resultAction.payload && typeof resultAction.payload === "object"
             ? (resultAction.payload as any).message
             : (resultAction.payload as string);
-
-        dispatch(
-          showModal({
-            type: "error",
-            message: message || "Something went wrong",
-          })
-        );
+        dispatch(showModal({ type: "error", message: message || "Something went wrong" }));
       }
     } catch (err) {
       console.error("Signup error:", err);
-      navigation.navigate("HealthProfile");
       dispatch(showModal({ type: "error", message: "Something went wrong" }));
     }
   };
 
-  // Auto-enable goal section when all prerequisites are met
-  useEffect(() => {
-    if (exerciseHabits && activityLevel && travelPercentage && ethnicity) {
-      setShowGoal(true);
+  // Render progress bar
+  const renderProgressBar = () => {
+    const progressWidth = progressAnim.interpolate({
+      inputRange: [0, 100],
+      outputRange: ["0%", "100%"],
+    });
+
+    return (
+      <View style={styles.progressBarContainer}>
+        <View style={styles.progressBarBackground}>
+          <Animated.View style={[styles.progressBarFill, { width: progressWidth }]} />
+        </View>
+        <Text style={styles.progressText}>
+          Step {currentStep} of {totalSteps}
+        </Text>
+      </View>
+    );
+  };
+
+  // Render option card
+  const renderOptionCard = (
+    option: CardOption,
+    isSelected: boolean,
+    onPress: () => void
+  ) => (
+    <TouchableOpacity
+      key={option.value || option.label}
+      style={[styles.modernCard, isSelected && styles.modernCardActive]}
+      onPress={onPress}
+      activeOpacity={0.7}
+    >
+      <View style={styles.modernCardContent}>
+        {(option.icon || option.emoji) && (
+          <View style={[styles.modernIconContainer, isSelected && styles.modernIconContainerActive]}>
+            {option.emoji ? (
+              <Text style={styles.emojiIcon}>{option.emoji}</Text>
+            ) : (
+              option.icon
+            )}
+          </View>
+        )}
+        <View style={styles.modernCardTextContainer}>
+          <Text style={[styles.modernCardTitle, isSelected && styles.modernCardTitleActive]}>
+            {option.label}
+          </Text>
+          {option.subtitle && (
+            <Text style={[styles.modernCardSubtitle, isSelected && styles.modernCardSubtitleActive]}>
+              {option.subtitle}
+            </Text>
+          )}
+        </View>
+      </View>
+      {isSelected && (
+        <View style={styles.checkmarkBadge}>
+          <Check size={16} color="#fff" strokeWidth={3} />
+        </View>
+      )}
+    </TouchableOpacity>
+  );
+
+  // Render current step content
+  const renderStepContent = () => {
+    const animatedStyle = {
+      opacity: fadeAnim,
+      transform: [{ translateX: slideAnim }],
+    };
+
+    switch (currentStep) {
+      case 1: // Age
+        return (
+          <Animated.View style={[styles.stepContainer, animatedStyle]}>
+            <Text style={styles.stepEmoji}>🎂</Text>
+            <Text style={styles.stepTitle}>When were you born?</Text>
+            <Text style={styles.stepSubtitle}>We use this to personalize your nutrition plan</Text>
+            <View style={styles.inputGroup}>
+              <Dropdown
+                label="Birth Year"
+                placeholder="Select Year"
+                items={yearOptions}
+                selectedValue={birthYear}
+                onSelect={(value) => setBirthYear(value.toString())}
+                required
+              />
+              <Dropdown
+                label="Birth Month"
+                placeholder="Select Month"
+                items={monthOptions}
+                selectedValue={birthMonth}
+                onSelect={(value) => setBirthMonth(value.toString())}
+                required
+              />
+            </View>
+          </Animated.View>
+        );
+
+      case 2: // Body Metrics
+        return (
+          <Animated.View style={[styles.stepContainer, animatedStyle]}>
+            <Text style={styles.stepEmoji}>⚖️</Text>
+            <Text style={styles.stepTitle}>Your body metrics</Text>
+            <Text style={styles.stepSubtitle}>Help us calculate your ideal nutrition</Text>
+            <View style={styles.inputGroup}>
+              <Input
+                label="Weight (lbs)"
+                value={weight}
+                onChangeText={setWeight}
+                keyboardType="numeric"
+                placeholder="150"
+                required
+              />
+              <View style={styles.row}>
+                <View style={styles.column}>
+                  <Dropdown
+                    label="Height (Feet)"
+                    placeholder="Feet"
+                    items={feetOptions}
+                    selectedValue={heightFeet}
+                    onSelect={(value) => setHeightFeet(value.toString())}
+                    required
+                  />
+                </View>
+                <View style={styles.column}>
+                  <Dropdown
+                    label="Inches"
+                    placeholder="In"
+                    items={inchesOptions}
+                    selectedValue={heightInches}
+                    onSelect={(value) => setHeightInches(value.toString())}
+                    required
+                  />
+                </View>
+              </View>
+            </View>
+          </Animated.View>
+        );
+
+      case 3: // Gender
+        return (
+          <Animated.View style={[styles.stepContainer, animatedStyle]}>
+            <Text style={styles.stepEmoji}>👤</Text>
+            <Text style={styles.stepTitle}>What's your biological sex?</Text>
+            <Text style={styles.stepSubtitle}>This helps us personalize your calorie needs</Text>
+            <View style={styles.cardsContainer}>
+              {genders.map((g) =>
+                renderOptionCard(g, gender === g.value, () => setGender(g.value as "M" | "F" | "O"))
+              )}
+            </View>
+          </Animated.View>
+        );
+
+      case 4: // Food Preference
+        return (
+          <Animated.View style={[styles.stepContainer, animatedStyle]}>
+            <Text style={styles.stepEmoji}>🥗</Text>
+            <Text style={styles.stepTitle}>What's your food preference?</Text>
+            <Text style={styles.stepSubtitle}>We'll tailor meal suggestions for you</Text>
+            <View style={styles.cardsContainer}>
+              {dietOptions.map((diet) =>
+                renderOptionCard(diet, dietPreference === diet.value, () =>
+                  setDietPreference(diet.value as "Veg" | "Non-Veg" | "Vegan")
+                )
+              )}
+            </View>
+            <View style={styles.toggleQuestion}>
+              <Text style={styles.toggleLabel}>Currently on any diet plan?</Text>
+              <View style={styles.toggleButtons}>
+                <TouchableOpacity
+                  style={[styles.toggleButton, onDiet === true && styles.toggleButtonActive]}
+                  onPress={() => setOnDiet(true)}
+                >
+                  <Text style={[styles.toggleButtonText, onDiet === true && styles.toggleButtonTextActive]}>
+                    Yes
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[styles.toggleButton, onDiet === false && styles.toggleButtonActive]}
+                  onPress={() => setOnDiet(false)}
+                >
+                  <Text style={[styles.toggleButtonText, onDiet === false && styles.toggleButtonTextActive]}>
+                    No
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </Animated.View>
+        );
+
+      case 5: // Activity Level
+        return (
+          <Animated.View style={[styles.stepContainer, animatedStyle]}>
+            <Text style={styles.stepEmoji}>💪</Text>
+            <Text style={styles.stepTitle}>How active are you?</Text>
+            <Text style={styles.stepSubtitle}>This helps us estimate your daily calorie needs</Text>
+            <View style={styles.cardsContainer}>
+              {activityOptions.map((activity) =>
+                renderOptionCard(activity, activityLevel === activity.value, () =>
+                  setActivityLevel(activity.value || null)
+                )
+              )}
+            </View>
+          </Animated.View>
+        );
+
+      case 6: // Ethnicity
+        return (
+          <Animated.View style={[styles.stepContainer, animatedStyle]}>
+            <Text style={styles.stepEmoji}>🌍</Text>
+            <Text style={styles.stepTitle}>What's your ethnicity?</Text>
+            <Text style={styles.stepSubtitle}>Helps us provide culturally relevant meal options</Text>
+            <View style={styles.cardsContainerGrid}>
+              {ethnicityOptions.map((eth) =>
+                renderOptionCard(eth, ethnicity === eth.value, () => setEthnicity(eth.value || null))
+              )}
+            </View>
+          </Animated.View>
+        );
+
+      case 7: // Travel Frequency
+        return (
+          <Animated.View style={[styles.stepContainer, animatedStyle]}>
+            <Text style={styles.stepEmoji}>✈️</Text>
+            <Text style={styles.stepTitle}>How often do you travel?</Text>
+            <Text style={styles.stepSubtitle}>We'll suggest portable meal options</Text>
+            <View style={styles.cardsContainer}>
+              {travelFrequencyOptions.map((travel) =>
+                renderOptionCard(travel, travelPercentage === travel.value, () =>
+                  setTravelPercentage(travel.value || "")
+                )
+              )}
+            </View>
+          </Animated.View>
+        );
+
+      case 8: // Goal
+        return (
+          <Animated.View style={[styles.stepContainer, animatedStyle]}>
+            <Text style={styles.stepEmoji}>🎯</Text>
+            <Text style={styles.stepTitle}>What's your fitness goal?</Text>
+            <Text style={styles.stepSubtitle}>Let's create your personalized plan</Text>
+            <View style={styles.cardsContainer}>
+              {goalOptions.map((goal) =>
+                renderOptionCard(goal, goalType === goal.value, () =>
+                  setGoalType(goal.value as "LOSE" | "GAIN" | "MAINTAIN")
+                )
+              )}
+            </View>
+          </Animated.View>
+        );
+
+      default:
+        return null;
     }
-  }, [exerciseHabits, activityLevel, travelPercentage, ethnicity]);
+  };
 
   return (
     <>
       <MainHeader
         title=""
         showBackButton={true}
-        onBackPress={() => {
-          navigation.goBack();
-        }}
+        onBackPress={goToPreviousStep}
       />
 
       <ScrollContainer>
-        <View style={styles.header}>
-          <Logo />
-        </View>
+        <View style={styles.modernContainer}>
+          {renderProgressBar()}
+          {renderStepContent()}
 
-        <ProgressSteps totalSteps={totalSteps} currentStep={currentStep} />
-
-        <View style={styles.content}>
-          <Text style={styles.title}>Personal Details</Text>
-          <Text style={styles.subtitle1}>
-            AI will personalize your nutrition recommendations
-          </Text>
-          <Text style={styles.subtitle2}>
-            Help us create your personalized nutrition plan with some basic
-            information
-          </Text>
-
-          <View style={styles.form}>
-            <View style={styles.row}>
-              <View style={styles.column}>
-                <Dropdown
-                  label="Birth Year"
-                  placeholder="Select Year"
-                  items={yearOptions}
-                  selectedValue={birthYear}
-                  onSelect={(value) => setBirthYear(value.toString())}
-                  required
-                />
-              </View>
-
-              <View style={styles.column}>
-                <Dropdown
-                  label="Birth Month"
-                  placeholder="Select Month"
-                  items={monthOptions}
-                  selectedValue={birthMonth}
-                  onSelect={(value) => setBirthMonth(value.toString())}
-                  required
-                />
-              </View>
-            </View>
-
-            <Input
-              label="Pounds(lbs)"
-              value={weight}
-              onChangeText={setWeight}
-              keyboardType="numeric"
-              placeholder="Pounds"
-              required
-            />
-
-            <View style={styles.row}>
-              <View style={styles.column}>
-                <Dropdown
-                  label="Height (Feet)"
-                  placeholder="Select Feet"
-                  items={feetOptions}
-                  selectedValue={heightFeet}
-                  onSelect={(value) => setHeightFeet(value.toString())}
-                  required
-                />
-              </View>
-              <View style={styles.column}>
-                <Dropdown
-                  label="Inches"
-                  placeholder="Select Inches"
-                  items={inchesOptions}
-                  selectedValue={heightInches}
-                  onSelect={(value) => setHeightInches(value.toString())}
-                  required
-                />
-              </View>
-            </View>
-
-            <View style={styles.sexContainer}>
-              <Text style={styles.label}>
-                What's your biological sex{" "}
-                <Text style={styles.required}>*</Text>
-              </Text>
-              <View style={styles.sexButtons}>
-                {genders.map((sex) => (
-                  <TouchableOpacity
-                    key={sex}
-                    style={[
-                      styles.sexButton,
-                      gender === sex && styles.sexButtonActive,
-                    ]}
-                    onPress={() => setGender(sex)}
-                  >
-                    <Text
-                      style={[
-                        styles.sexButtonText,
-                        gender === sex && styles.sexButtonTextActive,
-                      ]}
-                    >
-                      {sex}
-                    </Text>
-                  </TouchableOpacity>
-                ))}
-              </View>
-            </View>
-
-            <View style={styles.sexContainer}>
-              <Text style={styles.label}>
-                Food Preference <Text style={styles.required}>*</Text>
-              </Text>
-              <View style={styles.sexButtons}>
-                {dietOptions.map((option) => (
-                  <TouchableOpacity
-                    key={option}
-                    style={[
-                      styles.sexButton,
-                      dietPreference === option && styles.sexButtonActive,
-                    ]}
-                    onPress={() => setDietPreference(option)}
-                  >
-                    <Text
-                      style={[
-                        styles.sexButtonText,
-                        dietPreference === option && styles.sexButtonTextActive,
-                      ]}
-                    >
-                      {option}
-                    </Text>
-                  </TouchableOpacity>
-                ))}
-              </View>
-            </View>
-
-            <View style={styles.sexContainer}>
-              <Text style={styles.label}>
-                Currently on any Diet plan? e.g. Keto, Intermittent Fasting
-              </Text>
-              <View style={styles.sexButtons}>
-                <TouchableOpacity
-                  style={[
-                    styles.sexButton,
-                    onDiet === true && styles.sexButtonActive,
-                  ]}
-                  onPress={() => setOnDiet(true)}
-                >
-                  <Text
-                    style={[
-                      styles.sexButtonText,
-                      onDiet === true && styles.sexButtonTextActive,
-                    ]}
-                  >
-                    Yes
-                  </Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                  style={[
-                    styles.sexButton,
-                    onDiet === false && styles.sexButtonActive,
-                  ]}
-                  onPress={() => setOnDiet(false)}
-                >
-                  <Text
-                    style={[
-                      styles.sexButtonText,
-                      onDiet === false && styles.sexButtonTextActive,
-                    ]}
-                  >
-                    No
-                  </Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-
-            <ToggleCardSelector
-              label="Activity Level"
-              enabled={showActivityLevel}
-              setEnabled={setShowActivityLevel}
-              selectedValue={activityLevel}
-              setSelectedValue={setActivityLevel}
-              options={activityOptions}
-              required={true}
-            />
-
-            <ToggleCardSelector
-              label="Ethnicity"
-              enabled={showEthnicity}
-              setEnabled={setShowEthnicity}
-              selectedValue={ethnicity}
-              setSelectedValue={setEthnicity}
-              options={ethnicityOptions}
-              required={true}
-            />
-
-            <ToggleCardSelector
-              label="Travel Frequency"
-              enabled={showTravelFrequency}
-              setEnabled={setShowTravelFrequency}
-              selectedValue={travelPercentage}
-              setSelectedValue={setTravelPercentage}
-              options={travelFrequencyOptions}
-              required={true}
-            />
-
-            <ToggleCardSelector
-              label="Goal"
-              enabled={showGoal}
-              setEnabled={setShowGoal}
-              selectedValue={goalType}
-              setSelectedValue={(value) =>
-                setGoalType(value as "LOSE" | "Gain" | "Maintain")
-              }
-              options={goalOptions}
-              required={true}
-            />
-            {/* 
-            {goalType && (
-              <View style={{ marginTop: 10 }}>
-                <Input
-                  label="Target Weight (lbs)"
-                  value={targetWeight}
-                  onChangeText={setTargetWeight}
-                  keyboardType="numeric"
-                  placeholder="140"
-                  required
-                />
-                <Input
-                  label="Target Calories (optional)"
-                  value={targetCalories}
-                  onChangeText={setTargetCalories}
-                  keyboardType="numeric"
-                  placeholder="500"
-                />
-              </View>
-            )} */}
-
-            {/* <Input
-              label="Medical Condition"
-              value={medicalCondition}
-              onChangeText={setMedicalCondition}
-              placeholder="Optional"
-            /> */}
-          </View>
-
-          <View
-            style={{
-              flexDirection: "row",
-              justifyContent: "space-between",
-              marginTop: "auto",
-              marginBottom: verticalScale(16),
-              gap: scale(12),
-            }}
-          >
+          <View style={styles.buttonContainer}>
             <Button
-              title="Back"
-              onPress={() => navigation.goBack()}
-              variant="outline"
-              style={{ flex: 0.3 }}
-              textStyle={styles.backText}
-            />
-            <Button
-              title="Complete Personal Details"
+              title={currentStep === totalSteps ? "Complete Setup" : "Continue"}
               onPress={handleContinue}
               loading={loading}
-              style={{ flex: 1.5, backgroundColor: Colors.primary }}
+              style={styles.continueButton}
             />
           </View>
         </View>
