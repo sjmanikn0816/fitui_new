@@ -84,6 +84,16 @@ const SignUpScreen: React.FC<Props> = ({ navigation }) => {
       // Validate email and password format
       await SignUpSchema.validate({ email, password }, { abortEarly: true });
 
+      // ============================================================================
+      // TODO: FIX EMAIL VALIDATION - Currently disabled, allowing all users to proceed
+      // ============================================================================
+      // ISSUE: Email validation endpoint is failing - needs backend investigation
+      // TEMPORARY FIX: Bypass email validation, allow user to proceed
+      // FINAL VALIDATION: Will happen at /userSignup endpoint after all 8 steps
+      // ============================================================================
+
+      /* DISABLED - Email validation code (to be fixed later)
+
       // COMPREHENSIVE EMAIL VALIDATION WITH RETRY
       const deviceId = await DeviceInfo.getUniqueId();
       const checkEmailUrl = `${Config.API_BASE_URL}${
@@ -221,6 +231,15 @@ const SignUpScreen: React.FC<Props> = ({ navigation }) => {
           return; // BLOCK
         }
       }
+
+      */ // END DISABLED EMAIL VALIDATION
+
+      // ============================================================================
+      // TEMPORARY: Proceeding without email validation
+      // User will get validation error at final signup if email already exists
+      // ============================================================================
+      console.log("⚠️ Email validation DISABLED - proceeding to registration");
+      console.log("Email will be validated at final signup endpoint: /userSignup");
 
       // All validations passed - proceed to next screen
       navigation.navigate("PersonalDetails", {
