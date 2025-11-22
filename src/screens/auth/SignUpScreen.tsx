@@ -53,7 +53,7 @@ const SignUpScreen: React.FC<Props> = ({ navigation }) => {
 
       await SignUpSchema.validate({ email, password }, { abortEarly: true });
 
-      // Check if email already exists in backend
+      // Check if email already exists in backend - STRICT CHECK
       const deviceId = await DeviceInfo.getUniqueId();
       const checkEmailUrl = `${Config.API_BASE_URL}${
         Endpoints.AUTH.EMAIL_EXIST
@@ -71,19 +71,35 @@ const SignUpScreen: React.FC<Props> = ({ navigation }) => {
           }
         );
 
-        // If email exists, show error and stop
-        if (emailCheckResponse.data?.exists === true) {
+        console.log("📧 Email check response:", emailCheckResponse.data);
+
+        // Check multiple response formats
+        const responseData = emailCheckResponse.data;
+
+        // Check if email exists (various response formats)
+        if (
+          responseData?.exists === true ||
+          responseData?.userExists === true ||
+          responseData?.emailExists === true ||
+          responseData?.message?.toLowerCase().includes("already") ||
+          responseData?.message?.toLowerCase().includes("exists")
+        ) {
           dispatch(
             showModal({
               type: "error",
               message:
+                responseData?.message ||
                 "This email is already registered. Please sign in or use a different email.",
             })
           );
           return;
         }
+
+        // If response indicates success and email is available, proceed
+        console.log("✅ Email is available, proceeding to registration");
+
       } catch (apiError: any) {
-        // Handle API errors gracefully - log detailed information for debugging
+        // Handle API errors - log detailed information
         console.log("========================================");
         console.log("📧 Email Validation API Error Details:");
         console.log("========================================");
@@ -96,42 +112,39 @@ const SignUpScreen: React.FC<Props> = ({ navigation }) => {
           console.log("Response Status:", apiError.response.status);
           console.log("Response Data:", apiError.response.data);
           console.log("Response Headers:", apiError.response.headers);
+
+          // Check if error response contains "already exists" message
+          const errorMessage = apiError.response.data?.message || "";
+          if (
+            errorMessage.toLowerCase().includes("already") ||
+            errorMessage.toLowerCase().includes("exists") ||
+            apiError.response.status === 409 // Conflict status
+          ) {
+            dispatch(
+              showModal({
+                type: "error",
+                message: errorMessage || "This email is already registered. Please sign in or use a different email.",
+              })
+            );
+            return;
+          }
         } else if (apiError.request) {
           console.log("No Response Received - Network/CORS issue");
-          console.log("Request Details:", apiError.request);
         } else {
           console.log("Request Setup Error:", apiError.message);
         }
         console.log("========================================");
 
-        // If it's a server error (500) or network error, let user continue
-        // The final signup will validate the email anyway
-        if (apiError.response?.status === 500 || !apiError.response) {
-          console.warn(
-            "⚠️ Email validation API unavailable - allowing user to continue. Final signup will validate email."
-          );
-          // Continue to next screen - backend will validate on final signup
-        } else if (apiError.response?.status === 400) {
-          // Bad request - likely invalid email format
-          dispatch(
-            showModal({
-              type: "error",
-              message: "Please enter a valid email address.",
-            })
-          );
-          return;
-        } else {
-          // Other errors
-          dispatch(
-            showModal({
-              type: "error",
-              message:
-                apiError.response?.data?.message ||
-                "Unable to validate email. Please try again.",
-            })
-          );
-          return;
-        }
+        // Show error to user - don't allow them to proceed with validation errors
+        dispatch(
+          showModal({
+            type: "error",
+            message:
+              apiError.response?.data?.message ||
+              "Unable to verify email availability. Please check your connection and try again.",
+          })
+        );
+        return; // BLOCK user from proceeding
       }
 
       navigation.navigate("PersonalDetails", {
