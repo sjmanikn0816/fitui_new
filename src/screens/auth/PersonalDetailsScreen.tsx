@@ -599,7 +599,7 @@ const PersonalDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
             <Text style={styles.stepEmoji}>🌍</Text>
             <Text style={styles.stepTitle}>What's your ethnicity?</Text>
             <Text style={styles.stepSubtitle}>Helps us provide culturally relevant meal options</Text>
-            <View style={styles.cardsContainerGrid}>
+            <View style={styles.cardsContainer}>
               {ethnicityOptions.map((eth) =>
                 renderOptionCard(eth, ethnicity === eth.value, () => setEthnicity(eth.value || null))
               )}
