@@ -149,4 +149,82 @@ export const styles = StyleSheet.create({
     color: Colors.black,
     fontWeight: "600",
   },
+
+  // Diabetes screening styles
+  questionTitle: {
+    ...Typography.h4,
+    fontSize: fontScale(16),
+    color: Colors.gray900,
+    fontWeight: "700",
+    marginBottom: verticalScale(4),
+  },
+
+  // Yes/No buttons
+  yesNoButton: {
+    flex: 1,
+    paddingVertical: verticalScale(14),
+    paddingHorizontal: scale(20),
+    borderWidth: 2,
+    borderColor: Colors.gray300,
+    borderRadius: moderateScale(12),
+    backgroundColor: Colors.white,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  yesNoButtonSelected: {
+    borderColor: Colors.primary,
+    backgroundColor: "#F0F9FF",
+  },
+  yesNoButtonText: {
+    ...Typography.bodyMedium,
+    fontSize: fontScale(15),
+    color: Colors.gray700,
+    fontWeight: "600",
+  },
+  yesNoButtonTextSelected: {
+    color: Colors.primary,
+    fontWeight: "700",
+  },
+
+  // Diabetes type cards
+  diabetesCard: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: verticalScale(16),
+    paddingHorizontal: scale(16),
+    borderWidth: 2,
+    borderColor: Colors.gray300,
+    borderRadius: moderateScale(12),
+    backgroundColor: Colors.white,
+    marginBottom: verticalScale(10),
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 3,
+    elevation: 1,
+  },
+  diabetesCardSelected: {
+    borderColor: Colors.primary,
+    backgroundColor: "#F0F9FF",
+    shadowColor: Colors.primary,
+    shadowOpacity: 0.1,
+    elevation: 2,
+  },
+  diabetesCardLabel: {
+    ...Typography.bodyMedium,
+    fontSize: fontScale(15),
+    color: Colors.gray900,
+    fontWeight: "600",
+    marginBottom: verticalScale(4),
+  },
+  diabetesCardLabelSelected: {
+    color: Colors.primary,
+    fontWeight: "700",
+  },
+  diabetesCardSubtitle: {
+    ...Typography.caption,
+    fontSize: fontScale(12),
+    color: Colors.gray600,
+    lineHeight: fontScale(16),
+  },
 });
