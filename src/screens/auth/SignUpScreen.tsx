@@ -113,38 +113,48 @@ const SignUpScreen: React.FC<Props> = ({ navigation }) => {
           console.log("Response Data:", apiError.response.data);
           console.log("Response Headers:", apiError.response.headers);
 
-          // Check if error response contains "already exists" message
           const errorMessage = apiError.response.data?.message || "";
+          const statusCode = apiError.response.status;
+
+          // ONLY block if we're CERTAIN the email is already registered
           if (
-            errorMessage.toLowerCase().includes("already") ||
-            errorMessage.toLowerCase().includes("exists") ||
-            apiError.response.status === 409 // Conflict status
+            statusCode === 409 || // HTTP 409 Conflict - email exists
+            errorMessage.toLowerCase().includes("already registered") ||
+            errorMessage.toLowerCase().includes("email already exists") ||
+            errorMessage.toLowerCase().includes("user already exists")
           ) {
+            console.log("🚫 Email already exists - blocking user");
             dispatch(
               showModal({
                 type: "error",
                 message: errorMessage || "This email is already registered. Please sign in or use a different email.",
               })
             );
-            return;
+            return; // BLOCK - email definitely exists
+          }
+
+          // For 500 errors (server issues), ALLOW user to continue
+          if (statusCode >= 500) {
+            console.warn(
+              "⚠️ Backend server error (500+). Allowing user to continue - final signup will validate."
+            );
+            // Don't block - it's a backend problem, not a duplicate email
+            // The final signup endpoint will catch duplicates if they exist
+          } else {
+            // For other client errors (400, 403, etc), show error but don't block
+            console.warn(
+              `⚠️ Client error (${statusCode}). Allowing user to continue.`
+            );
           }
         } else if (apiError.request) {
           console.log("No Response Received - Network/CORS issue");
+          console.warn("⚠️ Network error. Allowing user to continue.");
+          // Network error - allow to continue, final signup will validate
         } else {
           console.log("Request Setup Error:", apiError.message);
         }
         console.log("========================================");
-
-        // Show error to user - don't allow them to proceed with validation errors
-        dispatch(
-          showModal({
-            type: "error",
-            message:
-              apiError.response?.data?.message ||
-              "Unable to verify email availability. Please check your connection and try again.",
-          })
-        );
-        return; // BLOCK user from proceeding
+        // Continue to next screen despite API errors (except confirmed duplicates)
       }
 
       navigation.navigate("PersonalDetails", {
