@@ -184,15 +184,19 @@ const PersonalDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
     },
   ];
 
-  const feetOptions = Array.from({ length: 12 }, (_, i) => ({
-    label: `${i + 1} ft`,
-    value: (i + 1).toString(),
+  // Height options: 4-9 feet only (no one is above 9 feet)
+  const feetOptions = Array.from({ length: 6 }, (_, i) => ({
+    label: `${i + 4} ft`,
+    value: (i + 4).toString(),
   }));
 
+  // Birth year options: Only show years for 18+ age (app is 18+ only)
   const currentYear = new Date().getFullYear();
-  const yearOptions = Array.from({ length: currentYear - 1923 }, (_, i) => ({
-    label: (currentYear - i).toString(),
-    value: (currentYear - i).toString(),
+  const minYear = currentYear - 100; // 100 years ago
+  const maxYear = currentYear - 18; // Must be at least 18 years old
+  const yearOptions = Array.from({ length: maxYear - minYear + 1 }, (_, i) => ({
+    label: (maxYear - i).toString(),
+    value: (maxYear - i).toString(),
   }));
 
   const monthOptions = Array.from({ length: 12 }, (_, i) => ({
@@ -283,8 +287,8 @@ const PersonalDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
           dispatch(showModal({ type: "error", message: "Please select your birth year and month" }));
           return false;
         }
-        if (age < 13) {
-          dispatch(showModal({ type: "error", message: "You must be at least 13 years old to use this app" }));
+        if (age < 18) {
+          dispatch(showModal({ type: "error", message: "You must be at least 18 years old to use this app" }));
           return false;
         }
         return true;
