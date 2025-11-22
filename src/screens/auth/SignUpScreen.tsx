@@ -54,32 +54,66 @@ const SignUpScreen: React.FC<Props> = ({ navigation }) => {
       await SignUpSchema.validate({ email, password }, { abortEarly: true });
 
       // Check if email already exists in backend
-      const deviceId = await DeviceInfo.getUniqueId();
-      const checkEmailUrl = `${Config.API_BASE_URL}${
-        Endpoints.AUTH.EMAIL_EXIST
-      }?email=${encodeURIComponent(email.trim())}`;
+      try {
+        const deviceId = await DeviceInfo.getUniqueId();
+        const checkEmailUrl = `${Config.API_BASE_URL}${
+          Endpoints.AUTH.EMAIL_EXIST
+        }?email=${encodeURIComponent(email.trim())}`;
 
-      const emailCheckResponse = await axios.post(
-        checkEmailUrl,
-        {},
-        {
-          headers: {
-            "X-Device-ID": deviceId,
-            "Content-Type": "application/json",
-          },
-        }
-      );
-
-      // If email exists, show error and stop
-      if (emailCheckResponse.data?.exists === true) {
-        dispatch(
-          showModal({
-            type: "error",
-            message:
-              "This email is already registered. Please sign in or use a different email.",
-          })
+        const emailCheckResponse = await axios.post(
+          checkEmailUrl,
+          {},
+          {
+            headers: {
+              "X-Device-ID": deviceId,
+              "Content-Type": "application/json",
+            },
+          }
         );
-        return;
+
+        // If email exists, show error and stop
+        if (emailCheckResponse.data?.exists === true) {
+          dispatch(
+            showModal({
+              type: "error",
+              message:
+                "This email is already registered. Please sign in or use a different email.",
+            })
+          );
+          return;
+        }
+      } catch (apiError: any) {
+        // Handle API errors gracefully
+        console.error("Email existence check failed:", apiError);
+
+        // If it's a server error (500) or network error, let user continue
+        // The final signup will validate the email anyway
+        if (apiError.response?.status === 500 || !apiError.response) {
+          console.warn(
+            "Email validation API unavailable, proceeding with signup"
+          );
+          // Continue to next screen - backend will validate on final signup
+        } else if (apiError.response?.status === 400) {
+          // Bad request - likely invalid email format
+          dispatch(
+            showModal({
+              type: "error",
+              message: "Please enter a valid email address.",
+            })
+          );
+          return;
+        } else {
+          // Other errors
+          dispatch(
+            showModal({
+              type: "error",
+              message:
+                apiError.response?.data?.message ||
+                "Unable to validate email. Please try again.",
+            })
+          );
+          return;
+        }
       }
 
       navigation.navigate("PersonalDetails", {
