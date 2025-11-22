@@ -371,7 +371,7 @@ const handleMenuPress = () => {
                     imageStyle={styles.statImageStyle}
                   >
                     <LinearGradient
-                      colors={["rgba(139, 92, 246, 0.65)", "rgba(99, 102, 241, 0.60)"]}
+                      colors={["rgba(139, 92, 246, 0.88)", "rgba(99, 102, 241, 0.85)"]}
                       style={styles.statOverlay}
                     >
                       <Text style={styles.statLabelWithBg}>Current Weight</Text>
@@ -387,7 +387,7 @@ const handleMenuPress = () => {
                     imageStyle={styles.statImageStyle}
                   >
                     <LinearGradient
-                      colors={["rgba(236, 72, 153, 0.65)", "rgba(251, 146, 60, 0.60)"]}
+                      colors={["rgba(236, 72, 153, 0.88)", "rgba(251, 146, 60, 0.85)"]}
                       style={styles.statOverlay}
                     >
                       <Text style={styles.statLabelWithBg}>Net Calories</Text>
@@ -403,7 +403,7 @@ const handleMenuPress = () => {
                     imageStyle={styles.statImageStyle}
                   >
                     <LinearGradient
-                      colors={["rgba(16, 185, 129, 0.65)", "rgba(20, 184, 166, 0.60)"]}
+                      colors={["rgba(16, 185, 129, 0.88)", "rgba(20, 184, 166, 0.85)"]}
                       style={styles.statOverlay}
                     >
                       <Text style={styles.statLabelWithBg}>Status</Text>
@@ -486,7 +486,7 @@ const handleMenuPress = () => {
                     imageStyle={styles.statImageStyle}
                   >
                     <LinearGradient
-                      colors={["rgba(139, 92, 246, 0.65)", "rgba(99, 102, 241, 0.60)"]}
+                      colors={["rgba(139, 92, 246, 0.88)", "rgba(99, 102, 241, 0.85)"]}
                       style={styles.statOverlay}
                     >
                       <Text style={styles.statLabelWithBg}>Avg Weight</Text>
@@ -502,7 +502,7 @@ const handleMenuPress = () => {
                     imageStyle={styles.statImageStyle}
                   >
                     <LinearGradient
-                      colors={["rgba(236, 72, 153, 0.65)", "rgba(251, 146, 60, 0.60)"]}
+                      colors={["rgba(236, 72, 153, 0.88)", "rgba(251, 146, 60, 0.85)"]}
                       style={styles.statOverlay}
                     >
                       <Text style={styles.statLabelWithBg}>Avg Intake</Text>
@@ -518,7 +518,7 @@ const handleMenuPress = () => {
                     imageStyle={styles.statImageStyle}
                   >
                     <LinearGradient
-                      colors={["rgba(16, 185, 129, 0.65)", "rgba(20, 184, 166, 0.60)"]}
+                      colors={["rgba(16, 185, 129, 0.88)", "rgba(20, 184, 166, 0.85)"]}
                       style={styles.statOverlay}
                     >
                       <Text style={styles.statLabelWithBg}>Avg Burned</Text>
@@ -603,7 +603,7 @@ const handleMenuPress = () => {
                   imageStyle={styles.statImageStyle}
                 >
                   <LinearGradient
-                    colors={["rgba(236, 72, 153, 0.30)", "rgba(251, 146, 60, 0.25)"]}
+                    colors={["rgba(236, 72, 153, 0.88)", "rgba(251, 146, 60, 0.85)"]}
                     style={styles.statOverlay}
                   >
                     <Text style={styles.statLabelWithBg}>Avg Daily Intake</Text>
@@ -619,7 +619,7 @@ const handleMenuPress = () => {
                   imageStyle={styles.statImageStyle}
                 >
                   <LinearGradient
-                    colors={["rgba(16, 185, 129, 0.30)", "rgba(20, 184, 166, 0.25)"]}
+                    colors={["rgba(16, 185, 129, 0.88)", "rgba(20, 184, 166, 0.85)"]}
                     style={styles.statOverlay}
                   >
                     <Text style={styles.statLabelWithBg}>Avg Daily Burned</Text>
@@ -635,7 +635,7 @@ const handleMenuPress = () => {
                   imageStyle={styles.statImageStyle}
                 >
                   <LinearGradient
-                    colors={["rgba(59, 130, 246, 0.65)", "rgba(99, 102, 241, 0.60)"]}
+                    colors={["rgba(59, 130, 246, 0.88)", "rgba(99, 102, 241, 0.85)"]}
                     style={styles.statOverlay}
                   >
                     <Text style={styles.statLabelWithBg}>Avg Net Calories</Text>
