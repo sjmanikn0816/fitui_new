@@ -27,9 +27,35 @@ const InputSection: React.FC<Props> = ({
 }) => {
   const [inputHeight, setInputHeight] = React.useState(40);
   const [isRecording, setIsRecording] = React.useState(false);
+  const [isFocused, setIsFocused] = React.useState(false);
 
   // 🔊 --- WAVE ANIMATION VALUE ---
   const waveAnim = useRef(new Animated.Value(1)).current;
+
+  // 📏 --- INPUT EXPANSION ANIMATION ---
+  const expandAnim = useRef(new Animated.Value(1)).current;
+
+  // 🎨 Expand input on focus
+  const handleFocus = () => {
+    setIsFocused(true);
+    Animated.spring(expandAnim, {
+      toValue: 1.05,
+      useNativeDriver: true,
+      tension: 50,
+      friction: 7,
+    }).start();
+  };
+
+  // 🎨 Shrink input on blur
+  const handleBlur = () => {
+    setIsFocused(false);
+    Animated.spring(expandAnim, {
+      toValue: 1,
+      useNativeDriver: true,
+      tension: 50,
+      friction: 7,
+    }).start();
+  };
 
   // 🔊 Animate waveform continuously
   const startWaveAnimation = () => {
@@ -101,7 +127,14 @@ const InputSection: React.FC<Props> = ({
   };
 
   return (
-    <View style={landingStyles.inputRow}>
+    <Animated.View
+      style={[
+        landingStyles.inputRow,
+        {
+          transform: [{ scale: expandAnim }],
+        },
+      ]}
+    >
       <TextInput
         placeholder="Fancy a meal? Ask AI..."
         placeholderTextColor={"#666"}
@@ -114,6 +147,8 @@ const InputSection: React.FC<Props> = ({
         onContentSizeChange={(e) =>
           setInputHeight(e.nativeEvent.contentSize.height)
         }
+        onFocus={handleFocus}
+        onBlur={handleBlur}
       />
 
       <View style={landingStyles.audioContainer}>
@@ -143,7 +178,7 @@ const InputSection: React.FC<Props> = ({
           />
         </Animated.View>
       </View>
-    </View>
+    </Animated.View>
   );
 };
 

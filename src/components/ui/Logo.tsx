@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Image } from "react-native";
+import { View, Text } from "react-native";
 import { styles } from "./styles/LogoStyles";
 
 interface LogoProps {
@@ -9,10 +9,7 @@ interface LogoProps {
 const Logo: React.FC<LogoProps> = ({ size = "medium" }) => {
   return (
     <View style={styles.container}>
-      <Image
-        source={require("./../../../assets/textfitAI.png")} // ✅ relative path
-        style={styles.logoImage}
-      />
+      <Text style={styles.logoText}>fitAI</Text>
     </View>
   );
 };
