@@ -9,12 +9,16 @@ import { styles } from "../styles/SignUpScreenStyles";
 import { SignUpSchema } from "@/utils/validationSchema";
 import { Strings } from "@/constants/String";
 import { useAppDispatch } from "@/redux/store/hooks";
-import {  useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 import ScrollContainer from "@/components/ui/ScrollContainer";
 import MainHeader from "@/components/ui/MainHeaderNav";
 import { showModal } from "@/redux/slice/modalSlice";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
+import axios from "axios";
+import DeviceInfo from "react-native-device-info";
+import { Config } from "@/constants/config";
+import { Endpoints } from "@/constants/endpoints";
 
 type SignUpScreenNavigationProp = StackNavigationProp<
   AuthStackParamList,
@@ -36,7 +40,7 @@ const SignUpScreen: React.FC<Props> = ({ navigation }) => {
 
   const handleContinue = async () => {
     try {
-      setLoading(true); 
+      setLoading(true);
       if (!firstName.trim() || !lastName.trim()) {
         dispatch(
           showModal({
@@ -48,6 +52,35 @@ const SignUpScreen: React.FC<Props> = ({ navigation }) => {
       }
 
       await SignUpSchema.validate({ email, password }, { abortEarly: true });
+
+      // Check if email already exists in backend
+      const deviceId = await DeviceInfo.getUniqueId();
+      const checkEmailUrl = `${Config.API_BASE_URL}${
+        Endpoints.AUTH.EMAIL_EXIST
+      }?email=${encodeURIComponent(email.trim())}`;
+
+      const emailCheckResponse = await axios.post(
+        checkEmailUrl,
+        {},
+        {
+          headers: {
+            "X-Device-ID": deviceId,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      // If email exists, show error and stop
+      if (emailCheckResponse.data?.exists === true) {
+        dispatch(
+          showModal({
+            type: "error",
+            message:
+              "This email is already registered. Please sign in or use a different email.",
+          })
+        );
+        return;
+      }
 
       navigation.navigate("PersonalDetails", {
         firstName: firstName.trim(),
