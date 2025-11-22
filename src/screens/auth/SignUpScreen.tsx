@@ -54,12 +54,12 @@ const SignUpScreen: React.FC<Props> = ({ navigation }) => {
       await SignUpSchema.validate({ email, password }, { abortEarly: true });
 
       // Check if email already exists in backend
-      try {
-        const deviceId = await DeviceInfo.getUniqueId();
-        const checkEmailUrl = `${Config.API_BASE_URL}${
-          Endpoints.AUTH.EMAIL_EXIST
-        }?email=${encodeURIComponent(email.trim())}`;
+      const deviceId = await DeviceInfo.getUniqueId();
+      const checkEmailUrl = `${Config.API_BASE_URL}${
+        Endpoints.AUTH.EMAIL_EXIST
+      }?email=${encodeURIComponent(email.trim())}`;
 
+      try {
         const emailCheckResponse = await axios.post(
           checkEmailUrl,
           {},
