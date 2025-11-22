@@ -83,14 +83,32 @@ const SignUpScreen: React.FC<Props> = ({ navigation }) => {
           return;
         }
       } catch (apiError: any) {
-        // Handle API errors gracefully
-        console.error("Email existence check failed:", apiError);
+        // Handle API errors gracefully - log detailed information for debugging
+        console.log("========================================");
+        console.log("📧 Email Validation API Error Details:");
+        console.log("========================================");
+        console.log("Attempted URL:", checkEmailUrl);
+        console.log("Email being checked:", email.trim());
+        console.log("Error Type:", apiError.name || "Unknown");
+        console.log("Error Message:", apiError.message);
+
+        if (apiError.response) {
+          console.log("Response Status:", apiError.response.status);
+          console.log("Response Data:", apiError.response.data);
+          console.log("Response Headers:", apiError.response.headers);
+        } else if (apiError.request) {
+          console.log("No Response Received - Network/CORS issue");
+          console.log("Request Details:", apiError.request);
+        } else {
+          console.log("Request Setup Error:", apiError.message);
+        }
+        console.log("========================================");
 
         // If it's a server error (500) or network error, let user continue
         // The final signup will validate the email anyway
         if (apiError.response?.status === 500 || !apiError.response) {
           console.warn(
-            "Email validation API unavailable, proceeding with signup"
+            "⚠️ Email validation API unavailable - allowing user to continue. Final signup will validate email."
           );
           // Continue to next screen - backend will validate on final signup
         } else if (apiError.response?.status === 400) {
