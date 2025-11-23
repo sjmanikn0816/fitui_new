@@ -101,87 +101,96 @@ const LandingScreen: React.FC = () => {
   };
 
   const handleMealPlanRequest = async (type: "suggest" | "surprise") => {
-    let ethnicity = "Asian";
+    try {
+      let ethnicity = "Asian";
 
-    if (
-      type === "suggest" &&
-      (!ethnicity || ethnicity === "Prefer not to say")
-    ) {
-      ethnicity = "Asian";
+      if (
+        type === "suggest" &&
+        (!ethnicity || ethnicity === "Prefer not to say")
+      ) {
+        ethnicity = "Asian";
+      }
+
+      const weightLbs = user?.weightInLbs ?? 180;
+      const heightFeet = user?.heightInFeet ?? 5;
+      const heightInches = user?.heightInInches ?? 0;
+      const targetWeightLbs = user?.targetWeight ?? 180;
+
+      const effectiveCalories = Math.round(
+        targetCalories ?? user?.targetCalories ?? 1800
+      );
+
+      const basePayload = {
+        plan_type: "daily",
+        user_profile: {
+          birth_year: user?.birthYear ?? 1990,
+          birth_month: user?.birthMonth ?? 6,
+          weight_lbs: weightLbs,
+          height_feet: heightFeet,
+          height_inches: heightInches,
+          biological_sex: mapGender(user?.gender),
+          food_preference: user?.dietPreference ?? "Non-Veg",
+          on_diet_plan: user?.isOnDiet ?? false,
+          activity_level: mappedActivity,
+          travel_frequency: user?.travelPercentage ?? "Rarely/Never",
+          ethnicity,
+        },
+        health_conditions: {
+          diabetes_type1_type2:
+            healthCondition?.diabetes_type1_type2 ??
+            healthCondition?.diabetes ??
+            healthCondition?.preDiabetes ??
+            false,
+          hypertension: healthCondition?.hypertension ?? false,
+          cancer: healthCondition?.cancer ?? false,
+          immune_disorder: healthCondition?.immune_disorder ?? false,
+          neurological_health: healthCondition?.neurological_health ?? false,
+          food_allergies: healthCondition?.food_allergies ?? [],
+        },
+        user_goal: {
+          weight_goal:
+            user?.goal === "LOSE"
+              ? "lose"
+              : user?.goal === "GAIN"
+              ? "gain"
+              : "maintain",
+          target_weight_lbs: targetWeightLbs,
+          target_calories: effectiveCalories,
+        },
+        options_per_meal: 1,
+        include_recipes: true,
+        recipe_detail_level: "detailed",
+        target_date: new Date().toISOString().split("T")[0],
+      };
+
+      const finalPayload =
+        query.trim().length > 0
+          ? { ...basePayload, prompt: query.trim() }
+          : { ...basePayload, target_daily_calories: effectiveCalories };
+
+      if (query.trim().length > 0) {
+        await dispatch(fetchMealPlan(finalPayload));
+      } else {
+        await dispatch(fetchMealPlanSimple(finalPayload));
+      }
+
+      // Reset animation state before navigation
+      setIsProcessing(false);
+      setShowProgress(false);
+
+      // Use setTimeout to ensure navigation happens after state updates
+      setTimeout(() => {
+        navigation.navigate("Dashboard", {
+          mealType: currentMealType,
+          surpriseMode: type === "surprise",
+          fromLanding: true,
+        });
+      }, 100);
+    } catch (error) {
+      console.error("❌ Meal Plan Request Error:", error);
+      setIsProcessing(false);
+      setShowProgress(false);
     }
-
-    const weightLbs = user?.weightInLbs ?? 180;
-    const heightFeet = user?.heightInFeet ?? 5;
-    const heightInches = user?.heightInInches ?? 0;
-    const targetWeightLbs = user?.targetWeight ?? 180;
-
-    const effectiveCalories = Math.round(
-      targetCalories ?? user?.targetCalories ?? 1800
-    );
-
-    const basePayload = {
-      plan_type: "daily",
-      user_profile: {
-        birth_year: user?.birthYear ?? 1990,
-        birth_month: user?.birthMonth ?? 6,
-        weight_lbs: weightLbs,
-        height_feet: heightFeet,
-        height_inches: heightInches,
-        biological_sex: mapGender(user?.gender),
-        food_preference: user?.dietPreference ?? "Non-Veg",
-        on_diet_plan: user?.isOnDiet ?? false,
-        activity_level: mappedActivity,
-        travel_frequency: user?.travelPercentage ?? "Rarely/Never",
-        ethnicity,
-      },
-      health_conditions: {
-        diabetes_type1_type2:
-          healthCondition?.diabetes_type1_type2 ??
-          healthCondition?.diabetes ??
-          healthCondition?.preDiabetes ??
-          false,
-        hypertension: healthCondition?.hypertension ?? false,
-        cancer: healthCondition?.cancer ?? false,
-        immune_disorder: healthCondition?.immune_disorder ?? false,
-        neurological_health: healthCondition?.neurological_health ?? false,
-        food_allergies: healthCondition?.food_allergies ?? [],
-      },
-      user_goal: {
-        weight_goal:
-          user?.goal === "LOSE"
-            ? "lose"
-            : user?.goal === "GAIN"
-            ? "gain"
-            : "maintain",
-        target_weight_lbs: targetWeightLbs,
-        target_calories: effectiveCalories,
-      },
-      options_per_meal: 1,
-      include_recipes: true,
-      recipe_detail_level: "detailed",
-      target_date: new Date().toISOString().split("T")[0],
-    };
-
-    const finalPayload =
-      query.trim().length > 0
-        ? { ...basePayload, prompt: query.trim() }
-        : { ...basePayload, target_daily_calories: effectiveCalories };
-
-    if (query.trim().length > 0) {
-      await dispatch(fetchMealPlan(finalPayload));
-    } else {
-      await dispatch(fetchMealPlanSimple(finalPayload));
-    }
-
-    navigation.navigate("Dashboard", {
-      mealType: currentMealType,
-      surpriseMode: type === "surprise",
-      fromLanding: true,
-    });
-
-    // Reset animation state
-    setIsProcessing(false);
-    setShowProgress(false);
   };
 
   const handleProfilePress = () => navigation.navigate("Profile");
