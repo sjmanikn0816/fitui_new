@@ -255,6 +255,65 @@ export const styles = StyleSheet.create({
     textShadowOffset: { width: 0, height: 1 },
     textShadowRadius: 3,
   },
+  // New styles for small vertical grid layout with light backgrounds
+  statsGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    paddingHorizontal: 20,
+    gap: 12,
+    justifyContent: 'space-between',
+  },
+  statCardSmall: {
+    width: '48%',
+    height: 110,
+    borderRadius: 14,
+    overflow: 'hidden',
+    ...Platform.select({
+      ios: {
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.08,
+        shadowRadius: 4,
+      },
+      android: {
+        elevation: 2,
+      },
+    }),
+  },
+  statImageBgSmall: {
+    width: '100%',
+    height: '100%',
+  },
+  statImageStyleSmall: {
+    borderRadius: 14,
+  },
+  statOverlaySmall: {
+    flex: 1,
+    padding: 12,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  statLabelLight: {
+    fontSize: 11,
+    color: '#475569',
+    fontWeight: '700',
+    marginTop: 6,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+  },
+  statValueLight: {
+    fontSize: 22,
+    fontWeight: '900',
+    color: '#1e293b',
+    marginTop: 4,
+    letterSpacing: 0.3,
+  },
+  statUnitLight: {
+    fontSize: 10,
+    color: '#64748b',
+    fontWeight: '600',
+    marginTop: 2,
+  },
   timelinesContainer: {
     marginTop: 24,
     paddingHorizontal: 20,

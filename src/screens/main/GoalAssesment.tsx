@@ -454,118 +454,118 @@ const handleMenuPress = () => {
             )}
 
             <Text style={styles.sectionTitle}>Your Current Stats</Text>
-            <ScrollView
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              contentContainerStyle={styles.statsScrollContent}
-            >
-              <View style={styles.statCard}>
+            <View style={styles.statsGrid}>
+              <View style={styles.statCardSmall}>
                 <ImageBackground
                   source={{
                     uri: "https://images.unsplash.com/photo-1483721310020-03333e577078?w=400&q=80",
                   }}
-                  style={styles.statImageBg}
-                  imageStyle={styles.statImageStyle}
+                  style={styles.statImageBgSmall}
+                  imageStyle={styles.statImageStyleSmall}
                 >
                   <LinearGradient
-                    colors={["rgba(59, 130, 246, 0.88)", "rgba(37, 99, 235, 0.85)"]}
-                    style={styles.statOverlay}
+                    colors={["rgba(255, 255, 255, 0.95)", "rgba(240, 240, 240, 0.92)"]}
+                    style={styles.statOverlaySmall}
                   >
-                    <Ionicons name="scale-outline" size={32} color="#fff" />
-                    <Text style={styles.statLabelWithBg}>Weight</Text>
-                    <Text style={styles.statValueWithBg}>{assessment.weight_lbs}</Text>
-                    <Text style={styles.statUnitWithBg}>lbs</Text>
+                    <Ionicons name="scale-outline" size={24} color="#3b82f6" />
+                    <Text style={styles.statLabelLight}>Weight</Text>
+                    <Text style={styles.statValueLight}>{assessment.weight_lbs}</Text>
+                    <Text style={styles.statUnitLight}>lbs</Text>
                   </LinearGradient>
                 </ImageBackground>
               </View>
-              <View style={styles.statCard}>
+
+              <View style={styles.statCardSmall}>
                 <ImageBackground
                   source={{
                     uri: "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=400&q=80",
                   }}
-                  style={styles.statImageBg}
-                  imageStyle={styles.statImageStyle}
+                  style={styles.statImageBgSmall}
+                  imageStyle={styles.statImageStyleSmall}
                 >
                   <LinearGradient
-                    colors={["rgba(16, 185, 129, 0.88)", "rgba(5, 150, 105, 0.85)"]}
-                    style={styles.statOverlay}
+                    colors={["rgba(255, 255, 255, 0.95)", "rgba(240, 240, 240, 0.92)"]}
+                    style={styles.statOverlaySmall}
                   >
-                    <Ionicons name="fitness-outline" size={32} color="#fff" />
-                    <Text style={styles.statLabelWithBg}>BMI</Text>
-                    <Text style={styles.statValueWithBg}>
+                    <Ionicons name="fitness-outline" size={24} color="#10b981" />
+                    <Text style={styles.statLabelLight}>BMI</Text>
+                    <Text style={styles.statValueLight}>
                       {assessment.user_assessment?.current_bmi}
                     </Text>
-                    <Text style={styles.statUnitWithBg}>index</Text>
+                    <Text style={styles.statUnitLight}>index</Text>
                   </LinearGradient>
                 </ImageBackground>
               </View>
-              <View style={styles.statCard}>
+
+              <View style={styles.statCardSmall}>
                 <ImageBackground
                   source={{
                     uri: "https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=400&q=80",
                   }}
-                  style={styles.statImageBg}
-                  imageStyle={styles.statImageStyle}
+                  style={styles.statImageBgSmall}
+                  imageStyle={styles.statImageStyleSmall}
                 >
                   <LinearGradient
-                    colors={["rgba(236, 72, 153, 0.88)", "rgba(251, 146, 60, 0.85)"]}
-                    style={styles.statOverlay}
+                    colors={["rgba(255, 255, 255, 0.95)", "rgba(240, 240, 240, 0.92)"]}
+                    style={styles.statOverlaySmall}
                   >
-                    <Ionicons name="flame-outline" size={32} color="#fff" />
-                    <Text style={styles.statLabelWithBg}>TDEE</Text>
-                    <Text style={styles.statValueWithBg}>
+                    <Ionicons name="flame-outline" size={24} color="#ec4899" />
+                    <Text style={styles.statLabelLight}>TDEE</Text>
+                    <Text style={styles.statValueLight}>
                       {Math.round(assessment.tdee)}
                     </Text>
-                    <Text style={styles.statUnitWithBg}>cal/day</Text>
+                    <Text style={styles.statUnitLight}>cal/day</Text>
                   </LinearGradient>
                 </ImageBackground>
               </View>
-              <View style={styles.statCard}>
+
+              <View style={styles.statCardSmall}>
                 <ImageBackground
                   source={{
                     uri: "https://images.unsplash.com/photo-1628348068343-c6a848d2b6dd?w=400&q=80",
                   }}
-                  style={styles.statImageBg}
-                  imageStyle={styles.statImageStyle}
+                  style={styles.statImageBgSmall}
+                  imageStyle={styles.statImageStyleSmall}
                 >
                   <LinearGradient
-                    colors={["rgba(239, 68, 68, 0.88)", "rgba(220, 38, 38, 0.85)"]}
-                    style={styles.statOverlay}
+                    colors={["rgba(255, 255, 255, 0.95)", "rgba(240, 240, 240, 0.92)"]}
+                    style={styles.statOverlaySmall}
                   >
                     <Ionicons
                       name="speedometer-outline"
-                      size={32}
-                      color="#fff"
+                      size={24}
+                      color="#ef4444"
                     />
-                    <Text style={styles.statLabelWithBg}>BMR</Text>
-                    <Text style={styles.statValueWithBg}>
+                    <Text style={styles.statLabelLight}>BMR</Text>
+                    <Text style={styles.statValueLight}>
                       {Math.round(assessment.bmr)}
                     </Text>
-                    <Text style={styles.statUnitWithBg}>cal/day</Text>
+                    <Text style={styles.statUnitLight}>cal/day</Text>
                   </LinearGradient>
                 </ImageBackground>
               </View>
-              <View style={styles.statCard}>
+
+              <View style={styles.statCardSmall}>
                 <ImageBackground
                   source={{
                     uri: "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=400&q=80",
                   }}
-                  style={styles.statImageBg}
-                  imageStyle={styles.statImageStyle}
+                  style={styles.statImageBgSmall}
+                  imageStyle={styles.statImageStyleSmall}
                 >
                   <LinearGradient
-                    colors={["rgba(168, 85, 247, 0.88)", "rgba(139, 92, 246, 0.85)"]}
-                    style={styles.statOverlay}
+                    colors={["rgba(255, 255, 255, 0.95)", "rgba(240, 240, 240, 0.92)"]}
+                    style={styles.statOverlaySmall}
                   >
-                    <Ionicons name="walk" size={32} color="#fff" />
-                    <Text style={styles.statLabelWithBg}>Activity</Text>
-                    <Text style={[styles.statValueWithBg, { fontSize: 18 }]}>
+                    <Ionicons name="walk" size={24} color="#a855f7" />
+                    <Text style={styles.statLabelLight}>Activity</Text>
+                    <Text style={[styles.statValueLight, { fontSize: 14 }]}>
                       {assessment.activity_level}
                     </Text>
                   </LinearGradient>
                 </ImageBackground>
               </View>
-            </ScrollView>
+            </View>
           </View>
 
           {/* Timeline Options */}
