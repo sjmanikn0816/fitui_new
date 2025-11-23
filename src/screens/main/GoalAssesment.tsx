@@ -134,34 +134,60 @@ const GoalAssessmentScreen = ({ navigation }) => {
     try {
       setSavingTimeline(true);
 
+      // Validate required data
+      if (!user?.userId) {
+        throw new Error("User ID is missing");
+      }
+
+      if (!assessment) {
+        throw new Error("Assessment data is missing. Please refresh the page.");
+      }
+
+      // Safely parse numeric values with fallbacks
+      const tdee = parseFloat(assessment.tdee) || 0;
+      const bmr = parseFloat(assessment.bmr) || 0;
+      const currentWeight = parseFloat(assessment.weight_lbs) || parseFloat(user?.weightInLbs) || 0;
+      const weeklyRate = parseFloat(timeline.weekly_rate) || 1;
+
+      // Calculate target calories with validation
+      const targetCalories = tdee - (weeklyRate * 500);
+
+      // Validate calculations
+      if (isNaN(targetCalories) || targetCalories <= 0) {
+        console.error("Invalid calculation:", { tdee, weeklyRate, targetCalories });
+        throw new Error("Unable to calculate target calories. Please try again.");
+      }
+
       const requestBody = {
-        userId: user?.userId,
+        userId: user.userId,
         approach_name: timeline.approach_name,
-        target_weight_lbs: timeline.target_weight_lbs,
-        weight_change_lbs: timeline.weight_change_lbs,
-        timeline_weeks: timeline.timeline_weeks,
-        weekly_rate: timeline.weekly_rate,
+        target_weight_lbs: parseFloat(timeline.target_weight_lbs),
+        weight_change_lbs: parseFloat(timeline.weight_change_lbs),
+        timeline_weeks: parseInt(timeline.timeline_weeks),
+        weekly_rate: weeklyRate,
         weight_goal: timeline.weight_goal,
         weight_loss_rate: timeline.weight_loss_rate,
         difficulty_level: timeline.difficulty_level,
-        focus_areas: timeline.focus_areas,
-        expected_outcomes: timeline.expected_outcomes,
+        focus_areas: timeline.focus_areas || [],
+        expected_outcomes: timeline.expected_outcomes || [],
         nutrition_emphasis: timeline.nutrition_emphasis,
         exercise_emphasis: timeline.exercise_emphasis,
-        tdee: assessment.tdee,
-        bmr: assessment.bmr,
-        current_weight_lbs: assessment.weight_lbs,
-        target_calories: assessment.tdee - timeline.weekly_rate * 500,
+        tdee: tdee,
+        bmr: bmr,
+        current_weight_lbs: currentWeight,
+        target_calories: Math.round(targetCalories),
       };
 
+      console.log("📤 Sending timeline save request:", requestBody);
+
       const { data } = await api.post(
-        `/goal/assessment/${user?.userId}`,
+        `/goal/assessment/${user.userId}`,
         requestBody
       );
 
       if (data) {
         console.log("✅ Timeline saved successfully:", data);
-        await  SecureStorage.setItem(
+        await SecureStorage.setItem(
           "selectedTimeline",
           JSON.stringify(timeline)
         );
@@ -174,6 +200,7 @@ const GoalAssessmentScreen = ({ navigation }) => {
       const message =
         err.response?.data?.message || err.message || "Failed to save timeline";
       console.error("❌ Save timeline error:", message);
+      console.error("Error details:", err.response?.data);
       Alert.alert("Error", message);
       return false;
     } finally {
@@ -219,9 +246,21 @@ const handleMenuPress = () => {
       return;
     }
 
+    // Debug logging
+    console.log("📊 Assessment Data:", {
+      tdee: assessment.tdee,
+      bmr: assessment.bmr,
+      weight_lbs: assessment.weight_lbs,
+      hasAssessment: !!assessment,
+    });
+    console.log("👤 User Data:", {
+      userId: user?.userId,
+      weightInLbs: user?.weightInLbs,
+    });
+
     // Save timeline to DB
     const saved = await saveSelectedTimeline(selectedTimeline);
-    console.log(saved);
+    console.log("Save Result:", saved);
     if (!saved) {
       Alert.alert("Warning", "Timeline couldn't be saved. Please try again.");
       return;
