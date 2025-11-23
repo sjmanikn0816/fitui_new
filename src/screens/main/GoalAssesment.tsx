@@ -464,7 +464,7 @@ const handleMenuPress = () => {
                   imageStyle={styles.statImageStyleSmall}
                 >
                   <LinearGradient
-                    colors={["rgba(255, 255, 255, 0.95)", "rgba(240, 240, 240, 0.92)"]}
+                    colors={["rgba(255, 255, 255, 0.85)", "rgba(240, 240, 240, 0.80)"]}
                     style={styles.statOverlaySmall}
                   >
                     <Ionicons name="scale-outline" size={24} color="#3b82f6" />
@@ -484,7 +484,7 @@ const handleMenuPress = () => {
                   imageStyle={styles.statImageStyleSmall}
                 >
                   <LinearGradient
-                    colors={["rgba(255, 255, 255, 0.95)", "rgba(240, 240, 240, 0.92)"]}
+                    colors={["rgba(255, 255, 255, 0.85)", "rgba(240, 240, 240, 0.80)"]}
                     style={styles.statOverlaySmall}
                   >
                     <Ionicons name="fitness-outline" size={24} color="#10b981" />
@@ -506,7 +506,7 @@ const handleMenuPress = () => {
                   imageStyle={styles.statImageStyleSmall}
                 >
                   <LinearGradient
-                    colors={["rgba(255, 255, 255, 0.95)", "rgba(240, 240, 240, 0.92)"]}
+                    colors={["rgba(255, 255, 255, 0.85)", "rgba(240, 240, 240, 0.80)"]}
                     style={styles.statOverlaySmall}
                   >
                     <Ionicons name="flame-outline" size={24} color="#ec4899" />
@@ -528,7 +528,7 @@ const handleMenuPress = () => {
                   imageStyle={styles.statImageStyleSmall}
                 >
                   <LinearGradient
-                    colors={["rgba(255, 255, 255, 0.95)", "rgba(240, 240, 240, 0.92)"]}
+                    colors={["rgba(255, 255, 255, 0.85)", "rgba(240, 240, 240, 0.80)"]}
                     style={styles.statOverlaySmall}
                   >
                     <Ionicons
@@ -554,7 +554,7 @@ const handleMenuPress = () => {
                   imageStyle={styles.statImageStyleSmall}
                 >
                   <LinearGradient
-                    colors={["rgba(255, 255, 255, 0.95)", "rgba(240, 240, 240, 0.92)"]}
+                    colors={["rgba(255, 255, 255, 0.85)", "rgba(240, 240, 240, 0.80)"]}
                     style={styles.statOverlaySmall}
                   >
                     <Ionicons name="walk" size={24} color="#a855f7" />
