@@ -106,8 +106,15 @@ export const signupUser = createAsyncThunk<
 >("auth/signupUser", async (userData, { rejectWithValue }) => {
   try {
     const deviceId = await DeviceInfo.getUniqueId();
+    const url = `${BASE_URL}${Endpoints.AUTH.REGISTER}`;
+
+    console.log("📤 SIGNUP REQUEST:");
+    console.log("   URL:", url);
+    console.log("   Device ID:", deviceId);
+    console.log("   Payload:", JSON.stringify(userData, null, 2));
+
     const response = await axios.post(
-      `${BASE_URL}${Endpoints.AUTH.REGISTER}`,
+      url,
       userData,
       {
         headers: {
@@ -116,6 +123,11 @@ export const signupUser = createAsyncThunk<
         },
       }
     );
+
+    console.log("✅ SIGNUP SUCCESS:");
+    console.log("   Status:", response.status);
+    console.log("   Response:", JSON.stringify(response.data, null, 2));
+
     const data = response.data;
     return {
       token: data.jwtTokenDTO?.jwtToken,
@@ -124,6 +136,15 @@ export const signupUser = createAsyncThunk<
       userId: data.userId,
     };
   } catch (err: any) {
+    console.error("❌ SIGNUP ERROR:");
+    console.error("   Message:", err.message);
+    console.error("   Status:", err.response?.status);
+    console.error("   Status Text:", err.response?.statusText);
+    console.error("   Response Data:", JSON.stringify(err.response?.data, null, 2));
+    console.error("   Request URL:", err.config?.url);
+    console.error("   Request Data:", err.config?.data);
+    console.error("   Full Error:", err);
+
     return rejectWithValue(err.response?.data?.message || err.message);
   }
 });
