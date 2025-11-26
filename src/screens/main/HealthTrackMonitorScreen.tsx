@@ -25,31 +25,38 @@ import Svg, { Path, Circle, Rect, Defs, LinearGradient as SvgLinearGradient, Sto
 
 const { width: screenWidth } = Dimensions.get("window");
 
-// Advanced color palette for dark mode cards
+// Advanced color palette for dark mode cards - IMPROVED VISIBILITY
 const CARD_COLORS = {
-  // Weight card - Purple/Blue
-  weightPrimary: "#8B5CF6",
-  weightSecondary: "#6366F1",
-  weightGlow: "rgba(139, 92, 246, 0.3)",
-  weightBg: ["#1e1b4b", "#312e81"],
+  // Steps card - Blue (brighter for visibility)
+  stepsPrimary: "#60A5FA",
+  stepsSecondary: "#93C5FD",
+  stepsGlow: "rgba(96, 165, 250, 0.4)",
+  stepsBg: ["#1e3a5f", "#2563eb"],
 
-  // Calories card - Orange/Red
-  caloriesPrimary: "#F97316",
-  caloriesSecondary: "#EF4444",
-  caloriesGlow: "rgba(249, 115, 22, 0.3)",
-  caloriesBg: ["#431407", "#7c2d12"],
+  // Calories card - Orange/Amber (brighter for visibility)
+  caloriesPrimary: "#FB923C",
+  caloriesSecondary: "#FBBF24",
+  caloriesGlow: "rgba(251, 146, 60, 0.4)",
+  caloriesBg: ["#7c2d12", "#b45309"],
 
-  // Status card - Green/Teal
-  statusPrimary: "#10B981",
-  statusSecondary: "#14B8A6",
-  statusGlow: "rgba(16, 185, 129, 0.3)",
-  statusBg: ["#064e3b", "#065f46"],
+  // Status card - Green/Teal (brighter for visibility)
+  statusPrimary: "#34D399",
+  statusSecondary: "#5EEAD4",
+  statusGlow: "rgba(52, 211, 153, 0.4)",
+  statusBg: ["#065f46", "#059669"],
 
-  // Common
-  cardBorder: "rgba(255, 255, 255, 0.1)",
+  // Heart Rate - Red (brighter for visibility)
+  heartPrimary: "#F87171",
+  heartSecondary: "#FCA5A5",
+  heartGlow: "rgba(248, 113, 113, 0.4)",
+  heartBg: ["#7f1d1d", "#b91c1c"],
+
+  // Common - IMPROVED TEXT VISIBILITY
+  cardBorder: "rgba(255, 255, 255, 0.15)",
   textPrimary: "#FFFFFF",
-  textSecondary: "rgba(255, 255, 255, 0.7)",
-  textMuted: "rgba(255, 255, 255, 0.5)",
+  textSecondary: "rgba(255, 255, 255, 0.9)",
+  textMuted: "rgba(255, 255, 255, 0.75)",
+  textLabel: "rgba(255, 255, 255, 0.85)",
 };
 
 // Mini Line Graph Component for weight trend
@@ -734,28 +741,28 @@ const HealthTrackMonitorScreen: React.FC = () => {
               <Text style={styles.cardMeta}>{healthData.daily.date}</Text>
             </View>
 
-            {/* Advanced Card 1: Steps (Blue Theme) - ORIGINAL FUNCTIONALITY */}
+            {/* Advanced Card 1: Steps (Blue Theme) - IMPROVED VISIBILITY */}
             <LinearGradient
-              colors={["#1e3a5f", "#1e40af"] as [string, string]}
+              colors={CARD_COLORS.stepsBg as [string, string]}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
               style={styles.advancedCard}
             >
-              <View style={[styles.advancedCardGlow, { backgroundColor: "rgba(59, 130, 246, 0.3)" }]} />
+              <View style={[styles.advancedCardGlow, { backgroundColor: CARD_COLORS.stepsGlow }]} />
               <View style={styles.advancedCardHeader}>
-                <View style={[styles.advancedCardIcon, { backgroundColor: "rgba(59, 130, 246, 0.3)" }]}>
-                  <MaterialCommunityIcons name="walk" size={20} color="#3B82F6" />
+                <View style={[styles.advancedCardIcon, { backgroundColor: CARD_COLORS.stepsGlow }]}>
+                  <MaterialCommunityIcons name="walk" size={20} color={CARD_COLORS.stepsPrimary} />
                 </View>
                 <Text style={styles.advancedCardTitle}>Steps</Text>
                 <View style={styles.changeIndicator}>
-                  <Ionicons name="trending-up" size={12} color="#10B981" />
-                  <Text style={[styles.changeText, { color: "#10B981" }]}>+12%</Text>
+                  <Ionicons name="trending-up" size={12} color="#4ADE80" />
+                  <Text style={[styles.changeText, { color: "#4ADE80" }]}>+12%</Text>
                 </View>
               </View>
 
               <View style={styles.advancedCardBody}>
                 <View style={styles.mainMetric}>
-                  <Text style={[styles.advancedCardValue, { color: "#3B82F6" }]}>
+                  <Text style={[styles.advancedCardValue, { color: CARD_COLORS.stepsPrimary }]}>
                     {healthData.daily.steps.toLocaleString()}
                   </Text>
                   <Text style={styles.advancedCardUnit}>steps</Text>
@@ -764,7 +771,7 @@ const HealthTrackMonitorScreen: React.FC = () => {
                   <Text style={styles.chartLabel}>7-Day Trend</Text>
                   <MiniLineGraph
                     data={[6200, 7500, 8100, 5800, 9200, 7800, healthData.daily.steps || 8000]}
-                    color="#3B82F6"
+                    color={CARD_COLORS.stepsPrimary}
                     width={100}
                     height={35}
                   />
@@ -774,12 +781,12 @@ const HealthTrackMonitorScreen: React.FC = () => {
               <View style={styles.advancedCardFooter}>
                 <View style={styles.bmiContainer}>
                   <Text style={styles.bmiLabel}>Goal</Text>
-                  <Text style={[styles.bmiValue, { color: "#3B82F6" }]}>{healthData.goal.targetSteps.toLocaleString()}</Text>
+                  <Text style={[styles.bmiValue, { color: CARD_COLORS.stepsPrimary }]}>{healthData.goal.targetSteps.toLocaleString()}</Text>
                 </View>
                 <View style={{ flex: 1 }}>
                   <View style={styles.calorieBarBg}>
                     <LinearGradient
-                      colors={["#3B82F6", "#60A5FA"]}
+                      colors={[CARD_COLORS.stepsPrimary, CARD_COLORS.stepsSecondary]}
                       start={{ x: 0, y: 0 }}
                       end={{ x: 1, y: 0 }}
                       style={[styles.calorieBarFill, { width: `${Math.min((healthData.daily.steps / healthData.goal.targetSteps) * 100, 100)}%` }]}
@@ -790,21 +797,21 @@ const HealthTrackMonitorScreen: React.FC = () => {
               </View>
             </LinearGradient>
 
-            {/* Advanced Card 2: Heart Rate (Red Theme) - ORIGINAL FUNCTIONALITY */}
+            {/* Advanced Card 2: Heart Rate (Red Theme) - IMPROVED VISIBILITY */}
             <LinearGradient
-              colors={["#450a0a", "#7f1d1d"] as [string, string]}
+              colors={CARD_COLORS.heartBg as [string, string]}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
               style={styles.advancedCard}
             >
-              <View style={[styles.advancedCardGlow, { backgroundColor: "rgba(239, 68, 68, 0.3)" }]} />
+              <View style={[styles.advancedCardGlow, { backgroundColor: CARD_COLORS.heartGlow }]} />
               <View style={styles.advancedCardHeader}>
-                <View style={[styles.advancedCardIcon, { backgroundColor: "rgba(239, 68, 68, 0.3)" }]}>
-                  <MaterialCommunityIcons name="heart-pulse" size={20} color="#EF4444" />
+                <View style={[styles.advancedCardIcon, { backgroundColor: CARD_COLORS.heartGlow }]}>
+                  <MaterialCommunityIcons name="heart-pulse" size={20} color={CARD_COLORS.heartPrimary} />
                 </View>
                 <Text style={styles.advancedCardTitle}>Heart Rate</Text>
-                <View style={[styles.goalBadge, { backgroundColor: "rgba(239, 68, 68, 0.2)" }]}>
-                  <Text style={[styles.goalBadgeText, { color: "#EF4444" }]}>Live</Text>
+                <View style={[styles.goalBadge, { backgroundColor: "rgba(248, 113, 113, 0.3)" }]}>
+                  <Text style={[styles.goalBadgeText, { color: CARD_COLORS.heartPrimary }]}>Live</Text>
                 </View>
               </View>
 
@@ -814,30 +821,30 @@ const HealthTrackMonitorScreen: React.FC = () => {
                     progress={Math.min((healthData.daily.heartRate / 180) * 100, 100)}
                     size={80}
                     strokeWidth={8}
-                    color="#EF4444"
+                    color={CARD_COLORS.heartPrimary}
                   />
                   <View style={styles.ringCenter}>
-                    <Text style={[styles.ringValue, { color: "#EF4444" }]}>{healthData.daily.heartRate || 72}</Text>
+                    <Text style={[styles.ringValue, { color: CARD_COLORS.heartPrimary }]}>{healthData.daily.heartRate || 72}</Text>
                     <Text style={styles.ringUnit}>bpm</Text>
                   </View>
                 </View>
                 <View style={styles.calorieDetails}>
                   <View style={styles.calorieRow}>
                     <View style={styles.calorieIconBox}>
-                      <Ionicons name="arrow-down" size={14} color="#10B981" />
+                      <Ionicons name="arrow-down" size={14} color="#4ADE80" />
                     </View>
                     <View>
                       <Text style={styles.calorieLabel}>Resting</Text>
-                      <Text style={[styles.calorieValue, { color: "#10B981" }]}>62 bpm</Text>
+                      <Text style={[styles.calorieValue, { color: "#4ADE80" }]}>62 bpm</Text>
                     </View>
                   </View>
                   <View style={styles.calorieRow}>
                     <View style={styles.calorieIconBox}>
-                      <Ionicons name="arrow-up" size={14} color="#EF4444" />
+                      <Ionicons name="arrow-up" size={14} color={CARD_COLORS.heartPrimary} />
                     </View>
                     <View>
                       <Text style={styles.calorieLabel}>Peak</Text>
-                      <Text style={[styles.calorieValue, { color: "#EF4444" }]}>142 bpm</Text>
+                      <Text style={[styles.calorieValue, { color: CARD_COLORS.heartPrimary }]}>142 bpm</Text>
                     </View>
                   </View>
                 </View>
@@ -846,7 +853,7 @@ const HealthTrackMonitorScreen: React.FC = () => {
               <View style={styles.calorieProgressBar}>
                 <View style={styles.calorieBarBg}>
                   <LinearGradient
-                    colors={["#10B981", "#FBBF24", "#EF4444"]}
+                    colors={["#4ADE80", "#FBBF24", CARD_COLORS.heartPrimary]}
                     start={{ x: 0, y: 0 }}
                     end={{ x: 1, y: 0 }}
                     style={[styles.calorieBarFill, { width: "100%" }]}
@@ -1023,28 +1030,28 @@ const HealthTrackMonitorScreen: React.FC = () => {
               <Text style={styles.cardMeta}>{healthData.weekly.weekStart} - {healthData.weekly.weekEnd}</Text>
             </View>
 
-            {/* Weekly Average Steps Card - ORIGINAL FUNCTIONALITY */}
+            {/* Weekly Average Steps Card - IMPROVED VISIBILITY */}
             <LinearGradient
-              colors={["#1e3a5f", "#1e40af"] as [string, string]}
+              colors={CARD_COLORS.stepsBg as [string, string]}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
               style={styles.advancedCard}
             >
-              <View style={[styles.advancedCardGlow, { backgroundColor: "rgba(59, 130, 246, 0.3)" }]} />
+              <View style={[styles.advancedCardGlow, { backgroundColor: CARD_COLORS.stepsGlow }]} />
               <View style={styles.advancedCardHeader}>
-                <View style={[styles.advancedCardIcon, { backgroundColor: "rgba(59, 130, 246, 0.3)" }]}>
-                  <MaterialCommunityIcons name="walk" size={20} color="#3B82F6" />
+                <View style={[styles.advancedCardIcon, { backgroundColor: CARD_COLORS.stepsGlow }]}>
+                  <MaterialCommunityIcons name="walk" size={20} color={CARD_COLORS.stepsPrimary} />
                 </View>
                 <Text style={styles.advancedCardTitle}>Average Steps</Text>
                 <View style={styles.changeIndicator}>
-                  <Ionicons name="trending-up" size={12} color="#10B981" />
-                  <Text style={[styles.changeText, { color: "#10B981" }]}>+8%</Text>
+                  <Ionicons name="trending-up" size={12} color="#4ADE80" />
+                  <Text style={[styles.changeText, { color: "#4ADE80" }]}>+8%</Text>
                 </View>
               </View>
 
               <View style={styles.advancedCardBody}>
                 <View style={styles.mainMetric}>
-                  <Text style={[styles.advancedCardValue, { color: "#3B82F6" }]}>
+                  <Text style={[styles.advancedCardValue, { color: CARD_COLORS.stepsPrimary }]}>
                     {healthData.weekly.avgSteps.toLocaleString()}
                   </Text>
                   <Text style={styles.advancedCardUnit}>avg/day</Text>
@@ -1053,7 +1060,7 @@ const HealthTrackMonitorScreen: React.FC = () => {
                   <Text style={styles.chartLabel}>7-Day Trend</Text>
                   <MiniLineGraph
                     data={[6200, 7500, 8100, 5800, 9200, 7800, healthData.weekly.avgSteps || 8000]}
-                    color="#3B82F6"
+                    color={CARD_COLORS.stepsPrimary}
                     width={100}
                     height={35}
                   />
@@ -1063,12 +1070,12 @@ const HealthTrackMonitorScreen: React.FC = () => {
               <View style={styles.advancedCardFooter}>
                 <View style={styles.bmiContainer}>
                   <Text style={styles.bmiLabel}>Goal</Text>
-                  <Text style={[styles.bmiValue, { color: "#3B82F6" }]}>{healthData.goal.targetSteps.toLocaleString()}</Text>
+                  <Text style={[styles.bmiValue, { color: CARD_COLORS.stepsPrimary }]}>{healthData.goal.targetSteps.toLocaleString()}</Text>
                 </View>
                 <View style={{ flex: 1 }}>
                   <View style={styles.calorieBarBg}>
                     <LinearGradient
-                      colors={["#3B82F6", "#60A5FA"]}
+                      colors={[CARD_COLORS.stepsPrimary, CARD_COLORS.stepsSecondary]}
                       start={{ x: 0, y: 0 }}
                       end={{ x: 1, y: 0 }}
                       style={[styles.calorieBarFill, { width: `${Math.min((healthData.weekly.avgSteps / healthData.goal.targetSteps) * 100, 100)}%` }]}
@@ -1079,7 +1086,7 @@ const HealthTrackMonitorScreen: React.FC = () => {
               </View>
             </LinearGradient>
 
-            {/* Weekly Calories Card - ORIGINAL FUNCTIONALITY */}
+            {/* Weekly Calories Card - IMPROVED VISIBILITY */}
             <LinearGradient
               colors={CARD_COLORS.caloriesBg as [string, string]}
               start={{ x: 0, y: 0 }}
@@ -1092,7 +1099,7 @@ const HealthTrackMonitorScreen: React.FC = () => {
                   <MaterialCommunityIcons name="fire" size={20} color={CARD_COLORS.caloriesPrimary} />
                 </View>
                 <Text style={styles.advancedCardTitle}>Average Calories</Text>
-                <View style={[styles.goalBadge, { backgroundColor: "rgba(249, 115, 22, 0.2)" }]}>
+                <View style={[styles.goalBadge, { backgroundColor: "rgba(251, 146, 60, 0.3)" }]}>
                   <Text style={[styles.goalBadgeText, { color: CARD_COLORS.caloriesPrimary }]}>Weekly</Text>
                 </View>
               </View>
@@ -1122,11 +1129,11 @@ const HealthTrackMonitorScreen: React.FC = () => {
                   </View>
                   <View style={styles.calorieRow}>
                     <View style={styles.calorieIconBox}>
-                      <Ionicons name="heart" size={14} color="#EF4444" />
+                      <Ionicons name="heart" size={14} color={CARD_COLORS.heartPrimary} />
                     </View>
                     <View>
                       <Text style={styles.calorieLabel}>Avg Heart Rate</Text>
-                      <Text style={[styles.calorieValue, { color: "#EF4444" }]}>{healthData.weekly.avgHeartRate || 72} bpm</Text>
+                      <Text style={[styles.calorieValue, { color: CARD_COLORS.heartPrimary }]}>{healthData.weekly.avgHeartRate || 72} bpm</Text>
                     </View>
                   </View>
                 </View>
@@ -1135,7 +1142,7 @@ const HealthTrackMonitorScreen: React.FC = () => {
               <View style={styles.calorieProgressBar}>
                 <View style={styles.calorieBarBg}>
                   <LinearGradient
-                    colors={[CARD_COLORS.caloriesPrimary, "#10B981"]}
+                    colors={[CARD_COLORS.caloriesPrimary, CARD_COLORS.statusPrimary]}
                     start={{ x: 0, y: 0 }}
                     end={{ x: 1, y: 0 }}
                     style={[styles.calorieBarFill, { width: `${Math.min((healthData.weekly.avgCalories / healthData.goal.targetCalories) * 100, 100)}%` }]}
@@ -1216,28 +1223,28 @@ const HealthTrackMonitorScreen: React.FC = () => {
               <Text style={styles.cardMeta}>{healthData.monthly.month}</Text>
             </View>
 
-            {/* Monthly Total Steps Card - ORIGINAL FUNCTIONALITY */}
+            {/* Monthly Total Steps Card - IMPROVED VISIBILITY */}
             <LinearGradient
-              colors={["#1e3a5f", "#1e40af"] as [string, string]}
+              colors={CARD_COLORS.stepsBg as [string, string]}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
               style={styles.advancedCard}
             >
-              <View style={[styles.advancedCardGlow, { backgroundColor: "rgba(59, 130, 246, 0.3)" }]} />
+              <View style={[styles.advancedCardGlow, { backgroundColor: CARD_COLORS.stepsGlow }]} />
               <View style={styles.advancedCardHeader}>
-                <View style={[styles.advancedCardIcon, { backgroundColor: "rgba(59, 130, 246, 0.3)" }]}>
-                  <MaterialCommunityIcons name="walk" size={20} color="#3B82F6" />
+                <View style={[styles.advancedCardIcon, { backgroundColor: CARD_COLORS.stepsGlow }]}>
+                  <MaterialCommunityIcons name="walk" size={20} color={CARD_COLORS.stepsPrimary} />
                 </View>
                 <Text style={styles.advancedCardTitle}>Total Steps</Text>
                 <View style={styles.changeIndicator}>
-                  <Ionicons name="trending-up" size={12} color="#10B981" />
-                  <Text style={[styles.changeText, { color: "#10B981" }]}>+12%</Text>
+                  <Ionicons name="trending-up" size={12} color="#4ADE80" />
+                  <Text style={[styles.changeText, { color: "#4ADE80" }]}>+12%</Text>
                 </View>
               </View>
 
               <View style={styles.advancedCardBody}>
                 <View style={styles.mainMetric}>
-                  <Text style={[styles.advancedCardValue, { color: "#3B82F6" }]}>
+                  <Text style={[styles.advancedCardValue, { color: CARD_COLORS.stepsPrimary }]}>
                     {(healthData.monthly.totalSteps / 1000).toFixed(0)}K
                   </Text>
                   <Text style={styles.advancedCardUnit}>steps</Text>
@@ -1246,7 +1253,7 @@ const HealthTrackMonitorScreen: React.FC = () => {
                   <Text style={styles.chartLabel}>30-Day Trend</Text>
                   <MiniLineGraph
                     data={[180000, 195000, 210000, 225000, 240000, 255000, healthData.monthly.totalSteps || 250000]}
-                    color="#3B82F6"
+                    color={CARD_COLORS.stepsPrimary}
                     width={110}
                     height={40}
                   />
@@ -1256,12 +1263,12 @@ const HealthTrackMonitorScreen: React.FC = () => {
               <View style={styles.advancedCardFooter}>
                 <View style={styles.bmiContainer}>
                   <Text style={styles.bmiLabel}>Monthly Goal</Text>
-                  <Text style={[styles.bmiValue, { color: "#3B82F6" }]}>{(healthData.goal.targetSteps * 30 / 1000).toFixed(0)}K</Text>
+                  <Text style={[styles.bmiValue, { color: CARD_COLORS.stepsPrimary }]}>{(healthData.goal.targetSteps * 30 / 1000).toFixed(0)}K</Text>
                 </View>
                 <View style={{ flex: 1 }}>
                   <View style={styles.calorieBarBg}>
                     <LinearGradient
-                      colors={["#3B82F6", "#60A5FA"]}
+                      colors={[CARD_COLORS.stepsPrimary, CARD_COLORS.stepsSecondary]}
                       start={{ x: 0, y: 0 }}
                       end={{ x: 1, y: 0 }}
                       style={[styles.calorieBarFill, { width: `${monthlyGoalProgress}%` }]}
@@ -1272,7 +1279,7 @@ const HealthTrackMonitorScreen: React.FC = () => {
               </View>
             </LinearGradient>
 
-            {/* Monthly Calories Card - ORIGINAL FUNCTIONALITY */}
+            {/* Monthly Calories Card - IMPROVED VISIBILITY */}
             <LinearGradient
               colors={CARD_COLORS.caloriesBg as [string, string]}
               start={{ x: 0, y: 0 }}
@@ -1285,7 +1292,7 @@ const HealthTrackMonitorScreen: React.FC = () => {
                   <MaterialCommunityIcons name="fire" size={20} color={CARD_COLORS.caloriesPrimary} />
                 </View>
                 <Text style={styles.advancedCardTitle}>Average Calories</Text>
-                <View style={[styles.goalBadge, { backgroundColor: "rgba(249, 115, 22, 0.2)" }]}>
+                <View style={[styles.goalBadge, { backgroundColor: "rgba(251, 146, 60, 0.3)" }]}>
                   <Text style={[styles.goalBadgeText, { color: CARD_COLORS.caloriesPrimary }]}>Monthly</Text>
                 </View>
               </View>
@@ -2014,9 +2021,10 @@ const styles = StyleSheet.create({
   },
   advancedCardUnit: {
     fontSize: 16,
-    color: "rgba(255, 255, 255, 0.6)",
+    color: "rgba(255, 255, 255, 0.85)",
     marginLeft: 4,
     marginTop: 12,
+    fontWeight: "500",
   },
   mainMetric: {
     flexDirection: "row",
@@ -2026,11 +2034,12 @@ const styles = StyleSheet.create({
     alignItems: "flex-end",
   },
   chartLabel: {
-    fontSize: 10,
-    color: "rgba(255, 255, 255, 0.5)",
+    fontSize: 11,
+    color: "rgba(255, 255, 255, 0.8)",
     marginBottom: 4,
     textTransform: "uppercase",
     letterSpacing: 0.5,
+    fontWeight: "600",
   },
   changeIndicator: {
     flexDirection: "row",
@@ -2050,13 +2059,14 @@ const styles = StyleSheet.create({
     marginRight: 16,
   },
   bmiLabel: {
-    fontSize: 10,
-    color: "rgba(255, 255, 255, 0.5)",
+    fontSize: 12,
+    color: "rgba(255, 255, 255, 0.85)",
     textTransform: "uppercase",
     letterSpacing: 0.5,
+    fontWeight: "600",
   },
   bmiValue: {
-    fontSize: 24,
+    fontSize: 22,
     fontWeight: "800",
   },
 
@@ -2071,12 +2081,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   ringValue: {
-    fontSize: 22,
+    fontSize: 24,
     fontWeight: "800",
   },
   ringUnit: {
-    fontSize: 10,
-    color: "rgba(255, 255, 255, 0.5)",
+    fontSize: 11,
+    color: "rgba(255, 255, 255, 0.8)",
+    fontWeight: "600",
   },
   calorieDetails: {
     flex: 1,
@@ -2097,13 +2108,14 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   calorieLabel: {
-    fontSize: 11,
-    color: "rgba(255, 255, 255, 0.5)",
+    fontSize: 12,
+    color: "rgba(255, 255, 255, 0.85)",
     textTransform: "uppercase",
     letterSpacing: 0.5,
+    fontWeight: "500",
   },
   calorieValue: {
-    fontSize: 16,
+    fontSize: 17,
     fontWeight: "700",
   },
   calorieProgressBar: {
@@ -2120,10 +2132,11 @@ const styles = StyleSheet.create({
     borderRadius: 3,
   },
   calorieProgressText: {
-    fontSize: 11,
-    color: "rgba(255, 255, 255, 0.5)",
+    fontSize: 12,
+    color: "rgba(255, 255, 255, 0.85)",
     marginTop: 6,
     textAlign: "center",
+    fontWeight: "500",
   },
   goalBadge: {
     paddingHorizontal: 10,
@@ -2131,8 +2144,8 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   goalBadgeText: {
-    fontSize: 11,
-    fontWeight: "600",
+    fontSize: 12,
+    fontWeight: "700",
   },
 
   // Status Card Styles
@@ -2144,7 +2157,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   statusBadgeText: {
-    fontSize: 11,
+    fontSize: 12,
     fontWeight: "700",
     marginLeft: 4,
   },
@@ -2162,13 +2175,14 @@ const styles = StyleSheet.create({
     marginRight: 14,
   },
   statusExpected: {
-    fontSize: 11,
-    color: "rgba(255, 255, 255, 0.5)",
+    fontSize: 12,
+    color: "rgba(255, 255, 255, 0.85)",
     textTransform: "uppercase",
     letterSpacing: 0.5,
+    fontWeight: "600",
   },
   statusValue: {
-    fontSize: 24,
+    fontSize: 28,
     fontWeight: "800",
   },
   predictionChart: {
@@ -2179,30 +2193,32 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   goalDateLabel: {
-    fontSize: 12,
-    color: "rgba(255, 255, 255, 0.5)",
+    fontSize: 13,
+    color: "rgba(255, 255, 255, 0.85)",
     marginLeft: 6,
     marginRight: 8,
+    fontWeight: "500",
   },
   goalDateValue: {
-    fontSize: 14,
+    fontSize: 15,
     fontWeight: "700",
   },
   daysRemaining: {
     alignItems: "center",
-    backgroundColor: "rgba(255, 255, 255, 0.1)",
+    backgroundColor: "rgba(255, 255, 255, 0.15)",
     paddingHorizontal: 14,
     paddingVertical: 8,
     borderRadius: 12,
   },
   daysValue: {
-    fontSize: 20,
+    fontSize: 22,
     fontWeight: "800",
     color: "#FFFFFF",
   },
   daysLabel: {
-    fontSize: 10,
-    color: "rgba(255, 255, 255, 0.5)",
+    fontSize: 11,
+    color: "rgba(255, 255, 255, 0.8)",
+    fontWeight: "500",
   },
 
   // Weekly Card Styles
@@ -2215,14 +2231,15 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   weeklyStatLabel: {
-    fontSize: 10,
-    color: "rgba(255, 255, 255, 0.5)",
+    fontSize: 12,
+    color: "rgba(255, 255, 255, 0.85)",
     textTransform: "uppercase",
     letterSpacing: 0.5,
     marginBottom: 4,
+    fontWeight: "600",
   },
   weeklyStatValue: {
-    fontSize: 20,
+    fontSize: 22,
     fontWeight: "800",
   },
   weeklyCalorieStats: {
@@ -2240,14 +2257,15 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   weeklyCalorieValue: {
-    fontSize: 12,
+    fontSize: 14,
     fontWeight: "700",
   },
   weeklyCalorieLabel: {
-    fontSize: 10,
-    color: "rgba(255, 255, 255, 0.5)",
+    fontSize: 11,
+    color: "rgba(255, 255, 255, 0.85)",
     marginTop: 8,
     textAlign: "center",
+    fontWeight: "500",
   },
   activityStatsRow: {
     flexDirection: "row",
@@ -2260,15 +2278,16 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
   },
   activityStatValue: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: "800",
     color: "#FFFFFF",
     marginTop: 6,
   },
   activityStatLabel: {
-    fontSize: 10,
-    color: "rgba(255, 255, 255, 0.5)",
+    fontSize: 11,
+    color: "rgba(255, 255, 255, 0.85)",
     marginTop: 2,
+    fontWeight: "500",
   },
 
   // Monthly Card Styles
@@ -2282,14 +2301,15 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   monthlyWeightLabel: {
-    fontSize: 10,
-    color: "rgba(255, 255, 255, 0.5)",
+    fontSize: 12,
+    color: "rgba(255, 255, 255, 0.85)",
     textTransform: "uppercase",
     letterSpacing: 0.5,
     marginBottom: 4,
+    fontWeight: "600",
   },
   monthlyWeightValue: {
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: "800",
   },
   monthlyWeightArrow: {
@@ -2302,12 +2322,14 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   monthlyProgressLabel: {
-    fontSize: 11,
+    fontSize: 13,
     marginBottom: 6,
+    fontWeight: "600",
+    color: "rgba(255, 255, 255, 0.85)",
   },
   monthlyProgressBar: {
     height: 8,
-    backgroundColor: "rgba(255, 255, 255, 0.1)",
+    backgroundColor: "rgba(255, 255, 255, 0.15)",
     borderRadius: 4,
     overflow: "hidden",
   },
@@ -2316,9 +2338,10 @@ const styles = StyleSheet.create({
     borderRadius: 4,
   },
   monthlyProgressText: {
-    fontSize: 11,
+    fontSize: 12,
     marginTop: 6,
     textAlign: "center",
+    fontWeight: "500",
   },
   monthlyCalorieGrid: {
     flexDirection: "row",
@@ -2339,15 +2362,16 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   monthlyCalorieValue: {
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: "800",
     color: "#FFFFFF",
   },
   monthlyCalorieLabel: {
-    fontSize: 9,
-    color: "rgba(255, 255, 255, 0.5)",
+    fontSize: 11,
+    color: "rgba(255, 255, 255, 0.85)",
     textAlign: "center",
     marginTop: 4,
+    fontWeight: "500",
   },
   calorieInsightBox: {
     flexDirection: "row",
@@ -2384,15 +2408,16 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   achievementRingValue: {
-    fontSize: 12,
+    fontSize: 14,
     fontWeight: "800",
     color: "#FFFFFF",
   },
   achievementLabel: {
-    fontSize: 9,
-    color: "rgba(255, 255, 255, 0.5)",
+    fontSize: 11,
+    color: "rgba(255, 255, 255, 0.85)",
     marginTop: 6,
     textAlign: "center",
+    fontWeight: "500",
   },
 });
 
