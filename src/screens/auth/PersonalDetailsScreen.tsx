@@ -528,57 +528,6 @@ const PersonalDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
     />
   );
 
-  // Elegant Toggle Button
-  const ElegantToggle = ({
-    isActive,
-    label,
-    onPress,
-    delay,
-  }: {
-    isActive: boolean;
-    label: string;
-    onPress: () => void;
-    delay: number;
-  }) => {
-    const scale = useSharedValue(1);
-
-    const animatedStyle = useAnimatedStyle(() => ({
-      transform: [{ scale: scale.value }],
-    }));
-
-    const handlePressIn = () => {
-      scale.value = withTiming(0.97, { duration: 100 });
-    };
-
-    const handlePressOut = () => {
-      scale.value = withTiming(1, { duration: 150, easing: ELEGANT_EASING });
-    };
-
-    return (
-      <Animated.View
-        entering={FadeInUp.delay(delay).duration(400).easing(ELEGANT_EASING)}
-        style={animatedStyle}
-      >
-        <TouchableOpacity
-          style={[styles.toggleButton, isActive && styles.toggleButtonActive]}
-          onPress={onPress}
-          onPressIn={handlePressIn}
-          onPressOut={handlePressOut}
-          activeOpacity={1}
-        >
-          <Text
-            style={[
-              styles.toggleButtonText,
-              isActive && styles.toggleButtonTextActive,
-            ]}
-          >
-            {label}
-          </Text>
-        </TouchableOpacity>
-      </Animated.View>
-    );
-  };
-
   const renderStepContent = () => {
     // Elegant slide transitions
     const enteringAnim = direction === "forward"
@@ -779,26 +728,27 @@ const PersonalDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
                 )
               )}
             </View>
-            <Animated.View
-              style={styles.toggleQuestion}
-              entering={FadeInUp.delay(300).duration(400).easing(ELEGANT_EASING)}
-            >
+            <View style={styles.toggleQuestion}>
               <Text style={styles.toggleLabel}>Currently on any diet plan?</Text>
               <View style={styles.toggleButtons}>
-                <ElegantToggle
-                  isActive={onDiet === true}
-                  label="Yes"
+                <TouchableOpacity
+                  style={[styles.toggleButton, onDiet === true && styles.toggleButtonActive]}
                   onPress={() => setOnDiet(true)}
-                  delay={350}
-                />
-                <ElegantToggle
-                  isActive={onDiet === false}
-                  label="No"
+                >
+                  <Text style={[styles.toggleButtonText, onDiet === true && styles.toggleButtonTextActive]}>
+                    Yes
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[styles.toggleButton, onDiet === false && styles.toggleButtonActive]}
                   onPress={() => setOnDiet(false)}
-                  delay={400}
-                />
+                >
+                  <Text style={[styles.toggleButtonText, onDiet === false && styles.toggleButtonTextActive]}>
+                    No
+                  </Text>
+                </TouchableOpacity>
               </View>
-            </Animated.View>
+            </View>
           </Animated.View>
         );
 
