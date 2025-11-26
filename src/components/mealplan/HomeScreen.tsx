@@ -1,4 +1,4 @@
-// HomeScreen.tsx - Clean meal plan display
+// HomeScreen.tsx - Meal plan display with HealthTrackMonitorScreen-style header
 import React from "react";
 import {
   View,
@@ -6,12 +6,15 @@ import {
   ScrollView,
   StyleSheet,
   TouchableOpacity,
+  ImageBackground,
   Dimensions,
 } from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { Meal, MealPlan } from "@/types/types";
 import NutritionTargets from "./NutritionTargets";
 import MedicalBanner from "./AiRecomendationBanner";
+import { useNavigation } from "@react-navigation/native";
 
 const { width: screenWidth } = Dimensions.get("window");
 
@@ -57,10 +60,15 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
   suggestionData,
 }) => {
   const plan = mealPlan ? (mealPlan[`${planType}_plan`] as any) : null;
+  const navigation = useNavigation();
 
   // Empty refresh handler - placeholder for future
   const handleRefresh = () => {
     console.log("Refresh pressed");
+  };
+
+  const handleMenuPress = () => {
+    navigation.navigate("AllScreensMenu");
   };
 
   // Calculate total nutrition from all meals
@@ -222,31 +230,64 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
 
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-      {/* Compact Nutrition Summary Bar */}
-      <View style={styles.nutritionSummaryBar}>
-        <View style={styles.summaryItem}>
-          <Ionicons name="flame" size={16} color="#F59E0B" />
-          <Text style={styles.summaryValue}>{totalNutrition.calories}</Text>
-          <Text style={styles.summaryLabel}>kcal</Text>
-        </View>
-        <View style={styles.summaryDivider} />
-        <View style={styles.summaryItem}>
-          <MaterialCommunityIcons name="food-drumstick" size={16} color="#10B981" />
-          <Text style={styles.summaryValue}>{totalNutrition.protein}g</Text>
-          <Text style={styles.summaryLabel}>protein</Text>
-        </View>
-        <View style={styles.summaryDivider} />
-        <View style={styles.summaryItem}>
-          <MaterialCommunityIcons name="bread-slice" size={16} color="#3B82F6" />
-          <Text style={styles.summaryValue}>{totalNutrition.carbs}g</Text>
-          <Text style={styles.summaryLabel}>carbs</Text>
-        </View>
-        <View style={styles.summaryDivider} />
-        <View style={styles.summaryItem}>
-          <MaterialCommunityIcons name="water" size={16} color="#8B5CF6" />
-          <Text style={styles.summaryValue}>{totalNutrition.fat}g</Text>
-          <Text style={styles.summaryLabel}>fat</Text>
-        </View>
+      {/* Header - HealthTrackMonitorScreen Style */}
+      <View style={styles.headerCard}>
+        <ImageBackground
+          source={{ uri: "https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=600&q=80" }}
+          style={styles.headerImageBg}
+          imageStyle={styles.headerImageStyle}
+        >
+          <LinearGradient
+            colors={["rgba(16, 185, 129, 0.93)", "rgba(5, 150, 105, 0.90)"]}
+            style={styles.headerOverlay}
+          >
+            <View style={styles.headerTopRow}>
+              <View>
+                <Text style={styles.headerTitle}>
+                  {planType === "weekly" ? "Weekly Plan" : "Today's Meals"}
+                </Text>
+                <Text style={styles.headerSubtitle}>
+                  {planType === "weekly"
+                    ? "Your meal schedule for the week"
+                    : new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })
+                  }
+                </Text>
+              </View>
+
+              <View style={styles.headerActions}>
+                <TouchableOpacity style={styles.headerBtn} onPress={handleRefresh}>
+                  <Ionicons name="refresh" size={20} color="#fff" />
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.headerBtn} onPress={() => navigation.navigate("MealPlanEmail", { mealPlan })}>
+                  <Ionicons name="share-outline" size={20} color="#fff" />
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.headerBtn} onPress={handleMenuPress}>
+                  <Ionicons name="ellipsis-horizontal" size={20} color="#fff" />
+                </TouchableOpacity>
+              </View>
+            </View>
+
+            {/* Nutrition Summary Row */}
+            <View style={styles.headerInfoRow}>
+              <View style={styles.headerInfoItem}>
+                <Text style={styles.headerInfoLabel}>Calories</Text>
+                <Text style={styles.headerInfoValue}>{totalNutrition.calories}</Text>
+              </View>
+              <View style={styles.headerInfoItem}>
+                <Text style={styles.headerInfoLabel}>Protein</Text>
+                <Text style={styles.headerInfoValue}>{totalNutrition.protein}g</Text>
+              </View>
+              <View style={styles.headerInfoItem}>
+                <Text style={styles.headerInfoLabel}>Carbs</Text>
+                <Text style={styles.headerInfoValue}>{totalNutrition.carbs}g</Text>
+              </View>
+              <View style={styles.headerInfoItem}>
+                <Text style={styles.headerInfoLabel}>Fat</Text>
+                <Text style={styles.headerInfoValue}>{totalNutrition.fat}g</Text>
+              </View>
+            </View>
+          </LinearGradient>
+        </ImageBackground>
       </View>
 
       {/* Nutrition Targets Card */}
@@ -289,43 +330,81 @@ const styles = StyleSheet.create({
     backgroundColor: "#F3F4F6",
   },
 
-  // Compact Nutrition Summary Bar
-  nutritionSummaryBar: {
+  // Header - HealthTrackMonitorScreen Style
+  headerCard: {
+    marginHorizontal: 16,
+    marginTop: 16,
+    marginBottom: 16,
+    borderRadius: 16,
+    overflow: "hidden",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 12,
+    elevation: 6,
+  },
+  headerImageBg: {
+    width: "100%",
+  },
+  headerImageStyle: {
+    borderRadius: 16,
+  },
+  headerOverlay: {
+    padding: 16,
+    borderRadius: 16,
+  },
+  headerTopRow: {
     flexDirection: "row",
     justifyContent: "space-between",
-    alignItems: "center",
-    backgroundColor: "#fff",
-    marginHorizontal: 16,
-    marginTop: 12,
+    alignItems: "flex-start",
     marginBottom: 12,
-    paddingVertical: 14,
-    paddingHorizontal: 16,
-    borderRadius: 14,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.06,
-    shadowRadius: 6,
-    elevation: 2,
   },
-  summaryItem: {
+  headerTitle: {
+    fontSize: 22,
+    fontWeight: "800",
+    color: "#fff",
+    textShadowColor: "rgba(0, 0, 0, 0.3)",
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 3,
+  },
+  headerSubtitle: {
+    fontSize: 14,
+    color: "rgba(255,255,255,0.9)",
+    marginTop: 4,
+  },
+  headerActions: {
     flexDirection: "row",
+    gap: 8,
+  },
+  headerBtn: {
+    padding: 8,
+    backgroundColor: "rgba(255,255,255,0.15)",
+    borderRadius: 50,
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.25)",
+  },
+  headerInfoRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    backgroundColor: "rgba(255,255,255,0.15)",
+    borderRadius: 12,
+    padding: 12,
+  },
+  headerInfoItem: {
     alignItems: "center",
-    gap: 4,
   },
-  summaryValue: {
-    fontSize: 15,
-    fontWeight: "700",
-    color: "#1F2937",
-  },
-  summaryLabel: {
+  headerInfoLabel: {
     fontSize: 11,
-    color: "#9CA3AF",
-    fontWeight: "500",
+    color: "rgba(255,255,255,0.85)",
+    marginBottom: 2,
   },
-  summaryDivider: {
-    width: 1,
-    height: 24,
-    backgroundColor: "#E5E7EB",
+  headerInfoValue: {
+    fontSize: 16,
+    fontWeight: "700",
+    color: "#fff",
+    textShadowColor: "rgba(0, 0, 0, 0.2)",
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
   },
 
   // Content
