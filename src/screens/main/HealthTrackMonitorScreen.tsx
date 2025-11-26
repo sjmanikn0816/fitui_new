@@ -734,37 +734,37 @@ const HealthTrackMonitorScreen: React.FC = () => {
               <Text style={styles.cardMeta}>{healthData.daily.date}</Text>
             </View>
 
-            {/* Advanced Card 1: Current Weight (Purple/Blue Theme) */}
+            {/* Advanced Card 1: Steps (Blue Theme) - ORIGINAL FUNCTIONALITY */}
             <LinearGradient
-              colors={CARD_COLORS.weightBg as [string, string]}
+              colors={["#1e3a5f", "#1e40af"] as [string, string]}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
               style={styles.advancedCard}
             >
-              <View style={styles.advancedCardGlow} />
+              <View style={[styles.advancedCardGlow, { backgroundColor: "rgba(59, 130, 246, 0.3)" }]} />
               <View style={styles.advancedCardHeader}>
-                <View style={[styles.advancedCardIcon, { backgroundColor: CARD_COLORS.weightGlow }]}>
-                  <MaterialCommunityIcons name="scale-bathroom" size={20} color={CARD_COLORS.weightPrimary} />
+                <View style={[styles.advancedCardIcon, { backgroundColor: "rgba(59, 130, 246, 0.3)" }]}>
+                  <MaterialCommunityIcons name="walk" size={20} color="#3B82F6" />
                 </View>
-                <Text style={styles.advancedCardTitle}>Current Weight</Text>
+                <Text style={styles.advancedCardTitle}>Steps</Text>
                 <View style={styles.changeIndicator}>
-                  <Ionicons name="arrow-up" size={12} color="#EF4444" />
-                  <Text style={[styles.changeText, { color: "#EF4444" }]}>+0.5 lbs</Text>
+                  <Ionicons name="trending-up" size={12} color="#10B981" />
+                  <Text style={[styles.changeText, { color: "#10B981" }]}>+12%</Text>
                 </View>
               </View>
 
               <View style={styles.advancedCardBody}>
                 <View style={styles.mainMetric}>
-                  <Text style={[styles.advancedCardValue, { color: CARD_COLORS.weightPrimary }]}>
-                    {(healthData.user.weight * 2.205).toFixed(1)}
+                  <Text style={[styles.advancedCardValue, { color: "#3B82F6" }]}>
+                    {healthData.daily.steps.toLocaleString()}
                   </Text>
-                  <Text style={styles.advancedCardUnit}>lbs</Text>
+                  <Text style={styles.advancedCardUnit}>steps</Text>
                 </View>
                 <View style={styles.miniChartContainer}>
                   <Text style={styles.chartLabel}>7-Day Trend</Text>
                   <MiniLineGraph
-                    data={[186.8, 186.5, 186.2, 186.0, 185.8, 186.1, 186.3]}
-                    color={CARD_COLORS.weightPrimary}
+                    data={[6200, 7500, 8100, 5800, 9200, 7800, healthData.daily.steps || 8000]}
+                    color="#3B82F6"
                     width={100}
                     height={35}
                   />
@@ -773,61 +773,71 @@ const HealthTrackMonitorScreen: React.FC = () => {
 
               <View style={styles.advancedCardFooter}>
                 <View style={styles.bmiContainer}>
-                  <Text style={styles.bmiLabel}>BMI</Text>
-                  <Text style={[styles.bmiValue, { color: CARD_COLORS.weightPrimary }]}>{healthData.user.bmi}</Text>
+                  <Text style={styles.bmiLabel}>Goal</Text>
+                  <Text style={[styles.bmiValue, { color: "#3B82F6" }]}>{healthData.goal.targetSteps.toLocaleString()}</Text>
                 </View>
-                <BMIProgressBar bmi={healthData.user.bmi} width={140} />
+                <View style={{ flex: 1 }}>
+                  <View style={styles.calorieBarBg}>
+                    <LinearGradient
+                      colors={["#3B82F6", "#60A5FA"]}
+                      start={{ x: 0, y: 0 }}
+                      end={{ x: 1, y: 0 }}
+                      style={[styles.calorieBarFill, { width: `${Math.min((healthData.daily.steps / healthData.goal.targetSteps) * 100, 100)}%` }]}
+                    />
+                  </View>
+                  <Text style={styles.calorieProgressText}>{Math.round((healthData.daily.steps / healthData.goal.targetSteps) * 100)}% of daily goal</Text>
+                </View>
               </View>
             </LinearGradient>
 
-            {/* Advanced Card 2: Net Calories (Orange/Red Theme) */}
+            {/* Advanced Card 2: Heart Rate (Red Theme) - ORIGINAL FUNCTIONALITY */}
             <LinearGradient
-              colors={CARD_COLORS.caloriesBg as [string, string]}
+              colors={["#450a0a", "#7f1d1d"] as [string, string]}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
               style={styles.advancedCard}
             >
-              <View style={[styles.advancedCardGlow, { backgroundColor: CARD_COLORS.caloriesGlow }]} />
+              <View style={[styles.advancedCardGlow, { backgroundColor: "rgba(239, 68, 68, 0.3)" }]} />
               <View style={styles.advancedCardHeader}>
-                <View style={[styles.advancedCardIcon, { backgroundColor: CARD_COLORS.caloriesGlow }]}>
-                  <MaterialCommunityIcons name="fire" size={20} color={CARD_COLORS.caloriesPrimary} />
+                <View style={[styles.advancedCardIcon, { backgroundColor: "rgba(239, 68, 68, 0.3)" }]}>
+                  <MaterialCommunityIcons name="heart-pulse" size={20} color="#EF4444" />
                 </View>
-                <Text style={styles.advancedCardTitle}>Net Calories</Text>
-                <View style={[styles.goalBadge, { backgroundColor: "rgba(16, 185, 129, 0.2)" }]}>
-                  <Text style={[styles.goalBadgeText, { color: "#10B981" }]}>Goal: -500</Text>
+                <Text style={styles.advancedCardTitle}>Heart Rate</Text>
+                <View style={[styles.goalBadge, { backgroundColor: "rgba(239, 68, 68, 0.2)" }]}>
+                  <Text style={[styles.goalBadgeText, { color: "#EF4444" }]}>Live</Text>
                 </View>
               </View>
 
               <View style={styles.advancedCardBody}>
                 <View style={styles.calorieRingContainer}>
                   <ProgressRing
-                    progress={90}
+                    progress={Math.min((healthData.daily.heartRate / 180) * 100, 100)}
                     size={80}
                     strokeWidth={8}
-                    color={CARD_COLORS.caloriesPrimary}
+                    color="#EF4444"
                   />
                   <View style={styles.ringCenter}>
-                    <Text style={[styles.ringValue, { color: CARD_COLORS.caloriesPrimary }]}>-450</Text>
-                    <Text style={styles.ringUnit}>kcal</Text>
+                    <Text style={[styles.ringValue, { color: "#EF4444" }]}>{healthData.daily.heartRate || 72}</Text>
+                    <Text style={styles.ringUnit}>bpm</Text>
                   </View>
                 </View>
                 <View style={styles.calorieDetails}>
                   <View style={styles.calorieRow}>
                     <View style={styles.calorieIconBox}>
-                      <Ionicons name="restaurant" size={14} color={CARD_COLORS.caloriesPrimary} />
+                      <Ionicons name="arrow-down" size={14} color="#10B981" />
                     </View>
                     <View>
-                      <Text style={styles.calorieLabel}>Intake</Text>
-                      <Text style={[styles.calorieValue, { color: CARD_COLORS.caloriesPrimary }]}>1,800 kcal</Text>
+                      <Text style={styles.calorieLabel}>Resting</Text>
+                      <Text style={[styles.calorieValue, { color: "#10B981" }]}>62 bpm</Text>
                     </View>
                   </View>
                   <View style={styles.calorieRow}>
                     <View style={styles.calorieIconBox}>
-                      <MaterialCommunityIcons name="lightning-bolt" size={14} color="#14B8A6" />
+                      <Ionicons name="arrow-up" size={14} color="#EF4444" />
                     </View>
                     <View>
-                      <Text style={styles.calorieLabel}>Burned</Text>
-                      <Text style={[styles.calorieValue, { color: "#14B8A6" }]}>2,250 kcal</Text>
+                      <Text style={styles.calorieLabel}>Peak</Text>
+                      <Text style={[styles.calorieValue, { color: "#EF4444" }]}>142 bpm</Text>
                     </View>
                   </View>
                 </View>
@@ -836,17 +846,17 @@ const HealthTrackMonitorScreen: React.FC = () => {
               <View style={styles.calorieProgressBar}>
                 <View style={styles.calorieBarBg}>
                   <LinearGradient
-                    colors={[CARD_COLORS.caloriesPrimary, CARD_COLORS.caloriesSecondary]}
+                    colors={["#10B981", "#FBBF24", "#EF4444"]}
                     start={{ x: 0, y: 0 }}
                     end={{ x: 1, y: 0 }}
-                    style={[styles.calorieBarFill, { width: "90%" }]}
+                    style={[styles.calorieBarFill, { width: "100%" }]}
                   />
                 </View>
-                <Text style={styles.calorieProgressText}>90% of daily deficit goal</Text>
+                <Text style={styles.calorieProgressText}>Normal heart rate zone</Text>
               </View>
             </LinearGradient>
 
-            {/* Advanced Card 3: Status (Green/Teal Theme) */}
+            {/* Advanced Card 3: Status (Green/Teal Theme) - ORIGINAL FUNCTIONALITY */}
             <LinearGradient
               colors={CARD_COLORS.statusBg as [string, string]}
               start={{ x: 0, y: 0 }}
@@ -861,24 +871,24 @@ const HealthTrackMonitorScreen: React.FC = () => {
                 <Text style={styles.advancedCardTitle}>Status</Text>
                 <View style={[styles.statusBadge, { backgroundColor: "rgba(16, 185, 129, 0.3)" }]}>
                   <Ionicons name="checkmark" size={12} color={CARD_COLORS.statusPrimary} />
-                  <Text style={[styles.statusBadgeText, { color: CARD_COLORS.statusPrimary }]}>On Track</Text>
+                  <Text style={[styles.statusBadgeText, { color: CARD_COLORS.statusPrimary }]}>{healthData.daily.status}</Text>
                 </View>
               </View>
 
               <View style={styles.advancedCardBody}>
                 <View style={styles.statusMain}>
                   <View style={styles.statusIconLarge}>
-                    <Ionicons name="trending-down" size={32} color={CARD_COLORS.statusPrimary} />
+                    <Ionicons name="fitness" size={32} color={CARD_COLORS.statusPrimary} />
                   </View>
                   <View>
-                    <Text style={styles.statusExpected}>Expected Today</Text>
-                    <Text style={[styles.statusValue, { color: CARD_COLORS.statusPrimary }]}>-0.13 lbs</Text>
+                    <Text style={styles.statusExpected}>Goal Progress</Text>
+                    <Text style={[styles.statusValue, { color: CARD_COLORS.statusPrimary }]}>{Math.round((healthData.daily.steps / healthData.goal.targetSteps) * 100)}%</Text>
                   </View>
                 </View>
                 <View style={styles.predictionChart}>
-                  <Text style={styles.chartLabel}>7-Day Prediction</Text>
+                  <Text style={styles.chartLabel}>Weekly Activity</Text>
                   <MiniBarChart
-                    data={[-0.12, -0.15, -0.10, -0.14, -0.11, -0.13, -0.15]}
+                    data={[0.6, 0.8, 0.75, 0.5, 0.9, 0.7, 0.85]}
                     width={100}
                     height={40}
                     color={CARD_COLORS.statusPrimary}
@@ -888,18 +898,18 @@ const HealthTrackMonitorScreen: React.FC = () => {
 
               <View style={styles.advancedCardFooter}>
                 <View style={styles.goalDateContainer}>
-                  <Ionicons name="calendar" size={14} color={CARD_COLORS.textSecondary} />
-                  <Text style={styles.goalDateLabel}>Target Date</Text>
-                  <Text style={[styles.goalDateValue, { color: CARD_COLORS.statusPrimary }]}>Dec 30th</Text>
+                  <Ionicons name="flame" size={14} color={CARD_COLORS.textSecondary} />
+                  <Text style={styles.goalDateLabel}>Calories</Text>
+                  <Text style={[styles.goalDateValue, { color: CARD_COLORS.statusPrimary }]}>{healthData.daily.calories} kcal</Text>
                 </View>
                 <View style={styles.daysRemaining}>
-                  <Text style={styles.daysValue}>34</Text>
-                  <Text style={styles.daysLabel}>days left</Text>
+                  <Text style={styles.daysValue}>{healthData.daily.activeMinutes}</Text>
+                  <Text style={styles.daysLabel}>active min</Text>
                 </View>
               </View>
             </LinearGradient>
 
-            {/* Activity & Vitals Row */}
+            {/* Activity & Vitals Row - ORIGINAL */}
             <View style={styles.rowTwoColumn}>
               <View style={[styles.cardSection, { flex: 1, marginRight: 8 }]}>
                 <Text style={styles.sectionHeader}>Activity</Text>
@@ -910,9 +920,9 @@ const HealthTrackMonitorScreen: React.FC = () => {
                   </Text>
                 </View>
                 <View style={styles.listRowBetween}>
-                  <Text style={styles.metricLabel}>Steps</Text>
+                  <Text style={styles.metricLabel}>Calories Burned</Text>
                   <Text style={styles.metricValue}>
-                    {healthData.daily.steps.toLocaleString()}
+                    {healthData.daily.calories} kcal
                   </Text>
                 </View>
                 <View style={styles.listRowBetween}>
@@ -972,7 +982,7 @@ const HealthTrackMonitorScreen: React.FC = () => {
               </View>
             </View>
 
-            {/* Health Insights */}
+            {/* Health Insights - ORIGINAL */}
             <View style={styles.cardSection}>
               <Text style={styles.sectionHeader}>Health Insights</Text>
               <View style={styles.insightCard}>
@@ -983,7 +993,7 @@ const HealthTrackMonitorScreen: React.FC = () => {
                   <View style={styles.insightTextBox}>
                     <Text style={styles.insightTitle}>Great Progress!</Text>
                     <Text style={styles.insightDesc}>
-                      You're on track to reach your weight goal by Dec 30th
+                      You're 15% ahead of your weekly step goal
                     </Text>
                   </View>
                 </View>
@@ -991,12 +1001,12 @@ const HealthTrackMonitorScreen: React.FC = () => {
               <View style={styles.insightCard}>
                 <View style={styles.insightRow}>
                   <View style={[styles.insightIconBox, { backgroundColor: "#FEF3C7" }]}>
-                    <Text style={styles.insightIcon}>🔥</Text>
+                    <Text style={styles.insightIcon}>🚶</Text>
                   </View>
                   <View style={styles.insightTextBox}>
-                    <Text style={styles.insightTitle}>Calorie Deficit Achieved</Text>
+                    <Text style={styles.insightTitle}>Stay Active</Text>
                     <Text style={styles.insightDesc}>
-                      90% of your daily deficit goal - keep it up!
+                      Try to reach 10,000 steps today to meet your goal
                     </Text>
                   </View>
                 </View>
@@ -1013,53 +1023,63 @@ const HealthTrackMonitorScreen: React.FC = () => {
               <Text style={styles.cardMeta}>{healthData.weekly.weekStart} - {healthData.weekly.weekEnd}</Text>
             </View>
 
-            {/* Weekly Weight Progress Card */}
+            {/* Weekly Average Steps Card - ORIGINAL FUNCTIONALITY */}
             <LinearGradient
-              colors={CARD_COLORS.weightBg as [string, string]}
+              colors={["#1e3a5f", "#1e40af"] as [string, string]}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
               style={styles.advancedCard}
             >
-              <View style={styles.advancedCardGlow} />
+              <View style={[styles.advancedCardGlow, { backgroundColor: "rgba(59, 130, 246, 0.3)" }]} />
               <View style={styles.advancedCardHeader}>
-                <View style={[styles.advancedCardIcon, { backgroundColor: CARD_COLORS.weightGlow }]}>
-                  <MaterialCommunityIcons name="chart-line" size={20} color={CARD_COLORS.weightPrimary} />
+                <View style={[styles.advancedCardIcon, { backgroundColor: "rgba(59, 130, 246, 0.3)" }]}>
+                  <MaterialCommunityIcons name="walk" size={20} color="#3B82F6" />
                 </View>
-                <Text style={styles.advancedCardTitle}>Weight Progress</Text>
+                <Text style={styles.advancedCardTitle}>Average Steps</Text>
                 <View style={styles.changeIndicator}>
-                  <Ionicons name="arrow-down" size={12} color="#10B981" />
-                  <Text style={[styles.changeText, { color: "#10B981" }]}>-0.8 lbs</Text>
+                  <Ionicons name="trending-up" size={12} color="#10B981" />
+                  <Text style={[styles.changeText, { color: "#10B981" }]}>+8%</Text>
                 </View>
               </View>
 
               <View style={styles.advancedCardBody}>
-                <View style={styles.weeklyStatsGrid}>
-                  <View style={styles.weeklyStatItem}>
-                    <Text style={styles.weeklyStatLabel}>Start</Text>
-                    <Text style={[styles.weeklyStatValue, { color: CARD_COLORS.textSecondary }]}>187.1</Text>
-                  </View>
-                  <View style={styles.weeklyStatItem}>
-                    <Text style={styles.weeklyStatLabel}>Current</Text>
-                    <Text style={[styles.weeklyStatValue, { color: CARD_COLORS.weightPrimary }]}>186.3</Text>
-                  </View>
-                  <View style={styles.weeklyStatItem}>
-                    <Text style={styles.weeklyStatLabel}>Goal</Text>
-                    <Text style={[styles.weeklyStatValue, { color: "#10B981" }]}>175.0</Text>
-                  </View>
+                <View style={styles.mainMetric}>
+                  <Text style={[styles.advancedCardValue, { color: "#3B82F6" }]}>
+                    {healthData.weekly.avgSteps.toLocaleString()}
+                  </Text>
+                  <Text style={styles.advancedCardUnit}>avg/day</Text>
                 </View>
                 <View style={styles.miniChartContainer}>
-                  <Text style={styles.chartLabel}>Weekly Trend</Text>
+                  <Text style={styles.chartLabel}>7-Day Trend</Text>
                   <MiniLineGraph
-                    data={[187.1, 186.9, 186.7, 186.5, 186.4, 186.2, 186.3]}
-                    color={CARD_COLORS.weightPrimary}
-                    width={110}
-                    height={40}
+                    data={[6200, 7500, 8100, 5800, 9200, 7800, healthData.weekly.avgSteps || 8000]}
+                    color="#3B82F6"
+                    width={100}
+                    height={35}
                   />
+                </View>
+              </View>
+
+              <View style={styles.advancedCardFooter}>
+                <View style={styles.bmiContainer}>
+                  <Text style={styles.bmiLabel}>Goal</Text>
+                  <Text style={[styles.bmiValue, { color: "#3B82F6" }]}>{healthData.goal.targetSteps.toLocaleString()}</Text>
+                </View>
+                <View style={{ flex: 1 }}>
+                  <View style={styles.calorieBarBg}>
+                    <LinearGradient
+                      colors={["#3B82F6", "#60A5FA"]}
+                      start={{ x: 0, y: 0 }}
+                      end={{ x: 1, y: 0 }}
+                      style={[styles.calorieBarFill, { width: `${Math.min((healthData.weekly.avgSteps / healthData.goal.targetSteps) * 100, 100)}%` }]}
+                    />
+                  </View>
+                  <Text style={styles.calorieProgressText}>{Math.round((healthData.weekly.avgSteps / healthData.goal.targetSteps) * 100)}% of daily goal</Text>
                 </View>
               </View>
             </LinearGradient>
 
-            {/* Weekly Calories Card */}
+            {/* Weekly Calories Card - ORIGINAL FUNCTIONALITY */}
             <LinearGradient
               colors={CARD_COLORS.caloriesBg as [string, string]}
               start={{ x: 0, y: 0 }}
@@ -1071,33 +1091,43 @@ const HealthTrackMonitorScreen: React.FC = () => {
                 <View style={[styles.advancedCardIcon, { backgroundColor: CARD_COLORS.caloriesGlow }]}>
                   <MaterialCommunityIcons name="fire" size={20} color={CARD_COLORS.caloriesPrimary} />
                 </View>
-                <Text style={styles.advancedCardTitle}>Calorie Summary</Text>
+                <Text style={styles.advancedCardTitle}>Average Calories</Text>
+                <View style={[styles.goalBadge, { backgroundColor: "rgba(249, 115, 22, 0.2)" }]}>
+                  <Text style={[styles.goalBadgeText, { color: CARD_COLORS.caloriesPrimary }]}>Weekly</Text>
+                </View>
               </View>
 
               <View style={styles.advancedCardBody}>
-                <View style={styles.weeklyCalorieStats}>
-                  <View style={styles.weeklyCalorieStat}>
-                    <ProgressRing progress={85} size={60} strokeWidth={5} color={CARD_COLORS.caloriesPrimary} />
-                    <View style={styles.weeklyCalorieCenter}>
-                      <Text style={[styles.weeklyCalorieValue, { color: CARD_COLORS.caloriesPrimary }]}>
-                        {healthData.weekly.avgCalories}
-                      </Text>
-                    </View>
-                    <Text style={styles.weeklyCalorieLabel}>Avg Burned</Text>
+                <View style={styles.calorieRingContainer}>
+                  <ProgressRing
+                    progress={Math.min((healthData.weekly.avgCalories / healthData.goal.targetCalories) * 100, 100)}
+                    size={80}
+                    strokeWidth={8}
+                    color={CARD_COLORS.caloriesPrimary}
+                  />
+                  <View style={styles.ringCenter}>
+                    <Text style={[styles.ringValue, { color: CARD_COLORS.caloriesPrimary }]}>{healthData.weekly.avgCalories}</Text>
+                    <Text style={styles.ringUnit}>kcal/day</Text>
                   </View>
-                  <View style={styles.weeklyCalorieStat}>
-                    <ProgressRing progress={78} size={60} strokeWidth={5} color="#14B8A6" />
-                    <View style={styles.weeklyCalorieCenter}>
-                      <Text style={[styles.weeklyCalorieValue, { color: "#14B8A6" }]}>1,850</Text>
+                </View>
+                <View style={styles.calorieDetails}>
+                  <View style={styles.calorieRow}>
+                    <View style={styles.calorieIconBox}>
+                      <Ionicons name="flame" size={14} color={CARD_COLORS.caloriesPrimary} />
                     </View>
-                    <Text style={styles.weeklyCalorieLabel}>Avg Intake</Text>
+                    <View>
+                      <Text style={styles.calorieLabel}>Target</Text>
+                      <Text style={[styles.calorieValue, { color: CARD_COLORS.caloriesPrimary }]}>{healthData.goal.targetCalories} kcal</Text>
+                    </View>
                   </View>
-                  <View style={styles.weeklyCalorieStat}>
-                    <ProgressRing progress={90} size={60} strokeWidth={5} color="#10B981" />
-                    <View style={styles.weeklyCalorieCenter}>
-                      <Text style={[styles.weeklyCalorieValue, { color: "#10B981" }]}>-3,150</Text>
+                  <View style={styles.calorieRow}>
+                    <View style={styles.calorieIconBox}>
+                      <Ionicons name="heart" size={14} color="#EF4444" />
                     </View>
-                    <Text style={styles.weeklyCalorieLabel}>Net Deficit</Text>
+                    <View>
+                      <Text style={styles.calorieLabel}>Avg Heart Rate</Text>
+                      <Text style={[styles.calorieValue, { color: "#EF4444" }]}>{healthData.weekly.avgHeartRate || 72} bpm</Text>
+                    </View>
                   </View>
                 </View>
               </View>
@@ -1108,10 +1138,10 @@ const HealthTrackMonitorScreen: React.FC = () => {
                     colors={[CARD_COLORS.caloriesPrimary, "#10B981"]}
                     start={{ x: 0, y: 0 }}
                     end={{ x: 1, y: 0 }}
-                    style={[styles.calorieBarFill, { width: "90%" }]}
+                    style={[styles.calorieBarFill, { width: `${Math.min((healthData.weekly.avgCalories / healthData.goal.targetCalories) * 100, 100)}%` }]}
                   />
                 </View>
-                <Text style={styles.calorieProgressText}>90% of weekly deficit goal achieved</Text>
+                <Text style={styles.calorieProgressText}>{Math.round((healthData.weekly.avgCalories / healthData.goal.targetCalories) * 100)}% of calorie goal</Text>
               </View>
             </LinearGradient>
 
@@ -1186,72 +1216,63 @@ const HealthTrackMonitorScreen: React.FC = () => {
               <Text style={styles.cardMeta}>{healthData.monthly.month}</Text>
             </View>
 
-            {/* Monthly Weight Journey Card */}
+            {/* Monthly Total Steps Card - ORIGINAL FUNCTIONALITY */}
             <LinearGradient
-              colors={CARD_COLORS.weightBg as [string, string]}
+              colors={["#1e3a5f", "#1e40af"] as [string, string]}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
               style={styles.advancedCard}
             >
-              <View style={styles.advancedCardGlow} />
+              <View style={[styles.advancedCardGlow, { backgroundColor: "rgba(59, 130, 246, 0.3)" }]} />
               <View style={styles.advancedCardHeader}>
-                <View style={[styles.advancedCardIcon, { backgroundColor: CARD_COLORS.weightGlow }]}>
-                  <MaterialCommunityIcons name="chart-timeline-variant" size={20} color={CARD_COLORS.weightPrimary} />
+                <View style={[styles.advancedCardIcon, { backgroundColor: "rgba(59, 130, 246, 0.3)" }]}>
+                  <MaterialCommunityIcons name="walk" size={20} color="#3B82F6" />
                 </View>
-                <Text style={styles.advancedCardTitle}>Weight Journey</Text>
+                <Text style={styles.advancedCardTitle}>Total Steps</Text>
                 <View style={styles.changeIndicator}>
-                  <Ionicons name="arrow-down" size={12} color="#10B981" />
-                  <Text style={[styles.changeText, { color: "#10B981" }]}>-3.2 lbs</Text>
+                  <Ionicons name="trending-up" size={12} color="#10B981" />
+                  <Text style={[styles.changeText, { color: "#10B981" }]}>+12%</Text>
                 </View>
               </View>
 
               <View style={styles.advancedCardBody}>
-                <View style={styles.monthlyWeightStats}>
-                  <View style={styles.monthlyWeightMain}>
-                    <Text style={styles.monthlyWeightLabel}>Month Start</Text>
-                    <Text style={[styles.monthlyWeightValue, { color: CARD_COLORS.textSecondary }]}>189.5 lbs</Text>
-                  </View>
-                  <View style={styles.monthlyWeightArrow}>
-                    <Ionicons name="arrow-forward" size={20} color={CARD_COLORS.weightPrimary} />
-                  </View>
-                  <View style={styles.monthlyWeightMain}>
-                    <Text style={styles.monthlyWeightLabel}>Current</Text>
-                    <Text style={[styles.monthlyWeightValue, { color: CARD_COLORS.weightPrimary }]}>186.3 lbs</Text>
-                  </View>
-                  <View style={styles.monthlyWeightArrow}>
-                    <Ionicons name="arrow-forward" size={20} color="#10B981" />
-                  </View>
-                  <View style={styles.monthlyWeightMain}>
-                    <Text style={styles.monthlyWeightLabel}>Goal</Text>
-                    <Text style={[styles.monthlyWeightValue, { color: "#10B981" }]}>175.0 lbs</Text>
-                  </View>
+                <View style={styles.mainMetric}>
+                  <Text style={[styles.advancedCardValue, { color: "#3B82F6" }]}>
+                    {(healthData.monthly.totalSteps / 1000).toFixed(0)}K
+                  </Text>
+                  <Text style={styles.advancedCardUnit}>steps</Text>
                 </View>
-                <View style={styles.monthlyTrendChart}>
+                <View style={styles.miniChartContainer}>
                   <Text style={styles.chartLabel}>30-Day Trend</Text>
                   <MiniLineGraph
-                    data={[189.5, 189.2, 188.8, 188.5, 188.1, 187.8, 187.5, 187.2, 186.9, 186.5, 186.3]}
-                    color={CARD_COLORS.weightPrimary}
-                    width={130}
-                    height={45}
+                    data={[180000, 195000, 210000, 225000, 240000, 255000, healthData.monthly.totalSteps || 250000]}
+                    color="#3B82F6"
+                    width={110}
+                    height={40}
                   />
                 </View>
               </View>
 
-              <View style={styles.monthlyProgressContainer}>
-                <Text style={[styles.monthlyProgressLabel, { color: CARD_COLORS.textSecondary }]}>Goal Progress</Text>
-                <View style={styles.monthlyProgressBar}>
-                  <LinearGradient
-                    colors={[CARD_COLORS.weightPrimary, "#10B981"]}
-                    start={{ x: 0, y: 0 }}
-                    end={{ x: 1, y: 0 }}
-                    style={[styles.monthlyProgressFill, { width: "22%" }]}
-                  />
+              <View style={styles.advancedCardFooter}>
+                <View style={styles.bmiContainer}>
+                  <Text style={styles.bmiLabel}>Monthly Goal</Text>
+                  <Text style={[styles.bmiValue, { color: "#3B82F6" }]}>{(healthData.goal.targetSteps * 30 / 1000).toFixed(0)}K</Text>
                 </View>
-                <Text style={[styles.monthlyProgressText, { color: CARD_COLORS.weightPrimary }]}>22% to goal (11.3 lbs remaining)</Text>
+                <View style={{ flex: 1 }}>
+                  <View style={styles.calorieBarBg}>
+                    <LinearGradient
+                      colors={["#3B82F6", "#60A5FA"]}
+                      start={{ x: 0, y: 0 }}
+                      end={{ x: 1, y: 0 }}
+                      style={[styles.calorieBarFill, { width: `${monthlyGoalProgress}%` }]}
+                    />
+                  </View>
+                  <Text style={styles.calorieProgressText}>{monthlyGoalProgress}% of monthly goal</Text>
+                </View>
               </View>
             </LinearGradient>
 
-            {/* Monthly Calories Card */}
+            {/* Monthly Calories Card - ORIGINAL FUNCTIONALITY */}
             <LinearGradient
               colors={CARD_COLORS.caloriesBg as [string, string]}
               start={{ x: 0, y: 0 }}
@@ -1263,38 +1284,57 @@ const HealthTrackMonitorScreen: React.FC = () => {
                 <View style={[styles.advancedCardIcon, { backgroundColor: CARD_COLORS.caloriesGlow }]}>
                   <MaterialCommunityIcons name="fire" size={20} color={CARD_COLORS.caloriesPrimary} />
                 </View>
-                <Text style={styles.advancedCardTitle}>Calorie Analysis</Text>
+                <Text style={styles.advancedCardTitle}>Average Calories</Text>
+                <View style={[styles.goalBadge, { backgroundColor: "rgba(249, 115, 22, 0.2)" }]}>
+                  <Text style={[styles.goalBadgeText, { color: CARD_COLORS.caloriesPrimary }]}>Monthly</Text>
+                </View>
               </View>
 
               <View style={styles.advancedCardBody}>
-                <View style={styles.monthlyCalorieGrid}>
-                  <View style={styles.monthlyCalorieBox}>
-                    <View style={[styles.monthlyCalorieIconBg, { backgroundColor: "rgba(249, 115, 22, 0.2)" }]}>
-                      <MaterialCommunityIcons name="fire" size={24} color={CARD_COLORS.caloriesPrimary} />
-                    </View>
-                    <Text style={styles.monthlyCalorieValue}>{healthData.monthly.avgCalories}</Text>
-                    <Text style={styles.monthlyCalorieLabel}>Avg Burned/Day</Text>
+                <View style={styles.calorieRingContainer}>
+                  <ProgressRing
+                    progress={Math.min((healthData.monthly.avgCalories / healthData.goal.targetCalories) * 100, 100)}
+                    size={80}
+                    strokeWidth={8}
+                    color={CARD_COLORS.caloriesPrimary}
+                  />
+                  <View style={styles.ringCenter}>
+                    <Text style={[styles.ringValue, { color: CARD_COLORS.caloriesPrimary }]}>{healthData.monthly.avgCalories}</Text>
+                    <Text style={styles.ringUnit}>kcal/day</Text>
                   </View>
-                  <View style={styles.monthlyCalorieBox}>
-                    <View style={[styles.monthlyCalorieIconBg, { backgroundColor: "rgba(20, 184, 166, 0.2)" }]}>
-                      <Ionicons name="restaurant" size={24} color="#14B8A6" />
+                </View>
+                <View style={styles.calorieDetails}>
+                  <View style={styles.calorieRow}>
+                    <View style={styles.calorieIconBox}>
+                      <Ionicons name="flame" size={14} color={CARD_COLORS.caloriesPrimary} />
                     </View>
-                    <Text style={styles.monthlyCalorieValue}>1,820</Text>
-                    <Text style={styles.monthlyCalorieLabel}>Avg Intake/Day</Text>
+                    <View>
+                      <Text style={styles.calorieLabel}>Target</Text>
+                      <Text style={[styles.calorieValue, { color: CARD_COLORS.caloriesPrimary }]}>{healthData.goal.targetCalories} kcal</Text>
+                    </View>
                   </View>
-                  <View style={styles.monthlyCalorieBox}>
-                    <View style={[styles.monthlyCalorieIconBg, { backgroundColor: "rgba(16, 185, 129, 0.2)" }]}>
-                      <Ionicons name="trending-down" size={24} color="#10B981" />
+                  <View style={styles.calorieRow}>
+                    <View style={styles.calorieIconBox}>
+                      <Ionicons name="heart" size={14} color="#EF4444" />
                     </View>
-                    <Text style={styles.monthlyCalorieValue}>-13,500</Text>
-                    <Text style={styles.monthlyCalorieLabel}>Total Deficit</Text>
+                    <View>
+                      <Text style={styles.calorieLabel}>Avg Heart Rate</Text>
+                      <Text style={[styles.calorieValue, { color: "#EF4444" }]}>{healthData.monthly.avgHeartRate || 72} bpm</Text>
+                    </View>
                   </View>
                 </View>
               </View>
 
-              <View style={styles.calorieInsightBox}>
-                <Ionicons name="bulb" size={16} color="#FBBF24" />
-                <Text style={styles.calorieInsightText}>At this rate, you'll lose ~3.9 lbs this month</Text>
+              <View style={styles.calorieProgressBar}>
+                <View style={styles.calorieBarBg}>
+                  <LinearGradient
+                    colors={[CARD_COLORS.caloriesPrimary, "#10B981"]}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 0 }}
+                    style={[styles.calorieBarFill, { width: `${Math.min((healthData.monthly.avgCalories / healthData.goal.targetCalories) * 100, 100)}%` }]}
+                  />
+                </View>
+                <Text style={styles.calorieProgressText}>{Math.round((healthData.monthly.avgCalories / healthData.goal.targetCalories) * 100)}% of calorie goal</Text>
               </View>
             </LinearGradient>
 
@@ -1375,7 +1415,7 @@ const HealthTrackMonitorScreen: React.FC = () => {
               </View>
             </LinearGradient>
 
-            {/* Monthly Insights */}
+            {/* Monthly Insights - ORIGINAL FUNCTIONALITY */}
             <View style={styles.cardSection}>
               <Text style={styles.sectionHeader}>Monthly Insights</Text>
               <View style={styles.insightCard}>
@@ -1393,13 +1433,13 @@ const HealthTrackMonitorScreen: React.FC = () => {
               </View>
               <View style={styles.insightCard}>
                 <View style={styles.insightRow}>
-                  <View style={[styles.insightIconBox, { backgroundColor: "#EDE9FE" }]}>
-                    <Text style={styles.insightIcon}>📈</Text>
+                  <View style={[styles.insightIconBox, { backgroundColor: "#DBEAFE" }]}>
+                    <Text style={styles.insightIcon}>🚶</Text>
                   </View>
                   <View style={styles.insightTextBox}>
-                    <Text style={styles.insightTitle}>Weight Loss Trend</Text>
+                    <Text style={styles.insightTitle}>Step Goal Progress</Text>
                     <Text style={styles.insightDesc}>
-                      You're losing weight at a healthy rate of ~0.8 lbs/week
+                      You've completed {monthlyGoalProgress}% of your monthly step goal
                     </Text>
                   </View>
                 </View>
