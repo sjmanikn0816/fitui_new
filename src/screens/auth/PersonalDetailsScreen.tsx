@@ -1,9 +1,28 @@
-import React, { useState, useEffect, useRef } from "react";
-import { View, Text, TouchableOpacity, Animated } from "react-native";
+import React, { useState, useEffect } from "react";
+import { View, Text, TouchableOpacity, Dimensions } from "react-native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { AuthStackParamList } from "../../navigation/AuthNavigator";
 import Button from "../../components/ui/Button";
 import Input from "../../components/ui/Input";
+import Animated, {
+  FadeInUp,
+  FadeInDown,
+  FadeOutUp,
+  FadeOutLeft,
+  FadeInRight,
+  SlideInRight,
+  SlideOutLeft,
+  useSharedValue,
+  useAnimatedStyle,
+  withSpring,
+  withTiming,
+  withSequence,
+  withDelay,
+  interpolate,
+  Easing,
+  ZoomIn,
+  BounceIn,
+} from "react-native-reanimated";
 
 import { Colors } from "@/constants/Colors";
 import { useAppDispatch, useAppSelector } from "@/redux/store/hooks";
@@ -31,6 +50,8 @@ import {
   Minus,
 } from "lucide-react-native";
 
+const { width: SCREEN_WIDTH } = Dimensions.get("window");
+
 type PersonalDetailsScreenNavigationProp = StackNavigationProp<
   AuthStackParamList,
   "PersonalDetails"
@@ -48,6 +69,103 @@ interface CardOption {
   subtitle?: string;
   emoji?: string;
 }
+
+// Animated Card Component with bounce effect
+const AnimatedCard = ({
+  option,
+  isSelected,
+  onPress,
+  index,
+}: {
+  option: CardOption;
+  isSelected: boolean;
+  onPress: () => void;
+  index: number;
+}) => {
+  const scale = useSharedValue(1);
+  const rotation = useSharedValue(0);
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [
+      { scale: scale.value },
+      { rotateZ: `${rotation.value}deg` },
+    ],
+  }));
+
+  const handlePress = () => {
+    // Bounce + slight rotation animation
+    scale.value = withSequence(
+      withSpring(0.95, { damping: 10, stiffness: 400 }),
+      withSpring(1.05, { damping: 10, stiffness: 400 }),
+      withSpring(1, { damping: 10, stiffness: 400 })
+    );
+    rotation.value = withSequence(
+      withTiming(-2, { duration: 50 }),
+      withTiming(2, { duration: 50 }),
+      withTiming(0, { duration: 50 })
+    );
+    onPress();
+  };
+
+  return (
+    <Animated.View
+      entering={FadeInUp.delay(index * 80).springify().damping(12)}
+      style={animatedStyle}
+    >
+      <TouchableOpacity
+        style={[styles.modernCard, isSelected && styles.modernCardActive]}
+        onPress={handlePress}
+        activeOpacity={0.8}
+      >
+        <View style={styles.modernCardContent}>
+          {(option.icon || option.emoji) && (
+            <Animated.View
+              style={[
+                styles.modernIconContainer,
+                isSelected && styles.modernIconContainerActive,
+              ]}
+              entering={isSelected ? ZoomIn.springify() : undefined}
+            >
+              {option.emoji ? (
+                <Text style={styles.emojiIcon}>{option.emoji}</Text>
+              ) : (
+                option.icon
+              )}
+            </Animated.View>
+          )}
+          <View style={styles.modernCardTextContainer}>
+            <Text
+              style={[
+                styles.modernCardTitle,
+                isSelected && styles.modernCardTitleActive,
+              ]}
+            >
+              {option.label}
+            </Text>
+            {option.subtitle && (
+              <Text
+                style={[
+                  styles.modernCardSubtitle,
+                  isSelected && styles.modernCardSubtitleActive,
+                ]}
+              >
+                {option.subtitle}
+              </Text>
+            )}
+          </View>
+        </View>
+        {isSelected && (
+          <Animated.View
+            style={styles.checkmarkBadge}
+            entering={BounceIn.duration(400)}
+          >
+            <Check size={16} color="#fff" strokeWidth={3} />
+          </Animated.View>
+        )}
+      </TouchableOpacity>
+    </Animated.View>
+  );
+};
 
 const PersonalDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
   const {
@@ -78,19 +196,20 @@ const PersonalDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
   );
 
   const [currentStep, setCurrentStep] = useState(1);
+  const [direction, setDirection] = useState<"forward" | "backward">("forward");
   const totalSteps = 8;
 
-  const fadeAnim = useRef(new Animated.Value(1)).current;
-  const slideAnim = useRef(new Animated.Value(0)).current;
-  const progressAnim = useRef(new Animated.Value(0)).current;
+  // Reanimated shared values
+  const progress = useSharedValue(0);
+  const progressGlow = useSharedValue(0);
 
   const dispatch = useAppDispatch();
   const { loading } = useAppSelector((state: RootState) => state.auth);
 
   const genders: CardOption[] = [
-    { label: "Male", value: "M" },
-    { label: "Female", value: "F" },
-    { label: "Other", value: "O" },
+    { label: "Male", value: "M", emoji: "👨" },
+    { label: "Female", value: "F", emoji: "👩" },
+    { label: "Other", value: "O", emoji: "🧑" },
   ];
 
   const dietOptions: CardOption[] = [
@@ -216,48 +335,29 @@ const PersonalDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
     return calculatedAge;
   })();
 
+  // Animated progress bar
   useEffect(() => {
-    Animated.spring(progressAnim, {
-      toValue: (currentStep / totalSteps) * 100,
-      useNativeDriver: false,
-      tension: 50,
-      friction: 7,
-    }).start();
+    progress.value = withSpring((currentStep / totalSteps) * 100, {
+      damping: 15,
+      stiffness: 100,
+    });
+    // Glow pulse effect
+    progressGlow.value = withSequence(
+      withTiming(1, { duration: 300 }),
+      withTiming(0.6, { duration: 500 })
+    );
   }, [currentStep]);
 
-  const animateStepTransition = (direction: "forward" | "backward") => {
-    Animated.sequence([
-      Animated.parallel([
-        Animated.timing(fadeAnim, {
-          toValue: 0,
-          duration: 150,
-          useNativeDriver: true,
-        }),
-        Animated.timing(slideAnim, {
-          toValue: direction === "forward" ? -50 : 50,
-          duration: 150,
-          useNativeDriver: true,
-        }),
-      ]),
-      Animated.parallel([
-        Animated.timing(fadeAnim, {
-          toValue: 1,
-          duration: 200,
-          useNativeDriver: true,
-        }),
-        Animated.timing(slideAnim, {
-          toValue: 0,
-          duration: 200,
-          useNativeDriver: true,
-        }),
-      ]),
-    ]).start();
-  };
+  const progressAnimatedStyle = useAnimatedStyle(() => ({
+    width: `${progress.value}%`,
+    shadowOpacity: interpolate(progressGlow.value, [0.6, 1], [0.3, 0.8]),
+    shadowRadius: interpolate(progressGlow.value, [0.6, 1], [4, 12]),
+  }));
 
   const goToNextStep = () => {
     if (currentStep < totalSteps) {
-      animateStepTransition("forward");
-      setTimeout(() => setCurrentStep(currentStep + 1), 150);
+      setDirection("forward");
+      setCurrentStep(currentStep + 1);
     } else {
       handleSubmit();
     }
@@ -265,8 +365,8 @@ const PersonalDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
 
   const goToPreviousStep = () => {
     if (currentStep > 1) {
-      animateStepTransition("backward");
-      setTimeout(() => setCurrentStep(currentStep - 1), 150);
+      setDirection("backward");
+      setCurrentStep(currentStep - 1);
     } else {
       navigation.goBack();
     }
@@ -400,77 +500,136 @@ const PersonalDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
   };
 
   const renderProgressBar = () => {
-    const progressWidth = progressAnim.interpolate({
-      inputRange: [0, 100],
-      outputRange: ["0%", "100%"],
-    });
-
     return (
-      <View style={styles.progressBarContainer}>
+      <Animated.View
+        style={styles.progressBarContainer}
+        entering={FadeInDown.delay(100).springify()}
+      >
         <View style={styles.progressBarBackground}>
-          <Animated.View style={[styles.progressBarFill, { width: progressWidth }]} />
+          <Animated.View
+            style={[
+              styles.progressBarFill,
+              progressAnimatedStyle,
+              {
+                shadowColor: Colors.primary,
+                shadowOffset: { width: 0, height: 0 },
+              },
+            ]}
+          />
         </View>
-        <Text style={styles.progressText}>
+        <Animated.Text
+          style={styles.progressText}
+          entering={FadeInUp.delay(200)}
+        >
           Step {currentStep} of {totalSteps}
-        </Text>
-      </View>
+        </Animated.Text>
+      </Animated.View>
     );
   };
 
   const renderOptionCard = (
     option: CardOption,
     isSelected: boolean,
-    onPress: () => void
+    onPress: () => void,
+    index: number
   ) => (
-    <TouchableOpacity
+    <AnimatedCard
       key={option.value || option.label}
-      style={[styles.modernCard, isSelected && styles.modernCardActive]}
+      option={option}
+      isSelected={isSelected}
       onPress={onPress}
-      activeOpacity={0.7}
-    >
-      <View style={styles.modernCardContent}>
-        {(option.icon || option.emoji) && (
-          <View style={[styles.modernIconContainer, isSelected && styles.modernIconContainerActive]}>
-            {option.emoji ? (
-              <Text style={styles.emojiIcon}>{option.emoji}</Text>
-            ) : (
-              option.icon
-            )}
-          </View>
-        )}
-        <View style={styles.modernCardTextContainer}>
-          <Text style={[styles.modernCardTitle, isSelected && styles.modernCardTitleActive]}>
-            {option.label}
-          </Text>
-          {option.subtitle && (
-            <Text style={[styles.modernCardSubtitle, isSelected && styles.modernCardSubtitleActive]}>
-              {option.subtitle}
-            </Text>
-          )}
-        </View>
-      </View>
-      {isSelected && (
-        <View style={styles.checkmarkBadge}>
-          <Check size={16} color="#fff" strokeWidth={3} />
-        </View>
-      )}
-    </TouchableOpacity>
+      index={index}
+    />
   );
 
-  const renderStepContent = () => {
-    const animatedStyle = {
-      opacity: fadeAnim,
-      transform: [{ translateX: slideAnim }],
+  // Toggle button with animation
+  const AnimatedToggle = ({
+    isActive,
+    label,
+    onPress,
+    delay,
+  }: {
+    isActive: boolean;
+    label: string;
+    onPress: () => void;
+    delay: number;
+  }) => {
+    const scale = useSharedValue(1);
+
+    const animatedStyle = useAnimatedStyle(() => ({
+      transform: [{ scale: scale.value }],
+    }));
+
+    const handlePress = () => {
+      scale.value = withSequence(
+        withSpring(0.9, { damping: 10 }),
+        withSpring(1, { damping: 10 })
+      );
+      onPress();
     };
+
+    return (
+      <Animated.View
+        entering={FadeInUp.delay(delay).springify()}
+        style={animatedStyle}
+      >
+        <TouchableOpacity
+          style={[styles.toggleButton, isActive && styles.toggleButtonActive]}
+          onPress={handlePress}
+        >
+          <Text
+            style={[
+              styles.toggleButtonText,
+              isActive && styles.toggleButtonTextActive,
+            ]}
+          >
+            {label}
+          </Text>
+        </TouchableOpacity>
+      </Animated.View>
+    );
+  };
+
+  const renderStepContent = () => {
+    const enteringAnim = direction === "forward"
+      ? SlideInRight.springify().damping(15)
+      : FadeInUp.springify().damping(15);
+
+    const exitingAnim = direction === "forward"
+      ? SlideOutLeft.springify().damping(15)
+      : FadeOutUp.springify().damping(15);
 
     switch (currentStep) {
       case 1:
         return (
-          <Animated.View style={[styles.stepContainer, animatedStyle]}>
-            <Text style={styles.stepEmoji}>🎂</Text>
-            <Text style={styles.stepTitle}>When were you born?</Text>
-            <Text style={styles.stepSubtitle}>We use this to personalize your nutrition plan</Text>
-            <View style={styles.inputGroup}>
+          <Animated.View
+            key="step1"
+            style={styles.stepContainer}
+            entering={enteringAnim}
+            exiting={exitingAnim}
+          >
+            <Animated.Text
+              style={styles.stepEmoji}
+              entering={BounceIn.delay(200)}
+            >
+              🎂
+            </Animated.Text>
+            <Animated.Text
+              style={styles.stepTitle}
+              entering={FadeInUp.delay(100).springify()}
+            >
+              When were you born?
+            </Animated.Text>
+            <Animated.Text
+              style={styles.stepSubtitle}
+              entering={FadeInUp.delay(150).springify()}
+            >
+              We use this to personalize your nutrition plan
+            </Animated.Text>
+            <Animated.View
+              style={styles.inputGroup}
+              entering={FadeInUp.delay(200).springify()}
+            >
               <Dropdown
                 label="Birth Year"
                 placeholder="Select Year"
@@ -487,17 +646,40 @@ const PersonalDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
                 onSelect={(value) => setBirthMonth(value.toString())}
                 required
               />
-            </View>
+            </Animated.View>
           </Animated.View>
         );
 
       case 2:
         return (
-          <Animated.View style={[styles.stepContainer, animatedStyle]}>
-            <Text style={styles.stepEmoji}>⚖️</Text>
-            <Text style={styles.stepTitle}>Your body metrics</Text>
-            <Text style={styles.stepSubtitle}>Help us calculate your ideal nutrition</Text>
-            <View style={styles.inputGroup}>
+          <Animated.View
+            key="step2"
+            style={styles.stepContainer}
+            entering={enteringAnim}
+            exiting={exitingAnim}
+          >
+            <Animated.Text
+              style={styles.stepEmoji}
+              entering={BounceIn.delay(200)}
+            >
+              ⚖️
+            </Animated.Text>
+            <Animated.Text
+              style={styles.stepTitle}
+              entering={FadeInUp.delay(100).springify()}
+            >
+              Your body metrics
+            </Animated.Text>
+            <Animated.Text
+              style={styles.stepSubtitle}
+              entering={FadeInUp.delay(150).springify()}
+            >
+              Help us calculate your ideal nutrition
+            </Animated.Text>
+            <Animated.View
+              style={styles.inputGroup}
+              entering={FadeInUp.delay(200).springify()}
+            >
               <Input
                 label="Weight (lbs)"
                 value={weight}
@@ -528,19 +710,44 @@ const PersonalDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
                   />
                 </View>
               </View>
-            </View>
+            </Animated.View>
           </Animated.View>
         );
 
       case 3:
         return (
-          <Animated.View style={[styles.stepContainer, animatedStyle]}>
-            <Text style={styles.stepEmoji}>👤</Text>
-            <Text style={styles.stepTitle}>What's your biological sex?</Text>
-            <Text style={styles.stepSubtitle}>This helps us personalize your calorie needs</Text>
+          <Animated.View
+            key="step3"
+            style={styles.stepContainer}
+            entering={enteringAnim}
+            exiting={exitingAnim}
+          >
+            <Animated.Text
+              style={styles.stepEmoji}
+              entering={BounceIn.delay(200)}
+            >
+              👤
+            </Animated.Text>
+            <Animated.Text
+              style={styles.stepTitle}
+              entering={FadeInUp.delay(100).springify()}
+            >
+              What's your biological sex?
+            </Animated.Text>
+            <Animated.Text
+              style={styles.stepSubtitle}
+              entering={FadeInUp.delay(150).springify()}
+            >
+              This helps us personalize your calorie needs
+            </Animated.Text>
             <View style={styles.cardsContainer}>
-              {genders.map((g) =>
-                renderOptionCard(g, gender === g.value, () => setGender(g.value as "M" | "F" | "O"))
+              {genders.map((g, index) =>
+                renderOptionCard(
+                  g,
+                  gender === g.value,
+                  () => setGender(g.value as "M" | "F" | "O"),
+                  index
+                )
               )}
             </View>
           </Animated.View>
@@ -548,51 +755,96 @@ const PersonalDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
 
       case 4:
         return (
-          <Animated.View style={[styles.stepContainer, animatedStyle]}>
-            <Text style={styles.stepEmoji}>🥗</Text>
-            <Text style={styles.stepTitle}>What's your food preference?</Text>
-            <Text style={styles.stepSubtitle}>We'll tailor meal suggestions for you</Text>
+          <Animated.View
+            key="step4"
+            style={styles.stepContainer}
+            entering={enteringAnim}
+            exiting={exitingAnim}
+          >
+            <Animated.Text
+              style={styles.stepEmoji}
+              entering={BounceIn.delay(200)}
+            >
+              🥗
+            </Animated.Text>
+            <Animated.Text
+              style={styles.stepTitle}
+              entering={FadeInUp.delay(100).springify()}
+            >
+              What's your food preference?
+            </Animated.Text>
+            <Animated.Text
+              style={styles.stepSubtitle}
+              entering={FadeInUp.delay(150).springify()}
+            >
+              We'll tailor meal suggestions for you
+            </Animated.Text>
             <View style={styles.cardsContainer}>
-              {dietOptions.map((diet) =>
-                renderOptionCard(diet, dietPreference === diet.value, () =>
-                  setDietPreference(diet.value as "Veg" | "Non-Veg" | "Vegan")
+              {dietOptions.map((diet, index) =>
+                renderOptionCard(
+                  diet,
+                  dietPreference === diet.value,
+                  () => setDietPreference(diet.value as "Veg" | "Non-Veg" | "Vegan"),
+                  index
                 )
               )}
             </View>
-            <View style={styles.toggleQuestion}>
+            <Animated.View
+              style={styles.toggleQuestion}
+              entering={FadeInUp.delay(400).springify()}
+            >
               <Text style={styles.toggleLabel}>Currently on any diet plan?</Text>
               <View style={styles.toggleButtons}>
-                <TouchableOpacity
-                  style={[styles.toggleButton, onDiet === true && styles.toggleButtonActive]}
+                <AnimatedToggle
+                  isActive={onDiet === true}
+                  label="Yes"
                   onPress={() => setOnDiet(true)}
-                >
-                  <Text style={[styles.toggleButtonText, onDiet === true && styles.toggleButtonTextActive]}>
-                    Yes
-                  </Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={[styles.toggleButton, onDiet === false && styles.toggleButtonActive]}
+                  delay={450}
+                />
+                <AnimatedToggle
+                  isActive={onDiet === false}
+                  label="No"
                   onPress={() => setOnDiet(false)}
-                >
-                  <Text style={[styles.toggleButtonText, onDiet === false && styles.toggleButtonTextActive]}>
-                    No
-                  </Text>
-                </TouchableOpacity>
+                  delay={500}
+                />
               </View>
-            </View>
+            </Animated.View>
           </Animated.View>
         );
 
       case 5:
         return (
-          <Animated.View style={[styles.stepContainer, animatedStyle]}>
-            <Text style={styles.stepEmoji}>💪</Text>
-            <Text style={styles.stepTitle}>How active are you?</Text>
-            <Text style={styles.stepSubtitle}>This helps us estimate your daily calorie needs</Text>
+          <Animated.View
+            key="step5"
+            style={styles.stepContainer}
+            entering={enteringAnim}
+            exiting={exitingAnim}
+          >
+            <Animated.Text
+              style={styles.stepEmoji}
+              entering={BounceIn.delay(200)}
+            >
+              💪
+            </Animated.Text>
+            <Animated.Text
+              style={styles.stepTitle}
+              entering={FadeInUp.delay(100).springify()}
+            >
+              How active are you?
+            </Animated.Text>
+            <Animated.Text
+              style={styles.stepSubtitle}
+              entering={FadeInUp.delay(150).springify()}
+            >
+              This helps us estimate your daily calorie needs
+            </Animated.Text>
             <View style={styles.cardsContainer}>
-              {activityOptions.map((activity) =>
-                renderOptionCard(activity, activityLevel === activity.value, () =>
-                  setActivityLevel(activity.value || null)
+              {activityOptions.map((activity, index) =>
+                renderOptionCard(
+                  activity,
+                  activityLevel === activity.value,
+                  () => setActivityLevel(activity.value || null),
+                  index
                 )
               )}
             </View>
@@ -601,13 +853,38 @@ const PersonalDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
 
       case 6:
         return (
-          <Animated.View style={[styles.stepContainer, animatedStyle]}>
-            <Text style={styles.stepEmoji}>🌍</Text>
-            <Text style={styles.stepTitle}>What's your ethnicity?</Text>
-            <Text style={styles.stepSubtitle}>Helps us provide culturally relevant meal options</Text>
+          <Animated.View
+            key="step6"
+            style={styles.stepContainer}
+            entering={enteringAnim}
+            exiting={exitingAnim}
+          >
+            <Animated.Text
+              style={styles.stepEmoji}
+              entering={BounceIn.delay(200)}
+            >
+              🌍
+            </Animated.Text>
+            <Animated.Text
+              style={styles.stepTitle}
+              entering={FadeInUp.delay(100).springify()}
+            >
+              What's your ethnicity?
+            </Animated.Text>
+            <Animated.Text
+              style={styles.stepSubtitle}
+              entering={FadeInUp.delay(150).springify()}
+            >
+              Helps us provide culturally relevant meal options
+            </Animated.Text>
             <View style={styles.cardsContainer}>
-              {ethnicityOptions.map((eth) =>
-                renderOptionCard(eth, ethnicity === eth.value, () => setEthnicity(eth.value || null))
+              {ethnicityOptions.map((eth, index) =>
+                renderOptionCard(
+                  eth,
+                  ethnicity === eth.value,
+                  () => setEthnicity(eth.value || null),
+                  index
+                )
               )}
             </View>
           </Animated.View>
@@ -615,14 +892,37 @@ const PersonalDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
 
       case 7:
         return (
-          <Animated.View style={[styles.stepContainer, animatedStyle]}>
-            <Text style={styles.stepEmoji}>✈️</Text>
-            <Text style={styles.stepTitle}>How often do you travel?</Text>
-            <Text style={styles.stepSubtitle}>We'll suggest portable meal options</Text>
+          <Animated.View
+            key="step7"
+            style={styles.stepContainer}
+            entering={enteringAnim}
+            exiting={exitingAnim}
+          >
+            <Animated.Text
+              style={styles.stepEmoji}
+              entering={BounceIn.delay(200)}
+            >
+              ✈️
+            </Animated.Text>
+            <Animated.Text
+              style={styles.stepTitle}
+              entering={FadeInUp.delay(100).springify()}
+            >
+              How often do you travel?
+            </Animated.Text>
+            <Animated.Text
+              style={styles.stepSubtitle}
+              entering={FadeInUp.delay(150).springify()}
+            >
+              We'll suggest portable meal options
+            </Animated.Text>
             <View style={styles.cardsContainer}>
-              {travelFrequencyOptions.map((travel) =>
-                renderOptionCard(travel, travelPercentage === travel.value, () =>
-                  setTravelPercentage(travel.value || "")
+              {travelFrequencyOptions.map((travel, index) =>
+                renderOptionCard(
+                  travel,
+                  travelPercentage === travel.value,
+                  () => setTravelPercentage(travel.value || ""),
+                  index
                 )
               )}
             </View>
@@ -631,14 +931,37 @@ const PersonalDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
 
       case 8:
         return (
-          <Animated.View style={[styles.stepContainer, animatedStyle]}>
-            <Text style={styles.stepEmoji}>🎯</Text>
-            <Text style={styles.stepTitle}>What's your fitness goal?</Text>
-            <Text style={styles.stepSubtitle}>Let's create your personalized plan</Text>
+          <Animated.View
+            key="step8"
+            style={styles.stepContainer}
+            entering={enteringAnim}
+            exiting={exitingAnim}
+          >
+            <Animated.Text
+              style={styles.stepEmoji}
+              entering={BounceIn.delay(200)}
+            >
+              🎯
+            </Animated.Text>
+            <Animated.Text
+              style={styles.stepTitle}
+              entering={FadeInUp.delay(100).springify()}
+            >
+              What's your fitness goal?
+            </Animated.Text>
+            <Animated.Text
+              style={styles.stepSubtitle}
+              entering={FadeInUp.delay(150).springify()}
+            >
+              Let's create your personalized plan
+            </Animated.Text>
             <View style={styles.cardsContainer}>
-              {goalOptions.map((goal) =>
-                renderOptionCard(goal, goalType === goal.value, () =>
-                  setGoalType(goal.value as "LOSE" | "GAIN" | "MAINTAIN")
+              {goalOptions.map((goal, index) =>
+                renderOptionCard(
+                  goal,
+                  goalType === goal.value,
+                  () => setGoalType(goal.value as "LOSE" | "GAIN" | "MAINTAIN"),
+                  index
                 )
               )}
             </View>
@@ -663,14 +986,17 @@ const PersonalDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
           {renderProgressBar()}
           {renderStepContent()}
 
-          <View style={styles.buttonContainer}>
+          <Animated.View
+            style={styles.buttonContainer}
+            entering={FadeInUp.delay(300).springify()}
+          >
             <Button
               title={currentStep === totalSteps ? "Complete Setup" : "Continue"}
               onPress={handleContinue}
               loading={loading}
               style={styles.continueButton}
             />
-          </View>
+          </Animated.View>
         </View>
       </ScrollContainer>
     </>
