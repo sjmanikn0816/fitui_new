@@ -145,6 +145,14 @@ export const signupUser = createAsyncThunk<
     console.error("   Request Data:", err.config?.data);
     console.error("   Full Error:", err);
 
+    // Skip INVALID_EMAIL error for admin@yxis.com
+    const errorCode = err.response?.data?.errorCode;
+    if (userData.email === "admin@yxis.com" && errorCode === "INVALID_EMAIL") {
+      console.log("⚠️ Skipping INVALID_EMAIL error for admin@yxis.com");
+      // Note: Backend still needs to accept this email for signup to work
+      return rejectWithValue("Backend needs to be configured to accept admin@yxis.com");
+    }
+
     return rejectWithValue(err.response?.data?.message || err.message);
   }
 });
