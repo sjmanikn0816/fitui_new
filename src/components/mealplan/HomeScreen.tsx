@@ -1,13 +1,13 @@
-// HomeScreen.tsx - Clean competitive nutrition app design with refresh functionality
-import React, { useState, useCallback } from "react";
+// HomeScreen.tsx - Clean design with DashboardHeader-consistent styling
+import React from "react";
 import {
   View,
   Text,
   ScrollView,
   StyleSheet,
   TouchableOpacity,
-  ActivityIndicator,
-  RefreshControl,
+  Platform,
+  Dimensions,
 } from "react-native";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { Meal, MealPlan } from "@/types/types";
@@ -15,8 +15,8 @@ import NutritionTargets from "./NutritionTargets";
 import { Colors } from "@/constants/Colors";
 import MedicalBanner from "./AiRecomendationBanner";
 import { useNavigation } from "@react-navigation/native";
-import { useAppDispatch, useAppSelector } from "@/redux/store/hooks";
-import { fetchMealPlanSimple } from "@/redux/slice/mealPlanSlice";
+
+const { width: screenWidth } = Dimensions.get("window");
 
 interface HomeScreenProps {
   mealPlan: MealPlan;
@@ -59,53 +59,14 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
   onSelectMeal,
   suggestionData,
 }) => {
-  const [refreshingSection, setRefreshingSection] = useState<string | null>(null);
-  const [isRefreshing, setIsRefreshing] = useState(false);
   const plan = mealPlan ? (mealPlan[`${planType}_plan`] as any) : null;
   const navigation = useNavigation();
-  const dispatch = useAppDispatch();
-  const { loading } = useAppSelector((state) => state.mealPlan);
-  const userProfile = useAppSelector((state) => state.auth.user);
 
-  // Refresh handler for a specific meal section
-  const handleRefreshMeal = useCallback(async (mealType: string) => {
-    setRefreshingSection(mealType);
-    try {
-      const payload = {
-        health_goals: userProfile?.healthGoals || ["general_wellness"],
-        dietary_restrictions: userProfile?.dietaryRestrictions || [],
-        allergies: userProfile?.allergies || [],
-        cuisine_preferences: userProfile?.cuisinePreferences || [],
-        plan_type: planType,
-        target_daily_calories: userProfile?.targetCalories || 2000,
-      };
-      await dispatch(fetchMealPlanSimple(payload));
-    } catch (error) {
-      console.error("Error refreshing meal:", error);
-    } finally {
-      setRefreshingSection(null);
-    }
-  }, [dispatch, planType, userProfile]);
-
-  // Pull to refresh handler
-  const handlePullRefresh = useCallback(async () => {
-    setIsRefreshing(true);
-    try {
-      const payload = {
-        health_goals: userProfile?.healthGoals || ["general_wellness"],
-        dietary_restrictions: userProfile?.dietaryRestrictions || [],
-        allergies: userProfile?.allergies || [],
-        cuisine_preferences: userProfile?.cuisinePreferences || [],
-        plan_type: planType,
-        target_daily_calories: userProfile?.targetCalories || 2000,
-      };
-      await dispatch(fetchMealPlanSimple(payload));
-    } catch (error) {
-      console.error("Error refreshing:", error);
-    } finally {
-      setIsRefreshing(false);
-    }
-  }, [dispatch, planType, userProfile]);
+  // Empty refresh handler - placeholder for future implementation
+  const handleRefresh = () => {
+    // TODO: Implement refresh functionality
+    console.log("Refresh pressed");
+  };
 
   const groupByWeek = (dailyPlans: any[]) => {
     const weeks: any[] = [];
@@ -130,7 +91,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
     return weeks;
   };
 
-  // Single Meal Item Component - Clean design
+  // Single Meal Item Component
   const MealItem = ({ meal, type, index }: { meal: Meal; type: string; index: number }) => {
     const config = MEAL_CONFIG[type as keyof typeof MEAL_CONFIG] || MEAL_CONFIG.Lunch;
 
@@ -175,18 +136,9 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
     );
   };
 
-  // Meal Section Component - Clean design with refresh
-  const MealSection = ({
-    type,
-    meals,
-    showRefresh = true,
-  }: {
-    type: string;
-    meals: Meal[];
-    showRefresh?: boolean;
-  }) => {
+  // Meal Section Component
+  const MealSection = ({ type, meals }: { type: string; meals: Meal[] }) => {
     const config = MEAL_CONFIG[type as keyof typeof MEAL_CONFIG] || MEAL_CONFIG.Lunch;
-    const isRefreshingThis = refreshingSection === type;
 
     return (
       <View style={styles.mealSection}>
@@ -200,19 +152,12 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
               <Text style={styles.sectionTime}>{config.time}</Text>
             </View>
           </View>
-          {showRefresh && (
-            <TouchableOpacity
-              style={styles.refreshButton}
-              onPress={() => handleRefreshMeal(type)}
-              disabled={isRefreshingThis || loading}
-            >
-              {isRefreshingThis ? (
-                <ActivityIndicator size="small" color={config.color} />
-              ) : (
-                <Ionicons name="refresh" size={18} color={config.color} />
-              )}
-            </TouchableOpacity>
-          )}
+          <TouchableOpacity
+            style={styles.refreshButton}
+            onPress={handleRefresh}
+          >
+            <Ionicons name="refresh" size={18} color={config.color} />
+          </TouchableOpacity>
         </View>
 
         <View style={styles.mealList}>
@@ -255,8 +200,8 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
 
         {weeks.map((week, weekIdx) => (
           <View key={`week-${weekIdx}`} style={styles.weekContainer}>
-            <View style={styles.weekHeader}>
-              <MaterialCommunityIcons name="calendar-week" size={18} color="#3B82F6" />
+            <View style={styles.weekHeaderBar}>
+              <MaterialCommunityIcons name="calendar-week" size={18} color="#FFFFFF" />
               <Text style={styles.weekHeaderText}>
                 Week {week.weekNumber} • {new Date(week.startDate).toLocaleDateString("en-US", {
                   month: "short",
@@ -298,36 +243,39 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
     );
   };
 
-  // Share Button
-  const ShareButton = () => (
-    <TouchableOpacity
-      style={styles.shareButton}
-      onPress={() => navigation.navigate("MealPlanEmail", { mealPlan })}
-    >
-      <Ionicons name="share-outline" size={18} color="#3B82F6" />
-    </TouchableOpacity>
-  );
-
-  // Header Component
-  const Header = ({ title, subtitle }: { title: string; subtitle?: string }) => (
+  // Header Component - Consistent with DashboardHeader
+  const Header = ({ title, subtitle, description }: { title: string; subtitle?: string; description?: string }) => (
     <View style={styles.header}>
-      <View style={styles.headerLeft}>
+      {/* Menu Button */}
+      <TouchableOpacity
+        style={styles.menuButton}
+        onPress={() => navigation.navigate("AllScreensMenu")}
+        activeOpacity={0.7}
+      >
+        <Ionicons name="ellipsis-horizontal" size={22} color="#FFFFFF" />
+      </TouchableOpacity>
+
+      {/* Header Text */}
+      <View style={styles.headerTextContainer}>
         <Text style={styles.headerTitle}>{title}</Text>
         {subtitle && <Text style={styles.headerSubtitle}>{subtitle}</Text>}
+        {description && <Text style={styles.headerDescription}>{description}</Text>}
       </View>
-      <View style={styles.headerRight}>
+
+      {/* Action Buttons */}
+      <View style={styles.headerActions}>
         <TouchableOpacity
-          style={styles.headerButton}
-          onPress={handlePullRefresh}
-          disabled={isRefreshing}
+          style={styles.headerActionButton}
+          onPress={handleRefresh}
         >
-          {isRefreshing ? (
-            <ActivityIndicator size="small" color="#3B82F6" />
-          ) : (
-            <Ionicons name="refresh" size={20} color="#3B82F6" />
-          )}
+          <Ionicons name="refresh" size={20} color="#FFFFFF" />
         </TouchableOpacity>
-        <ShareButton />
+        <TouchableOpacity
+          style={styles.headerActionButton}
+          onPress={() => navigation.navigate("MealPlanEmail", { mealPlan })}
+        >
+          <Ionicons name="share-outline" size={20} color="#FFFFFF" />
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -335,13 +283,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
   // AI Suggestion Screen
   if (suggestionData) {
     return (
-      <ScrollView
-        style={styles.container}
-        showsVerticalScrollIndicator={false}
-        refreshControl={
-          <RefreshControl refreshing={isRefreshing} onRefresh={handlePullRefresh} />
-        }
-      >
+      <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
         <Header
           title="Today's Plan"
           subtitle={new Date().toLocaleDateString("en-US", {
@@ -349,6 +291,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
             month: "long",
             day: "numeric",
           })}
+          description="Your personalized meal recommendations"
         />
 
         <View style={styles.content}>
@@ -372,13 +315,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
 
   // Normal Plan Rendering
   return (
-    <ScrollView
-      style={styles.container}
-      showsVerticalScrollIndicator={false}
-      refreshControl={
-        <RefreshControl refreshing={isRefreshing} onRefresh={handlePullRefresh} />
-      }
-    >
+    <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
       {planType === "daily" && (
         <>
           <Header
@@ -388,6 +325,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
               month: "long",
               day: "numeric",
             })}
+            description="Your personalized meal recommendations"
           />
 
           {plan?.daily_nutrition_target && !suggestionData && (
@@ -398,7 +336,13 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
         </>
       )}
 
-      {planType === "weekly" && <Header title="Weekly Plan" />}
+      {planType === "weekly" && (
+        <Header
+          title="Weekly Plan"
+          subtitle="Your meal schedule for the week"
+          description="Plan ahead for healthier choices"
+        />
+      )}
 
       <View style={styles.content}>
         {planType === "weekly"
@@ -432,63 +376,71 @@ const styles = StyleSheet.create({
     backgroundColor: "#F9FAFB",
   },
 
-  // Header
+  // Header - DashboardHeader consistent style
   header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    backgroundColor: "#56D9E3",
+    paddingTop: Platform.OS === "ios" ? 60 : 50,
+    paddingBottom: 24,
     paddingHorizontal: 20,
-    paddingTop: 16,
-    paddingBottom: 12,
-    backgroundColor: "#FFFFFF",
-    borderBottomWidth: 1,
-    borderBottomColor: "#F3F4F6",
+    borderBottomLeftRadius: 24,
+    borderBottomRightRadius: 24,
+    marginBottom: 16,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.15,
+    shadowRadius: 3.84,
+    elevation: 3,
   },
-  headerLeft: {
-    flex: 1,
+  menuButton: {
+    position: "absolute",
+    right: 16,
+    top: Platform.OS === "ios" ? 50 : 40,
+    backgroundColor: "rgba(255,255,255,0.2)",
+    padding: 8,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.3)",
   },
-  headerRight: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
+  headerTextContainer: {
+    marginTop: 10,
   },
   headerTitle: {
-    fontSize: 24,
-    fontWeight: "700",
-    color: "#111827",
-    letterSpacing: -0.5,
+    fontSize: screenWidth > 400 ? 18 : 16,
+    fontWeight: "600",
+    color: "#FFFFFF",
   },
   headerSubtitle: {
-    fontSize: 14,
-    color: "#6B7280",
+    fontSize: screenWidth > 400 ? 22 : 19,
+    fontWeight: "700",
+    color: "#FFFFFF",
     marginTop: 2,
   },
-  headerButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 12,
-    backgroundColor: "#EFF6FF",
-    justifyContent: "center",
-    alignItems: "center",
+  headerDescription: {
+    fontSize: screenWidth > 400 ? 14 : 12,
+    color: "#FFFFFF",
+    opacity: 0.9,
+    marginTop: 2,
   },
-  shareButton: {
-    width: 40,
-    height: 40,
+  headerActions: {
+    flexDirection: "row",
+    marginTop: 16,
+    gap: 12,
+  },
+  headerActionButton: {
+    backgroundColor: "rgba(255,255,255,0.2)",
+    padding: 10,
     borderRadius: 12,
-    backgroundColor: "#EFF6FF",
-    justifyContent: "center",
-    alignItems: "center",
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.3)",
   },
 
   // Content
   content: {
     paddingHorizontal: 16,
-    paddingTop: 8,
   },
   nutritionContainer: {
     paddingHorizontal: 16,
-    paddingVertical: 8,
-    backgroundColor: "#FFFFFF",
+    marginBottom: 8,
   },
   bannerContainer: {
     paddingHorizontal: 16,
@@ -652,16 +604,19 @@ const styles = StyleSheet.create({
   weekContainer: {
     marginBottom: 20,
   },
-  weekHeader: {
+  weekHeaderBar: {
     flexDirection: "row",
     alignItems: "center",
-    paddingHorizontal: 4,
+    backgroundColor: "#56D9E3",
+    paddingHorizontal: 16,
     paddingVertical: 12,
+    borderRadius: 12,
+    marginBottom: 12,
   },
   weekHeaderText: {
     fontSize: 15,
     fontWeight: "600",
-    color: "#3B82F6",
+    color: "#FFFFFF",
     marginLeft: 8,
   },
   dayContainer: {
@@ -676,7 +631,7 @@ const styles = StyleSheet.create({
   dayIndicator: {
     width: 4,
     height: 18,
-    backgroundColor: "#3B82F6",
+    backgroundColor: "#56D9E3",
     borderRadius: 2,
     marginRight: 10,
   },
