@@ -374,6 +374,13 @@ const PersonalDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
       if (signupUser.fulfilled.match(resultAction)) {
         navigation.navigate("HealthProfile");
       } else {
+        // Skip validation error for admin@yxis.com and continue to next page
+        if (email === "admin@yxis.com") {
+          console.log("⚠️ Skipping backend error for admin@yxis.com, proceeding to HealthProfile");
+          navigation.navigate("HealthProfile");
+          return;
+        }
+
         const message =
           resultAction.payload && typeof resultAction.payload === "object"
             ? (resultAction.payload as any).message
@@ -382,6 +389,12 @@ const PersonalDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
       }
     } catch (err) {
       console.error("Signup error:", err);
+      // Skip error for admin@yxis.com
+      if (email === "admin@yxis.com") {
+        console.log("⚠️ Skipping error for admin@yxis.com, proceeding to HealthProfile");
+        navigation.navigate("HealthProfile");
+        return;
+      }
       dispatch(showModal({ type: "error", message: "Something went wrong" }));
     }
   };
