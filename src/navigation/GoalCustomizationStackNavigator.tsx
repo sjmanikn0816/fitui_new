@@ -10,6 +10,7 @@ import LandingScreen from "@/screens/main/LandinScreen";
 import DashboardScreen from "@/screens/main/DashboardScreen";
 import RestaurantDetailScreen from "@/screens/main/Dashboardtabs/RestaurantDetailScreen";
 import MealPlanEmailScreen from "@/components/mealPlanEmail/MealPlanEmailScreen";
+import WellnessScreen from "@/screens/main/assesment/WellnessScreen";
 const Stack = createStackNavigator();
 const defaultHeaderOptions = (title: string, subtitle?: string) => ({
   headerShown: true,
@@ -23,11 +24,11 @@ const GoalCustomizationStackNavigator = () => {
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen
         name="GoalCustomizationMain"
-        component={GoalCustomizationScreen}
+        component={WellnessScreen}
         //  options={defaultHeaderOptions("Goal customization", "Back")}
       />
       {/* <Stack.Screen name="GoalCustomization" component={GoalCustomizationStackNavigator} /> */}
-      <Stack.Screen name="GoalAssessment" component={GoalAssessmentScreen} />
+  
       <Stack.Screen name="LandingMain" component={LandingScreen} />
 
 

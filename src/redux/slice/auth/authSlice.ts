@@ -124,34 +124,7 @@ export const signupUser = createAsyncThunk<
       userId: data.userId,
     };
   } catch (err: any) {
-    // ============================================================================
-    // TODO: REMOVE THIS HARDCODED EXCEPTION - Temporary workaround for testing
-    // ============================================================================
-    // TEMPORARY: Allow admin@yxis.com to bypass ALL signup errors
-    // This is a HARDCODED exception and should be removed in production
-    // ============================================================================
-    const isAdminEmail = userData.email?.toLowerCase() === "admin@yxis.com";
-
-    if (isAdminEmail) {
-      console.warn("⚠️ HARDCODED EXCEPTION: Bypassing ALL signup errors for admin@yxis.com");
-      console.warn("⚠️ TODO: Remove this hardcoded logic before production deployment");
-      console.warn(`⚠️ Original error: ${err.response?.data?.message || err.message}`);
-
-      // Return a mock success response for admin@yxis.com - bypasses ALL errors
-      // In a real scenario, you might want to call the login endpoint instead
-      return {
-        token: "temp_token_for_admin", // Mock token - backend should handle this properly
-        refreshToken: "temp_refresh_token_for_admin",
-        user: { email: userData.email, firstName: userData.firstName, lastName: userData.lastName },
-        userId: 0, // Mock user ID
-      };
-    }
-    // ============================================================================
-    // END TEMPORARY HARDCODED EXCEPTION
-    // ============================================================================
-
-    const errorMessage = err.response?.data?.message || err.message || "";
-    return rejectWithValue(errorMessage);
+    return rejectWithValue(err.response?.data?.message || err.message);
   }
 });
 

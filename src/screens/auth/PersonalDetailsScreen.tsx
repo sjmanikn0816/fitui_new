@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { View, Text, TouchableOpacity, Animated, Dimensions } from "react-native";
+import { View, Text, TouchableOpacity, Animated } from "react-native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { AuthStackParamList } from "../../navigation/AuthNavigator";
 import Button from "../../components/ui/Button";
@@ -25,7 +25,6 @@ import {
   Calendar,
   Clock,
   Briefcase,
-  ChevronRight,
   Check,
   TrendingDown,
   TrendingUp,
@@ -61,7 +60,6 @@ const PersonalDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
     provider = "",
   } = route.params || {};
 
-  // State variables (keeping same keys for backend compatibility)
   const [birthYear, setBirthYear] = useState("");
   const [birthMonth, setBirthMonth] = useState("");
   const [heightFeet, setHeightFeet] = useState("");
@@ -75,13 +73,13 @@ const PersonalDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
   const [activityLevel, setActivityLevel] = useState<string | null>(null);
   const [ethnicity, setEthnicity] = useState<string | null>(null);
   const [travelPercentage, setTravelPercentage] = useState("");
-  const [goalType, setGoalType] = useState<"LOSE" | "GAIN" | "MAINTAIN" | null>(null);
+  const [goalType, setGoalType] = useState<"LOSE" | "GAIN" | "MAINTAIN" | null>(
+    null
+  );
 
-  // Step management
   const [currentStep, setCurrentStep] = useState(1);
   const totalSteps = 8;
 
-  // Animation values
   const fadeAnim = useRef(new Animated.Value(1)).current;
   const slideAnim = useRef(new Animated.Value(0)).current;
   const progressAnim = useRef(new Animated.Value(0)).current;
@@ -89,7 +87,6 @@ const PersonalDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
   const dispatch = useAppDispatch();
   const { loading } = useAppSelector((state: RootState) => state.auth);
 
-  // Options data
   const genders: CardOption[] = [
     { label: "Male", value: "M" },
     { label: "Female", value: "F" },
@@ -184,16 +181,14 @@ const PersonalDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
     },
   ];
 
-  // Height options: 4-9 feet only (no one is above 9 feet)
   const feetOptions = Array.from({ length: 6 }, (_, i) => ({
     label: `${i + 4} ft`,
     value: (i + 4).toString(),
   }));
 
-  // Birth year options: Only show years for 18+ age (app is 18+ only)
   const currentYear = new Date().getFullYear();
-  const minYear = currentYear - 100; // 100 years ago
-  const maxYear = currentYear - 18; // Must be at least 18 years old
+  const minYear = currentYear - 100;
+  const maxYear = currentYear - 18;
   const yearOptions = Array.from({ length: maxYear - minYear + 1 }, (_, i) => ({
     label: (maxYear - i).toString(),
     value: (maxYear - i).toString(),
@@ -209,7 +204,6 @@ const PersonalDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
     value: i.toString(),
   }));
 
-  // Calculate age
   const age = (() => {
     if (!birthYear || !birthMonth) return 0;
     const today = new Date();
@@ -222,7 +216,6 @@ const PersonalDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
     return calculatedAge;
   })();
 
-  // Animate progress bar
   useEffect(() => {
     Animated.spring(progressAnim, {
       toValue: (currentStep / totalSteps) * 100,
@@ -232,7 +225,6 @@ const PersonalDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
     }).start();
   }, [currentStep]);
 
-  // Step transition animation
   const animateStepTransition = (direction: "forward" | "backward") => {
     Animated.sequence([
       Animated.parallel([
@@ -370,7 +362,7 @@ const PersonalDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
       hasMedicalCondition: false,
       watchesDietContent: false,
       ethnicity,
-      goal: goalType ? goalType.toUpperCase() : null,
+      goal: goalType ? goalType : null,
       birthMonth,
       birthYear,
       activityLevel,
@@ -394,7 +386,6 @@ const PersonalDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
     }
   };
 
-  // Render progress bar
   const renderProgressBar = () => {
     const progressWidth = progressAnim.interpolate({
       inputRange: [0, 100],
@@ -413,7 +404,6 @@ const PersonalDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
     );
   };
 
-  // Render option card
   const renderOptionCard = (
     option: CardOption,
     isSelected: boolean,
@@ -454,7 +444,6 @@ const PersonalDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
     </TouchableOpacity>
   );
 
-  // Render current step content
   const renderStepContent = () => {
     const animatedStyle = {
       opacity: fadeAnim,
@@ -462,7 +451,7 @@ const PersonalDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
     };
 
     switch (currentStep) {
-      case 1: // Age
+      case 1:
         return (
           <Animated.View style={[styles.stepContainer, animatedStyle]}>
             <Text style={styles.stepEmoji}>🎂</Text>
@@ -489,7 +478,7 @@ const PersonalDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
           </Animated.View>
         );
 
-      case 2: // Body Metrics
+      case 2:
         return (
           <Animated.View style={[styles.stepContainer, animatedStyle]}>
             <Text style={styles.stepEmoji}>⚖️</Text>
@@ -530,7 +519,7 @@ const PersonalDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
           </Animated.View>
         );
 
-      case 3: // Gender
+      case 3:
         return (
           <Animated.View style={[styles.stepContainer, animatedStyle]}>
             <Text style={styles.stepEmoji}>👤</Text>
@@ -544,7 +533,7 @@ const PersonalDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
           </Animated.View>
         );
 
-      case 4: // Food Preference
+      case 4:
         return (
           <Animated.View style={[styles.stepContainer, animatedStyle]}>
             <Text style={styles.stepEmoji}>🥗</Text>
@@ -581,7 +570,7 @@ const PersonalDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
           </Animated.View>
         );
 
-      case 5: // Activity Level
+      case 5:
         return (
           <Animated.View style={[styles.stepContainer, animatedStyle]}>
             <Text style={styles.stepEmoji}>💪</Text>
@@ -597,7 +586,7 @@ const PersonalDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
           </Animated.View>
         );
 
-      case 6: // Ethnicity
+      case 6:
         return (
           <Animated.View style={[styles.stepContainer, animatedStyle]}>
             <Text style={styles.stepEmoji}>🌍</Text>
@@ -611,7 +600,7 @@ const PersonalDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
           </Animated.View>
         );
 
-      case 7: // Travel Frequency
+      case 7:
         return (
           <Animated.View style={[styles.stepContainer, animatedStyle]}>
             <Text style={styles.stepEmoji}>✈️</Text>
@@ -627,7 +616,7 @@ const PersonalDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
           </Animated.View>
         );
 
-      case 8: // Goal
+      case 8:
         return (
           <Animated.View style={[styles.stepContainer, animatedStyle]}>
             <Text style={styles.stepEmoji}>🎯</Text>

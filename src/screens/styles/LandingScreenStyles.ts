@@ -85,7 +85,7 @@ export const styles = StyleSheet.create({
     flex: 1,
     ...Typography.body,
     color: Colors.black,
-    fontWeight: 800,
+    fontWeight: "800",
     paddingVertical: verticalScale(4),
   },
   addButton: {

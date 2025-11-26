@@ -8,17 +8,26 @@ export const screensList = [
   },
 
   {
-    id: "goal-assessment",
+    id: "GoalCustomizationMain",
     label: "Goal Assessment",
     description: "Assess your fitness and health goals",
     icon: "pulse-outline",
     color: "#10B981",
   },
+
   {
-    id: "goal-customization",
-    label: "Goal Customization",
-    description: "Customize your personal fitness goals",
-    icon: "options-outline",
+    id: "WeeklyMeal",
+    label: "Weekly Meal Plan",
+    description: "View your personalized weekly meal plan",
+    icon: "calendar-outline",   // ⭐ Added better icon
     color: "#3B82F6",
   },
+
+  // {
+  //   id: "goal-customization",
+  //   label: "Goal Customization",
+  //   description: "Customize your personal fitness goals",
+  //   icon: "options-outline",
+  //   color: "#3B82F6",
+  // },
 ];

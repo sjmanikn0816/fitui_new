@@ -14,6 +14,8 @@ import DashboardScreen from "@/screens/main/DashboardScreen";
 import RestaurantDetailScreen from "@/screens/main/Dashboardtabs/RestaurantDetailScreen";
 import MealPlanEmailScreen from "@/components/mealPlanEmail/MealPlanEmailScreen";
 import { LandingStackNavigator } from "./LandingStackNavigator";
+import WellnessScreen from "@/screens/main/assesment/WellnessScreen";
+import WeeklyMealPlanner from "@/screens/main/profile/WeeklyPlanScreen";
 
 const Stack = createStackNavigator();
 
@@ -28,32 +30,19 @@ const defaultHeaderOptions = (title: string, subtitle?: string) => ({
 export const AllScreenStackNavigator = () => {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
-   
-    
+      <Stack.Screen name="AllScreensMenu" component={AllScreensMenu} />
       <Stack.Screen
-        name="AllScreensMenu"
-        component={AllScreensMenu}
-        
-        
-      />
-      <Stack.Screen
-        name="GoalCustomization"
+        name="GoalCustomizationMain"
         component={GoalCustomizationStackNavigator}
       />
       <Stack.Screen name="LandingMain" component={LandingStackNavigator} />
- 
-      <Stack.Screen
-        name="Profile"
-        component={ProfileStackNavigator}
-      />
- 
-      <Stack.Screen
-        name="GoalAssessment"
-        component={GoalAssessmentScreen}
-      />
+
+      <Stack.Screen name="Profile" component={ProfileStackNavigator} />
+
+      {/* <Stack.Screen name="GoalCustomizationMain" component={WellnessScreen} /> */}
+        <Stack.Screen name="WeeklyMeal" component={WeeklyMealPlanner} />
 
       {/* Profile Stack */}
-     
     </Stack.Navigator>
   );
 };

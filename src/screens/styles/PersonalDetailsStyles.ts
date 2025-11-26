@@ -5,7 +5,6 @@ import { scale, verticalScale } from "@/utils/responsive";
 import { StyleSheet } from "react-native";
 
 export const styles = StyleSheet.create({
-  // Legacy styles (keeping for compatibility)
   container: {
     flex: 1,
     backgroundColor: Colors.white,
@@ -18,6 +17,13 @@ export const styles = StyleSheet.create({
     alignItems: "center",
     paddingTop: Spacing.xl,
     marginBottom: Spacing.lg,
+  },
+  modernContainer: {
+    flex: 1,
+    paddingHorizontal: Spacing.lg,
+    paddingTop: verticalScale(24),
+    paddingBottom: verticalScale(24),
+    justifyContent: "space-between",
   },
   content: {
     flex: 1,
@@ -201,9 +207,9 @@ export const styles = StyleSheet.create({
     borderColor: Colors.primary,
   },
   buttonContainer: {
-    marginTop: "auto",
-    paddingTop: verticalScale(20),
-    paddingBottom: verticalScale(16),
+    width: "100%",
+    paddingTop: verticalScale(24),
+    paddingBottom: verticalScale(8),
   },
   backButton: {
     flex: 0.35,
@@ -213,6 +219,8 @@ export const styles = StyleSheet.create({
   continueButton: {
     backgroundColor: Colors.primary,
     paddingVertical: verticalScale(14),
+    width: "100%",
+    alignSelf: "center",
   },
   backText: {
     color: Colors.black,
@@ -258,14 +266,7 @@ export const styles = StyleSheet.create({
     backgroundColor: Colors.primary,
   },
 
-  // ===== MODERN STEP-BASED STYLES =====
-  modernContainer: {
-    flex: 1,
-    paddingHorizontal: Spacing.lg,
-    paddingTop: verticalScale(10),
-  },
-
-  // Progress Bar
+  // Progress bar for modern multi-step flow
   progressBarContainer: {
     marginBottom: verticalScale(30),
   },
@@ -289,12 +290,10 @@ export const styles = StyleSheet.create({
     fontSize: 12,
   },
 
-  // Step Container
+  // Step container and headings
   stepContainer: {
     flex: 1,
   },
-
-  // Step Emoji & Title
   stepEmoji: {
     fontSize: 64,
     textAlign: "center",
@@ -307,7 +306,6 @@ export const styles = StyleSheet.create({
     color: Colors.text,
     textAlign: "center",
     marginBottom: verticalScale(8),
-    lineHeight: 34,
   },
   stepSubtitle: {
     ...Typography.body,
@@ -316,15 +314,13 @@ export const styles = StyleSheet.create({
     textAlign: "center",
     marginBottom: verticalScale(32),
     paddingHorizontal: Spacing.md,
-    lineHeight: 22,
   },
 
-  // Input Group
   inputGroup: {
     gap: Spacing.md,
   },
 
-  // Modern Cards Container
+  // Modern card layout used for options
   cardsContainer: {
     gap: Spacing.md,
   },
@@ -333,8 +329,6 @@ export const styles = StyleSheet.create({
     flexWrap: "wrap",
     gap: Spacing.sm,
   },
-
-  // Modern Card
   modernCard: {
     flexDirection: "row",
     alignItems: "center",
@@ -359,14 +353,12 @@ export const styles = StyleSheet.create({
     shadowRadius: 12,
     elevation: 3,
   },
-
   modernCardContent: {
     flexDirection: "row",
     alignItems: "center",
     gap: scale(14),
     flex: 1,
   },
-
   modernIconContainer: {
     justifyContent: "center",
     alignItems: "center",
@@ -378,15 +370,12 @@ export const styles = StyleSheet.create({
   modernIconContainerActive: {
     backgroundColor: "#DBEAFE",
   },
-
   emojiIcon: {
     fontSize: 28,
   },
-
   modernCardTextContainer: {
     flex: 1,
   },
-
   modernCardTitle: {
     fontSize: 16,
     fontWeight: "600",
@@ -397,7 +386,6 @@ export const styles = StyleSheet.create({
     color: Colors.primary,
     fontWeight: "700",
   },
-
   modernCardSubtitle: {
     fontSize: 13,
     color: Colors.textSecondary,
@@ -406,7 +394,6 @@ export const styles = StyleSheet.create({
   modernCardSubtitleActive: {
     color: "#3B82F6",
   },
-
   checkmarkBadge: {
     width: 28,
     height: 28,
@@ -416,7 +403,7 @@ export const styles = StyleSheet.create({
     alignItems: "center",
   },
 
-  // Toggle Question (for Yes/No)
+  // Yes/No toggle styles
   toggleQuestion: {
     marginTop: verticalScale(24),
     paddingTop: verticalScale(20),

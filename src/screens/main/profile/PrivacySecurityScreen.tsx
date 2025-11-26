@@ -13,6 +13,8 @@ import * as LocalAuthentication from "expo-local-authentication";
 import { useAppDispatch, useAppSelector } from "@/redux/store/hooks";
 import { styles } from "./styles/PrivacySecurityScreenStyles";
 import { SecureStorage } from "@/services/secureStorage";
+import { showModal } from "@/redux/slice/modalSlice";
+import { showConfirmation } from "@/redux/slice/conformationSlice";
 
 interface PrivacySecurityScreenProps {
   navigation: any;
@@ -22,6 +24,10 @@ const PrivacySecurityScreen = ({ navigation }: PrivacySecurityScreenProps) => {
   const dispatch = useAppDispatch();
   const [twoFactorEnabled, setTwoFactorEnabled] = useState(false);
   const [biometricEnabled, setBiometricEnabled] = useState(false);
+
+  const user = useAppSelector((state) => state.auth.user);
+  const token = useAppSelector((state) =>state.auth.token)
+
 
   useEffect(() => {
     const loadBiometricPref = async () => {
@@ -34,6 +40,7 @@ const PrivacySecurityScreen = ({ navigation }: PrivacySecurityScreenProps) => {
   const handleChangePassword = () => {
     navigation.navigate("ChangePassword");
   };
+  
 
   /** 🔐 Toggle Biometric Authentication */
   const handleBiometricToggle = async (enabled: boolean) => {
@@ -67,6 +74,25 @@ const PrivacySecurityScreen = ({ navigation }: PrivacySecurityScreenProps) => {
     }
   };
 
+  const handleTFA = async () => {
+    if (!user || !user.userId) {
+      dispatch(showModal({ type: "error", message: "User ID not found." }));
+      return;
+    }
+
+    dispatch(
+      showConfirmation({
+        title: 'Edit profile',
+        message: 'Are you sure you want to enable Two-Factor Authentication?',
+        onConfirm: async () => {
+
+        },
+        onCancel: () => { },
+      })
+    );
+  };
+
+
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView style={styles.scrollView}>
@@ -78,23 +104,14 @@ const PrivacySecurityScreen = ({ navigation }: PrivacySecurityScreenProps) => {
           </View>
 
           {/* Two-Factor Authentication */}
-          <View style={styles.settingItem}>
-            <View style={styles.settingLeft}>
-              <Text style={styles.phoneIcon}>📱</Text>
-              <View style={styles.settingTextContainer}>
-                <Text style={styles.settingTitle}>Two-Factor Authentication</Text>
-                <Text style={styles.settingDescription}>
-                  Add an extra layer of security to your account
-                </Text>
-              </View>
-            </View>
-            <Switch
-              value={twoFactorEnabled}
-              onValueChange={setTwoFactorEnabled}
-              trackColor={{ false: "#D1D5DB", true: "#34D399" }}
-              thumbColor="#FFFFFF"
-            />
-          </View>
+          <TouchableOpacity
+            style={styles.passwordButton}
+            onPress={handleTFA}
+          >
+            <Text style={styles.phoneIcon}>📱</Text>
+            <Text style={styles.passwordText}>Two-Factor Authentication</Text>
+            <Text style={styles.chevron}>›</Text>
+          </TouchableOpacity>
 
           {/* Biometric Login */}
           <View style={styles.settingItem}>
@@ -114,7 +131,7 @@ const PrivacySecurityScreen = ({ navigation }: PrivacySecurityScreenProps) => {
               thumbColor="#FFFFFF"
             />
           </View>
-{/* <TouchableOpacity
+          {/* <TouchableOpacity
   style={styles.policyButton}
   onPress={() => navigation.navigate("PrivacyPolicy")}
 >

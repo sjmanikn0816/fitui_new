@@ -46,17 +46,15 @@ yarn-error.*
 # ------------------------------
 # 🔐 Environment Files
 # ------------------------------
-# Ignore environment files (but allow .env.example)
+# Keep the main `.env` (used in local dev)
+# Ignore machine- or environment-specific variants
 .env
-.env.local
 .env.development
-.env.development.local
 .env.production
-.env.production.local
 .env.test
-.env.test.local
-# Allow .env.example to be committed
-!.env.example
+# Ignore environment files
+.env
+.env.*
 
 
 # ------------------------------

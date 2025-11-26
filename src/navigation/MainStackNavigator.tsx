@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Image, Platform, View, StatusBar, Animated } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
@@ -11,9 +11,9 @@ import { FoodAnalysisStackNavigator } from "./FoodAnalysisStackNavigator";
 import { HealthStackNavigator } from "./HealthTrackNavigotor";
 import NutritionStackNavigator from "./NutritionStackNavigator";
 import GoalCustomizationStackNavigator from "./GoalCustomizationStackNavigator";
-import AllScreensMenu from "@/screens/main/AllScreensMenu";
 import { AllScreenStackNavigator } from "./AllScreenMenuNavigaor";
-import TopMenuBar from "@/components/ui/TopMenuBar";
+
+import { SecureStorage } from "@/services/secureStorage";
 
 export type MainTabParamList = {
   FoodAnalysis: undefined;
@@ -29,7 +29,38 @@ const Tab = createBottomTabNavigator<MainTabParamList>();
 const MainNavigator: React.FC = () => {
   const user = useSelector((state: RootState) => state.auth.user);
 
-  // Helper function to render tab icons (png)
+  // ⭐ Initial tab based on journeyStarted
+  const [initialTab, setInitialTab] = useState<
+    "Landing" | "GoalCustomizationMain" | null
+  >(null);
+
+  // Load journey state from SecureStorage
+  useEffect(() => {
+    const loadJourneyState = async () => {
+      try {
+        const userJson = await SecureStorage.getItem("user");
+        const userObj = userJson ? JSON.parse(userJson) : null;
+
+        const journeyStarted = userObj?.journeyStarted === true;
+
+        if (journeyStarted) {
+          setInitialTab("Landing"); // AI tab initial
+        } else {
+          setInitialTab("GoalCustomizationMain"); // Customization tab initial
+        }
+      } catch (error) {
+        console.log("Journey state error:", error);
+        setInitialTab("Landing"); // fallback
+      }
+    };
+
+    loadJourneyState();
+  }, []);
+
+  // ⛔ Avoid rendering until we know initialTab
+  if (!initialTab) return null;
+
+  // Helper: Icon renderer
   const renderTabIcon = (
     focused: boolean,
     active: any,
@@ -42,6 +73,7 @@ const MainNavigator: React.FC = () => {
         width: size + 6,
         height: size + 6,
         resizeMode: "contain",
+        marginTop: 20,
         transform: [{ scale: focused ? 1.1 : 1 }],
       }}
     />
@@ -52,21 +84,18 @@ const MainNavigator: React.FC = () => {
       style={{ flex: 1, backgroundColor: "transparent" }}
       edges={["top", "bottom"]}
     >
-      <StatusBar
-        translucent
-        backgroundColor="transparent"
-        barStyle="dark-content"
-      />
+      <StatusBar translucent backgroundColor="transparent" barStyle="dark-content" />
+
       <View style={{ flex: 1 }}>
         <Tab.Navigator
-          initialRouteName="Landing"
+          initialRouteName={initialTab} // ⭐ Dynamic initial route
           screenOptions={{
             headerShown: false,
             tabBarShowLabel: false,
             tabBarHideOnKeyboard: false,
             tabBarActiveTintColor: Colors.primary,
             tabBarInactiveTintColor: Colors.black,
-          
+
             tabBarStyle: {
               position: "absolute",
               backgroundColor: Colors.white,
@@ -79,11 +108,12 @@ const MainNavigator: React.FC = () => {
               shadowOpacity: 0.05,
               shadowOffset: { width: 0, height: 1 },
               shadowRadius: 3,
+              marginTop: 10,
             },
           }}
         >
-          {/* FOOD ANALYSIS */}
 
+          {/* NUTRITION */}
           <Tab.Screen
             name="NutritionPlan"
             component={NutritionStackNavigator}
@@ -113,7 +143,7 @@ const MainNavigator: React.FC = () => {
             }}
           />
 
-          {/* LANDING (AI ICON) */}
+          {/* AI LANDING TAB */}
           <Tab.Screen
             name="Landing"
             component={LandingStackNavigator}
@@ -134,6 +164,7 @@ const MainNavigator: React.FC = () => {
                       transform: [{ scale: scaleAnim }],
                       justifyContent: "center",
                       alignItems: "center",
+                      marginTop: 20,
                     }}
                   >
                     <Image
@@ -151,6 +182,7 @@ const MainNavigator: React.FC = () => {
                   </Animated.View>
                 );
               },
+
               tabBarStyle: {
                 position: "absolute",
                 backgroundColor: "rgba(255,255,255,0.2)",
@@ -177,6 +209,8 @@ const MainNavigator: React.FC = () => {
                 ),
             }}
           />
+
+          {/* FOOD ANALYSIS */}
           <Tab.Screen
             name="FoodAnalysis"
             component={FoodAnalysisStackNavigator}
@@ -190,6 +224,8 @@ const MainNavigator: React.FC = () => {
                 ),
             }}
           />
+
+          {/* HIDDEN MENU (NO TAB) */}
           <Tab.Screen
             name="AllScreensMenu"
             component={AllScreenStackNavigator}
@@ -199,7 +235,6 @@ const MainNavigator: React.FC = () => {
               headerShown: false,
             }}
           />
-
         </Tab.Navigator>
       </View>
     </SafeAreaView>

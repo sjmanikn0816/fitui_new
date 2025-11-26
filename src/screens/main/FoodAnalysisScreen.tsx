@@ -48,9 +48,7 @@ const FoodAnalysisScreen: React.FC<FoodAnalysisScreenProps> = ({
 
   const handleFoodAnalysis = async () => {
     if (!query && !selectedImageUri) {
-      setTimeout(() => {
-        navigation.navigate("Dashboard", { mealType: currentMealType });
-      }, 100);
+      navigation.navigate("Dashboard", { mealType: currentMealType });
       return;
     }
 
@@ -74,25 +72,21 @@ const FoodAnalysisScreen: React.FC<FoodAnalysisScreenProps> = ({
       }
 
       const resultAction = await dispatch(fetchFoodAnalysis(payload));
-
-      setLoading(false);
-
-      setTimeout(() => {
-        navigation.navigate("AnalysisResults", {
-          analysisData: resultAction.payload,
-          foodName: query,
-          inputType: inputType,
-        });
-      }, 100);
+      navigation.navigate("AnalysisResults", {
+        analysisData: resultAction.payload,
+        foodName: query,
+        inputType: inputType,
+      });
     } catch (error) {
       console.error("Food Analysis API Error:", error);
-      setLoading(false);
       dispatch(
         showModal({
           type: "error",
           message: "Failed to analyze food. Please try again.",
         })
       );
+    } finally {
+      setLoading(false);
     }
   };
 const handleMenuPress = () => {

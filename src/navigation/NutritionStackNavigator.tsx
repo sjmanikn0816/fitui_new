@@ -13,6 +13,7 @@ import MealPlanEmailScreen from "@/components/mealPlanEmail/MealPlanEmailScreen"
 import RestaurantDetailScreen from "@/screens/main/Dashboardtabs/RestaurantDetailScreen";
 import HeaderWithSubtitle from "@/components/ui/HeaderWithSubtitle";
 import { Colors } from "@/constants/Colors";
+import { AllScreenStackNavigator } from "./AllScreenMenuNavigaor";
 
 const Stack = createStackNavigator();
 const defaultHeaderOptions = (title: string, subtitle?: string) => ({
@@ -39,16 +40,16 @@ const NutritionStackNavigator: React.FC = () => {
 
       <Stack.Screen
         name="AllScreensMenu"
-        component={AllScreensMenu}
+        component={AllScreenStackNavigator}
         options={{
           presentation: "modal",
           cardStyle: { backgroundColor: "transparent" },
         }}
       />
-      <Stack.Screen
+      {/* <Stack.Screen
         name="GoalCustomization"
         component={GoalCustomizationStackNavigator}
-      />
+      /> */}
         <Stack.Screen name="LandingMain" component={LandingScreen} />
            <Stack.Screen name="Dashboard" component={DashboardScreen} />
       <Stack.Screen
@@ -62,11 +63,7 @@ const NutritionStackNavigator: React.FC = () => {
         component={MealPlanEmailScreen}
         options={defaultHeaderOptions("Share Meal Plan", "Back")}
       />
-      <Stack.Screen
-        name="GoalAssessment"
-        component={GoalAssessmentScreen}
-      />
-
+ 
       {/* Profile Stack */}
       <Stack.Screen name="Profile" component={ProfileStackNavigator} />
     </Stack.Navigator>

@@ -1,7 +1,6 @@
 import axios from "axios";
 import { store } from "@/redux/store";
 import { setAuthToken, logout } from "@/redux/slice/auth/authSlice";
-import { BASE_URL } from "./base";
 import { Endpoints } from "@/constants/endpoints";
 import DeviceInfo from "react-native-device-info";
 import { Config } from "@/constants/config";
@@ -15,11 +14,12 @@ export const startbaseTokenRefresh = () => {
   refreshInterval = setInterval(async () => {
     try {
       const state = store.getState();
-      const email = JSON.parse((await SecureStorage.getItem("user")) || "{}");
+     const userRaw = await SecureStorage.getItem("user");
+     const userm = userRaw ? JSON.parse(userRaw) : null;
 
-      console.log(email.email);
+const email = userm?.email;
+
       const refreshToken = await SecureStorage.getItem("refreshToken");
-      console.log("refresh", refreshToken);
       if (!email || !refreshToken) {
         console.warn("Missing email or refresh token — skipping refresh");
         return;
@@ -30,9 +30,8 @@ export const startbaseTokenRefresh = () => {
       const response = await axios.post(
         `${Config.API_BASE_URL}${
           Endpoints.AUTH.REFRESH
-        }?email=${encodeURIComponent(email)}&refreshToken=${encodeURIComponent(
-          refreshToken
-        )}`,
+        }?email=${email}&refreshToken=${refreshToken}`,
+        {},
         {
           headers: {
             "Content-Type": "application/json",
@@ -42,25 +41,29 @@ export const startbaseTokenRefresh = () => {
       );
 
       const data = response.data;
-      console.log(data);
-      // Adjust to your backend structure
-      const jwtToken = data.jwtTokenDTO?.jwtToken;
-      const newRefreshToken = data.jwtTokenDTO?.refreshToken;
-      const user = data.user;
+      
 
-      if (jwtToken && newRefreshToken) {
+
+      // Adjust to your backend structure
+      const jwtToken = data.JWT?.jwtToken;
+     
+      const newRefreshToken = data.REFRESH?.refreshToken;
+      
+      const user = data.User.userDetail;
+      
+     await SecureStorage.setItem("user",JSON.stringify(user))
+      if (jwtToken && newRefreshToken && user) {
+
         await SecureStorage.setItem("authToken", jwtToken);
         await SecureStorage.setItem("refreshToken", newRefreshToken);
+        await SecureStorage.setItem("user",JSON.stringify(user))
 
-        if (user) {
-          await SecureStorage.setItem("user", JSON.stringify(user));
-        }
 
         store.dispatch(
           setAuthToken({
             token: jwtToken,
             refreshToken: newRefreshToken,
-            user: user,
+            user:user
           })
         );
 
@@ -74,7 +77,7 @@ export const startbaseTokenRefresh = () => {
         err?.response?.data || err.message
       );
     }
-  }, 1000 * 60 * 5);
+  }, 1000 *60*12);
 };
 
 export const stopbaseTokenRefresh = () => {

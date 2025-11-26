@@ -166,13 +166,15 @@ useEffect(() => {
       });
 
       const userData = response.data?.body;
+      console.log("googledata",userData)
       const exists =
         (response.status === 200 || response.data?.statusCodeValue === 200) &&
         userData?.userId;
 
       if (exists) {
         console.log("✅ Existing user detected → logging in user...");
-
+      const userData = response.data?.body;
+      console.log("googledata",userData)
         const userPayload = {
           token: userData.jwtTokenDTO.jwtToken,
           refreshToken: userData.jwtTokenDTO.refreshToken,

@@ -25,13 +25,15 @@ const AllScreensMenu: React.FC = () => {
       case "Profile":
         navigation.navigate("Profile" as never);
         break;
-      case "goal-assessment":
-      case "GoalAssessment":
-        navigation.navigate("GoalAssessment" as never);
+      case "GoalCustomizationMain":
+        navigation.navigate("GoalCustomizationMain" as never);
         break;
       case "goal-customization":
-      case "GoalCustomization":
-        navigation.navigate("GoalCustomization" as never);
+      // case "GoalCustomization":
+      //   navigation.navigate("GoalCustomization" as never);
+      //   break;
+      case "WeeklyMeal":
+        navigation.navigate("WeeklyMeal" as never);
         break;
       default:
         console.log("Navigate to:", id);

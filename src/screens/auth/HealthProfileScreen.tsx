@@ -15,13 +15,30 @@ import { scale, verticalScale } from "@/utils/responsive";
 import Logo from "@/components/ui/Logo";
 import Button from "@/components/ui/Button";
 import ScrollContainer from "@/components/ui/ScrollContainer";
+import { HealthCondition } from "@/types";
+import {
+  cancerConditions,
+  foodAllergies,
+  healthConditions,
+  immuneDisorders,
+  neurologicalConditions,
+} from "@/data/dummyData";
+import ConditionSelector from "@/components/ConditionSelector";
 import { RootState } from "@/redux/store";
+import {
+  submitCancerConditions,
+  submitFoodAllergies,
+  submitHealthConditions,
+  submitImmuneDisorders,
+  submitNeurologicalAndMentalHealth,
+} from "@/redux/slice/healthProfileSlice";
+import ProgressSteps from "./components/ProgressSteps";
 import MainHeader from "@/components/ui/MainHeaderNav";
 import { setAuthToken } from "@/redux/slice/auth/authSlice";
 import { showModal } from "@/redux/slice/modalSlice";
 import { useAppDispatch } from "@/redux/store/hooks";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
-import { Activity, Check } from "lucide-react-native";
+import TermsModal from "@/components/ui/TermsModal";
 
 
 type HealthProfileScreenNavigationProp = StackNavigationProp<
@@ -33,69 +50,46 @@ interface Props {
   navigation: HealthProfileScreenNavigationProp;
 }
 
-// Diabetes types interface
-interface DiabetesType {
-  id: string;
-  label: string;
-  subtitle: string;
-}
-
 const HealthProfileScreen: React.FC<Props> = ({ navigation }) => {
   const dispatch = useAppDispatch();
-  const loading = useSelector((state: RootState) => state.auth.loading);
+  const loading = useSelector((state: RootState) => state.healthProfile.loading);
   const signuptoken = useSelector((state: RootState) => state.auth.signuptoken);
   const signupuser = useSelector((state: RootState) => state.auth.user);
+
+  const [currentStep, setCurrentStep] = useState(1);
+  const [showTermsModal, setShowTermsModal] = useState(false);
 
   // Terms checkbox
   const [acceptedTerms, setAcceptedTerms] = useState(false);
 
-  // Diabetes screening
-  const [hasDiabetes, setHasDiabetes] = useState<boolean | null>(null);
-  const [selectedDiabetesType, setSelectedDiabetesType] = useState<string | null>(null);
+  // Health data toggles
+  const [hasHealthConditions, setHasHealthConditions] = useState(false);
+  const [selectedHealthConditions, setSelectedHealthConditions] =
+    useState<HealthCondition[]>(healthConditions);
 
-  // Diabetes types data
-  const diabetesTypes: DiabetesType[] = [
-    {
-      id: "type1",
-      label: "Type 1 Diabetes",
-      subtitle: "Autoimmune condition, insulin-dependent",
-    },
-    {
-      id: "type2",
-      label: "Type 2 Diabetes",
-      subtitle: "Insulin resistance, most common type",
-    },
-    {
-      id: "gestational",
-      label: "Gestational Diabetes",
-      subtitle: "Develops during pregnancy",
-    },
-    {
-      id: "prediabetes",
-      label: "Prediabetes",
-      subtitle: "Higher than normal blood sugar levels",
-    },
-    {
-      id: "type3c",
-      label: "Type 3c (Pancreatogenic)",
-      subtitle: "Caused by pancreatic disease or injury",
-    },
-    {
-      id: "lada",
-      label: "LADA (Type 1.5)",
-      subtitle: "Latent autoimmune diabetes in adults",
-    },
-    {
-      id: "mody",
-      label: "MODY",
-      subtitle: "Genetic form, diagnosed before age 25",
-    },
-    {
-      id: "secondary",
-      label: "Secondary Diabetes",
-      subtitle: "Caused by other conditions or medications",
-    },
-  ];
+  const [hasImmuneDisorders, setHasImmuneDisorders] = useState(false);
+  const [selectedImmDisorders, setSelectedImmDisorders] =
+    useState<HealthCondition[]>(immuneDisorders);
+
+  const [hasCancerConditions, setHasCancerConditions] = useState(false);
+  const [selectedCancerConditions, setSelectedCancerConditions] =
+    useState<HealthCondition[]>(cancerConditions);
+
+  const [hasFoodAllergies, setHasFoodAllergies] = useState(false);
+  const [selectedFoodAllergies, setSelectedFoodAllergies] =
+    useState<HealthCondition[]>(foodAllergies);
+
+  const [hasNeuroMentalHealth, setHasNeuroMentalHealth] = useState(false);
+  const [selectedNeuroMentalHealth, setSelectedNeuroMentalHealth] =
+    useState<HealthCondition[]>(neurologicalConditions);
+
+  const handleToggle = (
+    prev: boolean,
+    setState: React.Dispatch<React.SetStateAction<boolean>>
+  ) => {
+    setState(!prev);
+    setCurrentStep((step) => step + (!prev ? 1 : -1));
+  };
 
   // Complete Profile
   const handleCompleteProfile = async () => {
@@ -109,35 +103,43 @@ const HealthProfileScreen: React.FC<Props> = ({ navigation }) => {
       return;
     }
 
-    // ============================================================================
-    // TODO: BACKEND INTEGRATION - Store diabetes data to backend
-    // ============================================================================
-    // For now, we're just storing the diabetes data in JSON format locally
-    // This needs to be integrated with backend API later
-    // ============================================================================
+    try {
+      const promises: Promise<any>[] = [];
 
-    const diabetesData = {
-      hasDiabetes,
-      diabetesType: selectedDiabetesType,
-      timestamp: new Date().toISOString(),
-    };
+      if (hasHealthConditions)
+        promises.push(
+          dispatch(submitHealthConditions(selectedHealthConditions)).unwrap()
+        );
+      if (hasImmuneDisorders)
+        promises.push(
+          dispatch(submitImmuneDisorders(selectedImmDisorders)).unwrap()
+        );
+      if (hasCancerConditions)
+        promises.push(
+          dispatch(submitCancerConditions(selectedCancerConditions)).unwrap()
+        );
+      if (hasFoodAllergies)
+        promises.push(
+          dispatch(submitFoodAllergies(selectedFoodAllergies)).unwrap()
+        );
+      if (hasNeuroMentalHealth)
+        promises.push(
+          dispatch(
+            submitNeurologicalAndMentalHealth(selectedNeuroMentalHealth)
+          ).unwrap()
+        );
 
-    console.log("========================================");
-    console.log("📋 Diabetes Health Profile Data (JSON):");
-    console.log("========================================");
-    console.log(JSON.stringify(diabetesData, null, 2));
-    console.log("========================================");
-    console.log("⚠️ TODO: Integrate this data with backend API");
-    console.log("========================================");
-
-    // Complete registration
-    dispatch(setAuthToken({ token: signuptoken, user: signupuser || {} }));
-    dispatch(
-      showModal({
-        type: "success",
-        message: "Profile completed successfully!",
-      })
-    );
+      await Promise.all(promises);
+         dispatch(setAuthToken({ token: signuptoken, user: signupuser || {} }));
+      // setShowTermsModal(true);
+    } catch (error: any) {
+      dispatch(
+        showModal({
+          type: "error",
+          message: error?.message || "Something went wrong",
+        })
+      );
+    }
   };
 
   // Skip flow
@@ -151,9 +153,20 @@ const HealthProfileScreen: React.FC<Props> = ({ navigation }) => {
       );
       return;
     }
+       dispatch(setAuthToken({ token: signuptoken, user: signupuser || {} }));
+    // setShowTermsModal(true);
+  };
 
-    console.log("⚠️ User skipped diabetes health screening");
+  // When terms accepted
+  const handleTermsAccepted = () => {
+    setShowTermsModal(false);
     dispatch(setAuthToken({ token: signuptoken, user: signupuser || {} }));
+    dispatch(
+      showModal({
+        type: "success",
+        message: "Profile completed successfully!",
+      })
+    );
   };
 
   return (
@@ -168,97 +181,59 @@ const HealthProfileScreen: React.FC<Props> = ({ navigation }) => {
       <ScrollContainer>
         <View style={styles.header}>
           <Logo />
+          <ProgressSteps totalSteps={5} currentStep={currentStep} />
         </View>
 
         <View style={styles.content}>
-          <Text style={styles.title}>Diabetes Screening</Text>
+          <Text style={styles.title}>Health Profile</Text>
           <Text style={styles.subtitle}>
-            Help us personalize your nutrition plan for better diabetes management
+            fitAI will suggest more targeted nutrition advice
           </Text>
 
           <View style={styles.form}>
-            {/* Question: Do you have diabetes? */}
-            <View style={{ marginBottom: verticalScale(24) }}>
-              <Text style={styles.questionTitle}>Do you have diabetes?</Text>
-              <View style={{ flexDirection: "row", gap: scale(12), marginTop: verticalScale(12) }}>
-                <TouchableOpacity
-                  style={[
-                    styles.yesNoButton,
-                    hasDiabetes === true && styles.yesNoButtonSelected,
-                  ]}
-                  onPress={() => {
-                    setHasDiabetes(true);
-                    setSelectedDiabetesType(null); // Reset selection when changing answer
-                  }}
-                >
-                  <Text
-                    style={[
-                      styles.yesNoButtonText,
-                      hasDiabetes === true && styles.yesNoButtonTextSelected,
-                    ]}
-                  >
-                    Yes
-                  </Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={[
-                    styles.yesNoButton,
-                    hasDiabetes === false && styles.yesNoButtonSelected,
-                  ]}
-                  onPress={() => {
-                    setHasDiabetes(false);
-                    setSelectedDiabetesType(null); // Clear diabetes type
-                  }}
-                >
-                  <Text
-                    style={[
-                      styles.yesNoButtonText,
-                      hasDiabetes === false && styles.yesNoButtonTextSelected,
-                    ]}
-                  >
-                    No
-                  </Text>
-                </TouchableOpacity>
-              </View>
-            </View>
+            <ConditionSelector
+              title="Health Conditions (Optional)"
+              subtitle="I have health conditions that affect my diet"
+              enabled={hasHealthConditions}
+              setEnabled={() =>
+                handleToggle(hasHealthConditions, setHasHealthConditions)
+              }
+              conditions={selectedHealthConditions}
+              setConditions={setSelectedHealthConditions}
+            />
+            <ConditionSelector
+              title="Immune & Autoimmune Disorders (Optional)"
+              subtitle="I have health conditions that affect my diet"
+              enabled={hasImmuneDisorders}
+              setEnabled={() =>
+                handleToggle(hasImmuneDisorders, setHasImmuneDisorders)
+              }
+              conditions={selectedImmDisorders}
+              setConditions={setSelectedImmDisorders}
+            />
+            <ConditionSelector
+              title="Cancers (Optional)"
+              subtitle="I have health conditions that affect my diet"
+              enabled={hasCancerConditions}
+              setEnabled={() =>
+                handleToggle(hasCancerConditions, setHasCancerConditions)
+              }
+              conditions={selectedCancerConditions}
+              setConditions={setSelectedCancerConditions}
+            />
+            <ConditionSelector
+              title="Neurological & Mental Health (Optional)"
+              subtitle="I have health conditions that affect my diet"
+              enabled={hasNeuroMentalHealth}
+              setEnabled={() =>
+                handleToggle(hasNeuroMentalHealth, setHasNeuroMentalHealth)
+              }
+              conditions={selectedNeuroMentalHealth}
+              setConditions={setSelectedNeuroMentalHealth}
+            />
 
-            {/* Show diabetes types if user has diabetes */}
-            {hasDiabetes === true && (
-              <View style={{ marginBottom: verticalScale(24) }}>
-                <Text style={styles.questionTitle}>What type of diabetes do you have?</Text>
-                <View style={{ marginTop: verticalScale(12) }}>
-                  {diabetesTypes.map((type) => (
-                    <TouchableOpacity
-                      key={type.id}
-                      style={[
-                        styles.diabetesCard,
-                        selectedDiabetesType === type.id && styles.diabetesCardSelected,
-                      ]}
-                      onPress={() => setSelectedDiabetesType(type.id)}
-                    >
-                      <View style={{ flex: 1 }}>
-                        <Text
-                          style={[
-                            styles.diabetesCardLabel,
-                            selectedDiabetesType === type.id && styles.diabetesCardLabelSelected,
-                          ]}
-                        >
-                          {type.label}
-                        </Text>
-                        <Text style={styles.diabetesCardSubtitle}>{type.subtitle}</Text>
-                      </View>
-                      {selectedDiabetesType === type.id && (
-                        <Check size={24} color={Colors.primary} strokeWidth={3} />
-                      )}
-                    </TouchableOpacity>
-                  ))}
-                </View>
-              </View>
-            )}
-
-            {/* Terms & Conditions */}
-            <TouchableOpacity
-              style={{ flexDirection: "row", alignItems: "center", marginTop: verticalScale(20) }}
+             <TouchableOpacity
+              style={{ flexDirection: "row", alignItems: "center" }}
               onPress={() => setAcceptedTerms(!acceptedTerms)}
             >
               <View
@@ -275,10 +250,12 @@ const HealthProfileScreen: React.FC<Props> = ({ navigation }) => {
                 }}
               >
                 {acceptedTerms && (
-                  <Text style={{ color: Colors.white, fontWeight: "bold" }}>✓</Text>
+                  <Text style={{ color: Colors.white, fontWeight: "bold" }}>
+                    ✓
+                  </Text>
                 )}
               </View>
-              <Text style={{ flex: 1, color: Colors.textDark, fontSize: scale(13) }}>
+              <Text style={{ flex: 1, color: Colors.textDark }}>
                 I agree to the{" "}
                 <Text
                   style={{
@@ -303,12 +280,17 @@ const HealthProfileScreen: React.FC<Props> = ({ navigation }) => {
             </TouchableOpacity>
           </View>
 
+          {/* Terms Checkbox */}
+          <View style={{ marginTop: verticalScale(20) }}>
+           
+          </View>
+
           {/* Buttons */}
           <View
             style={{
               flexDirection: "row",
               justifyContent: "space-between",
-              marginTop: verticalScale(32),
+              marginTop: "auto",
               marginBottom: verticalScale(16),
               gap: scale(12),
             }}
@@ -332,7 +314,16 @@ const HealthProfileScreen: React.FC<Props> = ({ navigation }) => {
         </View>
       </ScrollContainer>
 
-      <LoadingSpinner visible={loading} message="Completing your health profile..." />
+      <LoadingSpinner
+        visible={loading}
+        message="Completing your health profile..."
+      />
+
+      <TermsModal
+        visible={showTermsModal}
+        onAccept={handleTermsAccepted}
+        onClose={() => setShowTermsModal(false)}
+      />
     </>
   );
 };

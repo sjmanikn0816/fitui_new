@@ -1,98 +1,200 @@
-import React, { useState, useEffect, useCallback, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import {
   View,
   Text,
   ScrollView,
   TouchableOpacity,
+  Animated,
   StyleSheet,
-  Dimensions,
   ActivityIndicator,
   Alert,
   RefreshControl,
-  Animated,
-  Platform,
   ImageBackground,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
-import aiApi from "@/services/aiApi";
-import { styles } from "../styles/GoalAssesmentScreen";
 import { useAppDispatch, useAppSelector } from "@/redux/store/hooks";
 import { fetchUserById } from "@/redux/slice/auth/authSlice";
-import LoadingSpinner from "@/components/ui/LoadingSpinner";
-import api from "@/services/api";
+import aiApi from "@/services/aiApi";
 import { SecureStorage } from "@/services/secureStorage";
-const { width, height } = Dimensions.get("window");
+import api from "@/services/api";
+import { useNavigation } from "@react-navigation/native";
+import { scale, verticalScale, moderateScale } from "@/utils/responsive";
 
-const GoalAssessmentScreen = ({ navigation }) => {
-  const [assessment, setAssessment] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [refreshing, setRefreshing] = useState(false);
-  const [error, setError] = useState(null);
-  const [selectedTimeline, setSelectedTimeline] = useState(null);
-  const [expandedTimeline, setExpandedTimeline] = useState(null);
-  const [fadeAnim] = useState(new Animated.Value(0));
-  const [savingTimeline, setSavingTimeline] = useState(false);
-  const expandAnim = useRef(new Animated.Value(0)).current;
+const COLORS = {
+  primary: "#4F46E5",
+  primaryLight: "#6366F1",
+  white: "#FFFFFF",
+  background: "#F8F9FA",
+  cardBg: "#FFFFFF",
+  textPrimary: "#1F2937",
+  textSecondary: "#6B7280",
+  textTertiary: "#9CA3AF",
+  border: "#E5E7EB",
+  borderLight: "#F3F4F6",
+  success: "#10B981",
+  warning: "#F59E0B",
+  error: "#EF4444",
 
+  statAge: { bg: "#DBEAFE", text: "#2563EB" },
+  statWeight: { bg: "#F3E8FF", text: "#9333EA" },
+  statBMI: { bg: "#DCFCE7", text: "#16A34A" },
+  statTDEE: { bg: "#FED7AA", text: "#EA580C" },
+};
+
+const FONT = {
+  xs: moderateScale(10),
+  sm: moderateScale(12),
+  base: moderateScale(14),
+  lg: moderateScale(16),
+  xl: moderateScale(18),
+  xxl: moderateScale(22),
+  xxxl: moderateScale(28),
+};
+
+interface Timeline {
+  approach_name: string;
+  target_weight_lbs: number;
+  weight_change_lbs: number;
+  timeline_weeks: number;
+  weekly_rate: number;
+  weight_goal: string;
+  weight_loss_rate?: string;
+  difficulty_level: string;
+  focus_areas?: string[];
+  expected_outcomes?: string[];
+  nutrition_emphasis?: string;
+  exercise_emphasis?: string;
+}
+
+interface UserAssessment {
+  current_bmi: number;
+  bmi_category: string;
+  health_risk_level: string;
+  medical_supervision_recommended: boolean;
+}
+
+interface SafetyAssessment {
+  risk_level: string;
+  user_category?: string;
+  recommendations_allowed?: boolean;
+  requires_professional_guidance?: boolean;
+}
+
+interface Assessment {
+  success: boolean;
+  weight_lbs: number;
+  age: number;
+  tdee: number;
+  bmr: number;
+  user_assessment: UserAssessment;
+  safety_assessment?: SafetyAssessment;
+  recommended_timeline?: Timeline;
+  available_timelines?: Timeline[];
+  important_notes?: string[];
+}
+
+interface Customization {
+  success: boolean;
+  target_calories: number;
+  calorie_adjustment: number;
+  weight_lbs: number;
+  target_weight_lbs: number;
+  macro_breakdown: {
+    protein: { grams: number; percentage: number };
+    carbohydrates: { grams: number; percentage: number };
+    fat: { grams: number; percentage: number };
+  };
+  nutrition_targets: { fiber_g: number; sodium_mg: number };
+  timeline_details: {
+    weight_to_lose_lbs: number;
+    weight_to_gain_lbs:number;
+    expected_weekly_maintain_lbs:number;
+    expected_weekly_loss_lbs: number;
+    estimated_end_date: string;
+    expected_weekly_gain_lbs:number;
+    weight_to_maintain_lbs :number;
+
+  };
+  wellness_guidance: {
+    mental_health: string[];
+    sleep_and_recovery: string[];
+    stress_management: string[];
+    long_term_sustainability: string[];
+  };
+  safety_assessment: { risk_level: string };
+}
+
+export default function WellnessPlanMobile() {
   const dispatch = useAppDispatch();
-  const { healthCondition } = useAppSelector((state) => state.auth);
-  const user = useAppSelector((state) => state.auth.user);
+  const { healthCondition, user } = useAppSelector((state) => state.auth);
   const health = healthCondition || {};
+  const navigation = useNavigation();
+  const [showCustomize, setShowCustomize] = useState(false);
+  const [selectedApproach, setSelectedApproach] = useState<string | null>(null);
+  const [selectedTarget, setSelectedTarget] = useState<number | null>(null);
+  const [isCustomized, setIsCustomized] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
+  const [savingTimeline, setSavingTimeline] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [assessment, setAssessment] = useState<Assessment | null>(null);
+  const [customization, setCustomization] = useState<Customization | null>(null);
+  const [selectedTimeline, setSelectedTimeline] = useState<Timeline | null>(null);
+
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+  const slideAnim = useRef(new Animated.Value(50)).current;
+  const customizeHeight = useRef(new Animated.Value(0)).current;
+
+  const handleMenuPress = () => navigation.navigate("AllScreensMenu");
+
+  const activityLevels = [
+    { id: "NOT_ACTIVE", label: "Not Active" },
+    { id: "SOMEWHAT_ACTIVE", label: "Somewhat Active" },
+    { id: "ACTIVE", label: "Active" },
+    { id: "VERY_ACTIVE", label: "Very Active" },
+    { id: "EXTRA_ACTIVE", label: "Athletic" },
+    { id: "PRO_ATHLETE", label: "Pro Athlete" },
+  ];
+
+  const formatText = (text: string): string =>
+    text ? text.split("_").map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(" ") : "";
+
+  const mappedActivity = activityLevels.find((a) => a.id === user?.activityLevel)?.label || "Active";
 
   useEffect(() => {
     if (user?.userId) {
       dispatch(fetchUserById(user.userId));
+      fetchGoalAssessment();
     }
   }, [user?.userId]);
 
-  const formatText = (text) =>
-    text
-      ? text
-          .split("_")
-          .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-          .join(" ")
-      : "";
-
-  const activityLevels = [
-    { id: "NOT_ACTIVE", label: "Not Active", icon: "moon" },
-    { id: "SOMEWHAT_ACTIVE", label: "Somewhat Active", icon: "sun" },
-    { id: "ACTIVE", label: "Active", icon: "zap" },
-    { id: "VERY_ACTIVE", label: "Very Active", icon: "trending-up" },
-    { id: "EXTRA_ACTIVE", label: "Athletic", icon: "flame" },
-    { id: "PRO_ATHLETE", label: "Pro Athlete", icon: "star" },
-  ];
-
-  const mappedActivity =
-    activityLevels.find((a) => a.id === user?.activityLevel)?.label || "Active";
+  useEffect(() => {
+    if (assessment) {
+      Animated.parallel([
+        Animated.timing(fadeAnim, { toValue: 1, duration: 800, useNativeDriver: true }),
+        Animated.timing(slideAnim, { toValue: 0, duration: 600, useNativeDriver: true }),
+      ]).start();
+    }
+  }, [assessment]);
 
   const fetchGoalAssessment = async () => {
     try {
       setError(null);
       setLoading(true);
-
-      const goalMap = {
-        LOSE: "lose_weight",
-        GAIN: "gain_weight",
-        MAINTAIN: "maintain_weight",
-      };
-
+      const goalMap: Record<string, string> = { LOSE: "lose_weight", GAIN: "gain_weight", MAINTAIN: "maintain_weight" };
       const requestBody = {
-        birth_year: user.birthYear || 2000,
-        birth_month: user.birthMonth || 1,
+        birth_year: user.birthYear,
+        birth_month: user.birthMonth,
         weight_lbs: user.weightInLbs || 150,
-        height_feet: user.heightInFeet || 5,
-        height_inches: user.heightInInches || 0,
-        biological_sex: user.gender || "M",
-        activity_level: mappedActivity || "Active",
-        food_preference: user.dietPreference || "Non-Veg",
-        primary_goal: goalMap[user.goal] || "lose_weight",
+        height_feet: user.heightInFeet,
+        height_inches: user.heightInInches,
+        biological_sex: user.gender,
+        activity_level: mappedActivity,
+        food_preference: user.dietPreference,
+        primary_goal: goalMap[user.goal],
         health_conditions: {
-          diabetes_type1_type2:
-            health.diabetes_type1_type2 ??
-            health.diabetes ??
-            health.preDiabetes ??
-            false,
+          diabetes_type1_type2: health.diabetes_type1_type2 ?? health.diabetes ?? health.preDiabetes ?? false,
           hypertension: health.hypertension ?? false,
           cancer: health.cancer ?? false,
           immune_disorder: health.immune_disorder ?? false,
@@ -100,27 +202,16 @@ const GoalAssessmentScreen = ({ navigation }) => {
           food_allergies: health.food_allergies ?? [],
         },
       };
-
       const { data } = await aiApi.post("/goal-assessment", requestBody);
-
       if (data.success) {
         setAssessment(data);
-
         if (data.recommended_timeline) {
           setSelectedTimeline(data.recommended_timeline);
+          await fetchCustomization(data.recommended_timeline);
         }
-
-        Animated.timing(fadeAnim, {
-          toValue: 1,
-          duration: 600,
-          useNativeDriver: true,
-        }).start();
-      } else {
-        throw new Error(data.message || "Assessment failed");
-      }
-    } catch (err) {
-      const message =
-        err.response?.data?.message || err.message || "Something went wrong";
+      } else throw new Error(data.message || "Assessment failed");
+    } catch (err: any) {
+      const message = err.response?.data?.message || err.message || "Something went wrong";
       setError(message);
       Alert.alert("Error", message);
     } finally {
@@ -129,639 +220,505 @@ const GoalAssessmentScreen = ({ navigation }) => {
     }
   };
 
-  // Function to save selected timeline to backend
-  const saveSelectedTimeline = async (timeline) => {
+  const fetchCustomization = async (timeline: Timeline) => {
+    try {
+      const primaryGoalMap: Record<string, string> = { LOSE: "lose_weight", GAIN: "gain_weight", MAINTAIN: "maintain_weight" };
+      const weightGoalMap: Record<string, string> = { LOSE: "lose", GAIN: "gain", MAINTAIN: "maintain" };
+      const requestBody = {
+        birth_year: user.birthYear, birth_month: user.birthMonth, weight_lbs: user.weightInLbs,
+        height_feet: user.heightInFeet, height_inches: user.heightInInches, biological_sex: user.gender,
+        activity_level: mappedActivity, weight_goal: weightGoalMap[user.goal], target_weight_lbs: timeline.target_weight_lbs,
+        weight_loss_rate: timeline.weight_loss_rate, primary_goal: primaryGoalMap[user.goal], target_weeks: timeline.timeline_weeks,
+        health_conditions: { diabetes_type1_type2: user.health?.diabetes || false, hypertension: user.health?.hypertension || false, food_allergies: user.health?.food_allergies || [] },
+        food_preference: user.dietPreference || "Non-Veg",
+      };
+      const { data } = await aiApi.post("/goal-customization", requestBody);
+      if (data.success) setCustomization(data);
+    } catch (err) { console.error("Failed to fetch customization:", err); }
+  };
+
+  const saveSelectedTimeline = async (timeline: Timeline): Promise<boolean> => {
     try {
       setSavingTimeline(true);
-
-      // Validate required data
-      if (!user?.userId) {
-        throw new Error("User ID is missing");
-      }
-
-      if (!assessment) {
-        throw new Error("Assessment data is missing. Please refresh the page.");
-      }
-
-      // Safely parse numeric values with fallbacks
-      const tdee = parseFloat(assessment.tdee) || 0;
-      const bmr = parseFloat(assessment.bmr) || 0;
-      const currentWeight = parseFloat(assessment.weight_lbs) || parseFloat(user?.weightInLbs) || 0;
-      const weeklyRate = parseFloat(timeline.weekly_rate) || 1;
-
-      // Calculate target calories with validation
-      const targetCalories = tdee - (weeklyRate * 500);
-
-      // Validate calculations
-      if (isNaN(targetCalories) || targetCalories <= 0) {
-        console.error("Invalid calculation:", { tdee, weeklyRate, targetCalories });
-        throw new Error("Unable to calculate target calories. Please try again.");
-      }
-
       const requestBody = {
-        userId: user.userId,
-        approach_name: timeline.approach_name,
-        target_weight_lbs: parseFloat(timeline.target_weight_lbs),
-        weight_change_lbs: parseFloat(timeline.weight_change_lbs),
-        timeline_weeks: parseInt(timeline.timeline_weeks),
-        weekly_rate: weeklyRate,
-        weight_goal: timeline.weight_goal,
-        weight_loss_rate: timeline.weight_loss_rate,
-        difficulty_level: timeline.difficulty_level,
-        focus_areas: timeline.focus_areas || [],
-        expected_outcomes: timeline.expected_outcomes || [],
-        nutrition_emphasis: timeline.nutrition_emphasis,
-        exercise_emphasis: timeline.exercise_emphasis,
-        tdee: tdee,
-        bmr: bmr,
-        current_weight_lbs: currentWeight,
-        target_calories: Math.round(targetCalories),
+        userId: user?.userId, approach_name: timeline.approach_name, target_weight_lbs: timeline.target_weight_lbs,
+        weight_change_lbs: timeline.weight_change_lbs, timeline_weeks: timeline.timeline_weeks, weekly_rate: timeline.weekly_rate,
+        weight_goal: timeline.weight_goal, weight_loss_rate: timeline.weight_loss_rate, difficulty_level: timeline.difficulty_level,
+        focus_areas: timeline.focus_areas, expected_outcomes: timeline.expected_outcomes, nutrition_emphasis: timeline.nutrition_emphasis,
+        exercise_emphasis: timeline.exercise_emphasis, tdee: assessment?.tdee, bmr: assessment?.bmr, current_weight_lbs: assessment?.weight_lbs,
+        target_calories: assessment ? assessment.tdee - timeline.weekly_rate * 500 : 0,
       };
-
-      console.log("📤 Sending timeline save request:", requestBody);
-
-      const { data } = await api.post(
-        `/goal/assessment/${user.userId}`,
-        requestBody
-      );
-
+      const { data } = await api.post(`/goal/assessment/${user?.userId}`, requestBody);
       if (data) {
-        console.log("✅ Timeline saved successfully:", data);
-        await SecureStorage.setItem(
-          "selectedTimeline",
-          JSON.stringify(timeline)
-        );
+        await SecureStorage.setItem("selectedTimeline", JSON.stringify(timeline));
         await SecureStorage.setItem("goalAssessmentComplete", "true");
         return true;
-      } else {
-        throw new Error(data.message || "Failed to save timeline");
-      }
-    } catch (err) {
-      const message =
-        err.response?.data?.message || err.message || "Failed to save timeline";
-      console.error("❌ Save timeline error:", message);
-      console.error("Error details:", err.response?.data);
-      Alert.alert("Error", message);
+      } else throw new Error(data.message || "Failed to save timeline");
+    } catch (err: any) {
+      Alert.alert("Error", err.response?.data?.message || err.message || "Failed to save timeline");
       return false;
-    } finally {
-      setSavingTimeline(false);
-    }
-  };
-  
-
-  useEffect(() => {
-    fetchGoalAssessment();
-  }, []);
-
-  const onRefresh = useCallback(() => {
-    setRefreshing(true);
-    fetchGoalAssessment();
-  }, []);
-const handleMenuPress = () => {
-
-  navigation.navigate("AllScreensMenu");
-};
-  const getDifficultyColor = (level) => {
-    const colors = {
-      beginner_friendly: ["#10b981", "#34d399"],
-      moderate_commitment: ["#3b82f6", "#60a5fa"],
-      challenging: ["#f59e0b", "#fbbf24"],
-    };
-    return colors[level] || ["#6b7280", "#9ca3af"];
+    } finally { setSavingTimeline(false); }
   };
 
-  const getRiskColor = (level) => {
-    const colors = {
-      low: "#10b981",
-      moderate: "#f59e0b",
-      high: "#ef4444",
-    };
-    return colors[level] || "#6b7280";
-  };
-  console.log("Selected Timeline:", selectedTimeline);
-  // Handle Start Journey - Save to DB then Navigate to Customization
-  const handleStartJourney = async () => {
-    if (!selectedTimeline || !assessment || !user) {
-      Alert.alert("Error", "Please select a timeline to continue");
-      return;
-    }
+  const onRefresh = () => { setRefreshing(true); fetchGoalAssessment(); };
 
-    // Debug logging
-    console.log("📊 Assessment Data:", {
-      tdee: assessment.tdee,
-      bmr: assessment.bmr,
-      weight_lbs: assessment.weight_lbs,
-      hasAssessment: !!assessment,
-    });
-    console.log("👤 User Data:", {
-      userId: user?.userId,
-      weightInLbs: user?.weightInLbs,
-    });
+  const targetWeights = assessment?.available_timelines ? [...new Set(assessment.available_timelines.map((t) => t.target_weight_lbs))] : [];
+  const filteredTimelines = selectedTarget && assessment?.available_timelines ? assessment.available_timelines.filter((t) => t.target_weight_lbs === selectedTarget) : [];
 
-    // Save timeline to DB
-    const saved = await saveSelectedTimeline(selectedTimeline);
-    console.log("Save Result:", saved);
-    if (!saved) {
-      Alert.alert("Warning", "Timeline couldn't be saved. Please try again.");
-      return;
-    }
-
-    const targetCalories = assessment.tdee - selectedTimeline.weekly_rate * 500;
-
-    navigation.navigate("GoalCustomization", {
-      assessment,
-      user,
-      selectedTimeline,
-      tdee: assessment?.tdee ?? 0,
-      bmr: assessment?.bmr ?? 0,
-      targetCalories,
-      targetWeight: selectedTimeline?.target_weight_lbs ?? 0,
-      targetWeeks: selectedTimeline?.timeline_weeks ?? 0,
-      weeklyRate: selectedTimeline?.weekly_rate ?? 0,
-      currentWeight: assessment?.weight_lbs ?? 0,
-    });
+  const toggleCustomize = () => {
+    setShowCustomize(!showCustomize);
+    Animated.spring(customizeHeight, { toValue: showCustomize ? 0 : 1, useNativeDriver: false, friction: 8 }).start();
   };
 
-
-  const handleTimelineSelect = async (timeline) => {
-    setSelectedTimeline(timeline);
-
-    // Navigate to details
-    // navigation.navigate("TimelineDetails", {
-    //   timeline,
-    //   assessment,
-    // });
+  const handleConfirm = async () => {
+    if (!selectedApproach) return;
+    const timeline = filteredTimelines.find((t) => `${t.approach_name}-${t.target_weight_lbs}` === selectedApproach);
+    if (!timeline) return;
+    setLoading(true);
+    try {
+      await fetchCustomization(timeline);
+      const saved = await saveSelectedTimeline(timeline);
+      if (saved) { setIsCustomized(true); setSelectedTimeline(timeline); Alert.alert("Success", "Your customization has been saved!"); toggleCustomize(); }
+    } catch { Alert.alert("Error", "Failed to apply customization"); }
+    finally { setLoading(false); }
   };
 
-  if (loading && !refreshing) {
-    return (
-      <LoadingSpinner
-        message="Loading your goal assessment..."
-        visible={loading}
-      />
-    );
-  }
-
-  if (error && !assessment) {
-    return (
-      <View style={styles.errorContainer}>
-        <Ionicons name="warning-outline" size={64} color="#ef4444" />
-        <Text style={styles.errorText}>Failed to load assessment</Text>
-        <Text style={styles.errorSubtext}>{error}</Text>
-        <TouchableOpacity
-          style={styles.retryButton}
-          onPress={fetchGoalAssessment}
-        >
-          <Ionicons name="refresh" size={20} color="#fff" />
-          <Text style={styles.retryButtonText}>Retry</Text>
-        </TouchableOpacity>
-      </View>
-    );
-  }
-
-  if (!assessment) {
-    return null;
-  }
-
-  const isRecommended = (timeline) =>
-    timeline.approach_name === assessment.recommended_timeline?.approach_name &&
-    timeline.timeline_weeks === assessment.recommended_timeline?.timeline_weeks;
-
-  const isSelected = (timeline) =>
-    selectedTimeline?.approach_name === timeline.approach_name &&
-    selectedTimeline?.timeline_weeks === timeline.timeline_weeks;
-
-  const isExpanded = (timeline) =>
-    expandedTimeline?.approach_name === timeline.approach_name &&
-    expandedTimeline?.timeline_weeks === timeline.timeline_weeks;
+  const statItems = assessment ? [
+    { label: "Age", value: assessment.age || new Date().getFullYear() - user?.birthYear, colors: COLORS.statAge },
+    { label: "Weight", value: assessment.weight_lbs, unit: "lbs", colors: COLORS.statWeight },
+    { label: "BMI", value: assessment.user_assessment?.current_bmi?.toFixed(1), colors: COLORS.statBMI },
+    { label: "TDEE", value: Math.round(assessment.tdee), colors: COLORS.statTDEE },
+  ] : [];
 
   return (
-    <View style={styles.container}>
-      <View style={styles.headerCard}>
-        <ImageBackground
-          source={{
-            uri: "https://images.unsplash.com/photo-1518611012118-696072aa579a?w=600&q=80",
-          }}
-          style={styles.headerImageBg}
-          imageStyle={styles.headerImageStyle}
-        >
-          <LinearGradient
-            colors={["rgba(59, 130, 246, 0.92)", "rgba(139, 92, 246, 0.90)"]}
-            style={styles.headerOverlay}
-          >
-            <View style={styles.headerTopRow}>
-              <View>
-                <Text style={styles.titleWithBg}>Your Goal Assessment</Text>
-                <Text style={styles.subtitleWithBg}>
-                  Timeline & Detailed Stats
-                </Text>
-              </View>
-
-              {/* <View style={styles.headerUserBox}>
-                <Ionicons name="fitness" size={36} color="#fff" />
-              </View> */}
-                     <TouchableOpacity
-              onPress={handleMenuPress}
-              style={{
-                padding: 8,
-                backgroundColor: "rgba(255, 255, 255, 0.18)",
-                borderRadius: 50,
-                borderWidth: 1,
-                borderColor: "rgba(255,255,255,0.3)",
-                backdropFilter: "blur(10px)", // works on web but RN ignores
-              }}
+    <ScrollView style={styles.container} showsVerticalScrollIndicator={false} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={COLORS.primary} />}>
+      {loading && !assessment ? (
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color={COLORS.primary} />
+          <Text style={styles.loadingText}>Loading your wellness plan...</Text>
+        </View>
+      ) : error ? (
+        <View style={styles.errorContainer}>
+          <Ionicons name="alert-circle-outline" size={scale(48)} color={COLORS.error} />
+          <Text style={styles.errorText}>{error}</Text>
+          <TouchableOpacity style={styles.retryButton} onPress={fetchGoalAssessment}>
+            <Text style={styles.retryButtonText}>Retry</Text>
+          </TouchableOpacity>
+        </View>
+      ) : !assessment ? (
+        <View style={styles.errorContainer}>
+          <Text style={styles.errorText}>No assessment data available</Text>
+        </View>
+      ) : (
+        <Animated.View style={[styles.content, { opacity: fadeAnim, transform: [{ translateY: slideAnim }] }]}>
+          {/* Header with Image Background */}
+          <View style={styles.headerCard}>
+            <ImageBackground
+              source={{ uri: "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=600&q=80" }}
+              style={styles.headerImageBg}
+              imageStyle={styles.headerImageStyle}
             >
-           <Ionicons name="ellipsis-horizontal" size={22} color="#fff" />
-            </TouchableOpacity>
-            </View>
-
-            <Text style={styles.descriptionWithBg}>
-              Weekly progress, calorie targets & goal projections
-            </Text>
-          </LinearGradient>
-        </ImageBackground>
-      </View>
-
-      {/* Health Risk Assessment */}
-
-      <ScrollView
-        style={styles.scrollView}
-        contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator={false}
-        refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={onRefresh}
-            colors={["#3b82f6"]}
-            tintColor="#3b82f6"
-          />
-        }
-      >
-        <Animated.View style={{ opacity: fadeAnim }}>
-          {/* Current Stats - Horizontal Scroll */}
-          <View style={styles.statsSection}>
-            {assessment.user_assessment && (
-              <View style={styles.riskCard}>
-                <View style={styles.riskHeader}>
-                  <Ionicons
-                    name="shield-checkmark"
-                    size={24}
-                    color={getRiskColor(
-                      assessment.user_assessment.health_risk_level
-                    )}
-                  />
-                  <Text style={styles.riskTitle}>Health Assessment</Text>
-                </View>
-                <View style={styles.riskContent}>
-                  <View style={styles.riskItem}>
-                    <Text style={styles.riskLabel}>BMI Category</Text>
-                    <Text style={styles.riskValue}>
-                      {assessment.user_assessment.bmi_category}
-                    </Text>
+              <LinearGradient colors={["rgba(79, 70, 229, 0.92)", "rgba(99, 102, 241, 0.90)"]} style={styles.headerOverlay}>
+                <View style={styles.headerTopRow}>
+                  <View style={styles.headerTitleContainer}>
+                    <Text style={styles.headerTitle}>Your Wellness Plan</Text>
+                    <Text style={styles.headerSubtitle}>Personalized Assessment</Text>
                   </View>
-                  <View style={styles.riskDivider} />
-                  <View style={styles.riskItem}>
-                    <Text style={styles.riskLabel}>Risk Level</Text>
-                    <View
-                      style={[
-                        styles.riskBadge,
-                        {
-                          backgroundColor:
-                            getRiskColor(
-                              assessment.user_assessment.health_risk_level
-                            ) + "20",
-                        },
-                      ]}
-                    >
-                      <Text
-                        style={[
-                          styles.riskBadgeText,
-                          {
-                            color: getRiskColor(
-                              assessment.user_assessment.health_risk_level
-                            ),
-                          },
-                        ]}
-                      >
-                        {formatText(
-                          assessment.user_assessment.health_risk_level
-                        )}
-                      </Text>
-                    </View>
+                  <TouchableOpacity onPress={handleMenuPress} style={styles.menuButton}>
+                    <Ionicons name="ellipsis-horizontal" size={scale(20)} color={COLORS.white} />
+                  </TouchableOpacity>
+                </View>
+                <Text style={styles.headerDesc}>Timeline, nutrition targets & goal projections tailored for you</Text>
+              </LinearGradient>
+            </ImageBackground>
+          </View>
+
+          {/* Assessment Card */}
+          <View style={styles.card}>
+            <View style={styles.cardHeader}>
+              <Ionicons name="analytics-outline" size={scale(18)} color={COLORS.primary} />
+              <Text style={styles.cardHeaderText}>Assessment Results</Text>
+            </View>
+            <View style={styles.statsGrid}>
+              {statItems.map((stat, i) => (
+                <View key={i} style={[styles.statBox, { backgroundColor: stat.colors.bg }]}>
+                  <Text style={[styles.statValue, { color: stat.colors.text }]}>{stat.value}</Text>
+                  <Text style={styles.statLabel}>{stat.unit || stat.label}</Text>
+                </View>
+              ))}
+            </View>
+            <View style={styles.statusBanner}>
+              <Ionicons name="checkmark-circle" size={scale(20)} color={COLORS.success} />
+              <View style={styles.statusText}>
+                <Text style={styles.statusTitle}>{assessment.user_assessment?.bmi_category}</Text>
+                <Text style={styles.statusSubtitle}>Risk: {assessment.user_assessment?.health_risk_level}</Text>
+              </View>
+            </View>
+            {assessment.recommended_timeline && (
+              <View style={styles.recommendedCard}>
+                <Text style={styles.recommendedBadge}>RECOMMENDED</Text>
+                <View style={styles.recommendedContent}>
+                  <View style={styles.recommendedLeft}>
+                    <Text style={styles.recommendedTitle}>{formatText(assessment.recommended_timeline.approach_name)}</Text>
+                    <Text style={styles.recommendedSubtitle}>Target: {assessment.recommended_timeline.target_weight_lbs} lbs</Text>
+                    <Text style={styles.recommendedSubtitle}>Rate: {assessment.recommended_timeline.weekly_rate} lb/week</Text>
+                  </View>
+                  <View style={styles.weeksContainer}>
+                    <Text style={styles.weeksValue}>{assessment.recommended_timeline.timeline_weeks}</Text>
+                    <Text style={styles.weeksLabel}>weeks</Text>
                   </View>
                 </View>
               </View>
             )}
-
-            <Text style={styles.sectionTitle}>Your Current Stats</Text>
-            <View style={styles.statsGrid}>
-              <View style={styles.statCardSmall}>
-                <ImageBackground
-                  source={{
-                    uri: "https://images.unsplash.com/photo-1483721310020-03333e577078?w=400&q=80",
-                  }}
-                  style={styles.statImageBgSmall}
-                  imageStyle={styles.statImageStyleSmall}
-                >
-                  <LinearGradient
-                    colors={["rgba(255, 255, 255, 0.85)", "rgba(240, 240, 240, 0.80)"]}
-                    style={styles.statOverlaySmall}
-                  >
-                    <Ionicons name="scale-outline" size={24} color="#3b82f6" />
-                    <Text style={styles.statLabelLight}>Weight</Text>
-                    <Text style={styles.statValueLight}>{assessment.weight_lbs}</Text>
-                    <Text style={styles.statUnitLight}>lbs</Text>
-                  </LinearGradient>
-                </ImageBackground>
+            {assessment.important_notes && assessment.important_notes.length > 0 && (
+              <View style={styles.notesContainer}>
+                <Text style={styles.notesTitle}>Important Notes</Text>
+                {assessment.important_notes.map((note, i) => <Text key={i} style={styles.noteText}>• {note}</Text>)}
               </View>
+            )}
+          </View>
 
-              <View style={styles.statCardSmall}>
-                <ImageBackground
-                  source={{
-                    uri: "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=400&q=80",
-                  }}
-                  style={styles.statImageBgSmall}
-                  imageStyle={styles.statImageStyleSmall}
-                >
-                  <LinearGradient
-                    colors={["rgba(255, 255, 255, 0.85)", "rgba(240, 240, 240, 0.80)"]}
-                    style={styles.statOverlaySmall}
-                  >
-                    <Ionicons name="fitness-outline" size={24} color="#10b981" />
-                    <Text style={styles.statLabelLight}>BMI</Text>
-                    <Text style={styles.statValueLight}>
-                      {assessment.user_assessment?.current_bmi}
-                    </Text>
-                    <Text style={styles.statUnitLight}>index</Text>
-                  </LinearGradient>
-                </ImageBackground>
+          {/* Customize Section */}
+          <TouchableOpacity style={styles.card} onPress={toggleCustomize} activeOpacity={0.7}>
+            <View style={styles.customizeHeader}>
+              <View style={styles.customizeLeft}>
+                <View style={styles.customizeIcon}><Ionicons name="options-outline" size={scale(20)} color={COLORS.primary} /></View>
+                <View>
+                  <Text style={styles.customizeTitle}>Want to Customize?</Text>
+                  <Text style={styles.customizeSubtitle}>Choose different target & approach</Text>
+                </View>
               </View>
-
-              <View style={styles.statCardSmall}>
-                <ImageBackground
-                  source={{
-                    uri: "https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=400&q=80",
-                  }}
-                  style={styles.statImageBgSmall}
-                  imageStyle={styles.statImageStyleSmall}
-                >
-                  <LinearGradient
-                    colors={["rgba(255, 255, 255, 0.85)", "rgba(240, 240, 240, 0.80)"]}
-                    style={styles.statOverlaySmall}
-                  >
-                    <Ionicons name="flame-outline" size={24} color="#ec4899" />
-                    <Text style={styles.statLabelLight}>TDEE</Text>
-                    <Text style={styles.statValueLight}>
-                      {Math.round(assessment.tdee)}
-                    </Text>
-                    <Text style={styles.statUnitLight}>cal/day</Text>
-                  </LinearGradient>
-                </ImageBackground>
-              </View>
-
-              <View style={styles.statCardSmall}>
-                <ImageBackground
-                  source={{
-                    uri: "https://images.unsplash.com/photo-1628348068343-c6a848d2b6dd?w=400&q=80",
-                  }}
-                  style={styles.statImageBgSmall}
-                  imageStyle={styles.statImageStyleSmall}
-                >
-                  <LinearGradient
-                    colors={["rgba(255, 255, 255, 0.85)", "rgba(240, 240, 240, 0.80)"]}
-                    style={styles.statOverlaySmall}
-                  >
-                    <Ionicons
-                      name="speedometer-outline"
-                      size={24}
-                      color="#ef4444"
-                    />
-                    <Text style={styles.statLabelLight}>BMR</Text>
-                    <Text style={styles.statValueLight}>
-                      {Math.round(assessment.bmr)}
-                    </Text>
-                    <Text style={styles.statUnitLight}>cal/day</Text>
-                  </LinearGradient>
-                </ImageBackground>
-              </View>
-
-              <View style={styles.statCardSmall}>
-                <ImageBackground
-                  source={{
-                    uri: "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=400&q=80",
-                  }}
-                  style={styles.statImageBgSmall}
-                  imageStyle={styles.statImageStyleSmall}
-                >
-                  <LinearGradient
-                    colors={["rgba(255, 255, 255, 0.85)", "rgba(240, 240, 240, 0.80)"]}
-                    style={styles.statOverlaySmall}
-                  >
-                    <Ionicons name="walk" size={24} color="#a855f7" />
-                    <Text style={styles.statLabelLight}>Activity</Text>
-                    <Text style={[styles.statValueLight, { fontSize: 14 }]}>
-                      {assessment.activity_level}
-                    </Text>
-                  </LinearGradient>
-                </ImageBackground>
-              </View>
+              <Animated.View style={{ transform: [{ rotate: customizeHeight.interpolate({ inputRange: [0, 1], outputRange: ["0deg", "180deg"] }) }] }}>
+                <Ionicons name="chevron-down" size={scale(20)} color={COLORS.textTertiary} />
+              </Animated.View>
             </View>
-          </View>
+          </TouchableOpacity>
 
-          {/* Timeline Options */}
-          <View style={styles.timelinesContainer}>
-            <Text style={styles.sectionTitle}>Choose Your Timeline</Text>
-            <Text style={styles.sectionSubtitle}>
-              {assessment.available_timelines?.length} options available
-            </Text>
-
-            {assessment.available_timelines?.map((timeline, index) => {
-              const expanded = isExpanded(timeline);
-              const selected = isSelected(timeline);
-
-              return (
-                <View key={index}>
-                  <TouchableOpacity
-                    activeOpacity={0.7}
-                    onPress={() => handleTimelineSelect(timeline)}
-                    disabled={savingTimeline}
-                  >
-                    <View
-                      style={[
-                        styles.timelineCard,
-                        selected && styles.timelineCardSelected,
-                      ]}
-                    >
-                      {isRecommended(timeline) && (
-                        <LinearGradient
-                          colors={["#3b82f6", "#8b5cf6"]}
-                          start={{ x: 0, y: 0 }}
-                          end={{ x: 1, y: 0 }}
-                          style={styles.recommendedBadge}
-                        >
-                          <Ionicons name="star" size={14} color="#fff" />
-                          <Text style={styles.recommendedText}>
-                            Recommended
-                          </Text>
-                        </LinearGradient>
-                      )}
-
-                      <View style={styles.timelineHeader}>
-                        <View style={{ flex: 1 }}>
-                          <Text style={styles.timelineName}>
-                            {formatText(timeline.approach_name)}
-                          </Text>
-                          <LinearGradient
-                            colors={getDifficultyColor(
-                              timeline.difficulty_level
-                            )}
-                            start={{ x: 0, y: 0 }}
-                            end={{ x: 1, y: 0 }}
-                            style={styles.difficultyBadge}
-                          >
-                            <Text style={styles.difficultyText}>
-                              {formatText(timeline.difficulty_level)}
-                            </Text>
-                          </LinearGradient>
-                        </View>
-                        <View style={styles.rightSection}>
-                          <View style={styles.weeksContainer}>
-                            <Text style={styles.weeksNumber}>
-                              {timeline.timeline_weeks}
-                            </Text>
-                            <Text style={styles.weeksLabel}>weeks</Text>
+          {showCustomize && (
+            <Animated.View style={[styles.customizeContent, { opacity: customizeHeight }]}>
+              <View style={styles.card}>
+                <Text style={styles.stepTitle}>Step 1: Target Weight</Text>
+                <View style={styles.targetGrid}>
+                  {targetWeights.map((w) => (
+                    <TouchableOpacity key={w} style={[styles.targetButton, selectedTarget === w && styles.targetButtonActive]} onPress={() => { setSelectedTarget(w); setSelectedApproach(null); }}>
+                      <Text style={[styles.targetValue, selectedTarget === w && styles.targetValueActive]}>{w}</Text>
+                      <Text style={styles.targetLabel}>lbs</Text>
+                      <Text style={[styles.targetDiff, selectedTarget === w && styles.targetDiffActive]}>
+                        {assessment.weight_lbs - w > 0 ? `-${assessment.weight_lbs - w}` : `+${Math.abs(assessment.weight_lbs - w)}`} lbs
+                      </Text>
+                    </TouchableOpacity>
+                  ))}
+                </View>
+                {selectedTarget !== null && (
+                  <>
+                    <Text style={[styles.stepTitle, { marginTop: verticalScale(20) }]}>Step 2: Approach</Text>
+                    {filteredTimelines.map((t) => {
+                      const id = `${t.approach_name}-${t.target_weight_lbs}`;
+                      return (
+                        <TouchableOpacity key={id} style={[styles.approachButton, selectedApproach === id && styles.approachButtonActive]} onPress={() => setSelectedApproach(id)}>
+                          <View style={styles.approachLeft}>
+                            <Ionicons name={t.approach_name.includes("conservative") ? "walk-outline" : t.approach_name.includes("moderate") ? "fitness-outline" : "rocket-outline"} size={scale(22)} color={selectedApproach === id ? COLORS.primary : COLORS.textSecondary} />
+                            <View style={styles.approachInfo}>
+                              <Text style={[styles.approachName, selectedApproach === id && styles.approachNameActive]}>{formatText(t.approach_name)}</Text>
+                              <Text style={styles.approachRate}>{t.weekly_rate} lb/week</Text>
+                            </View>
                           </View>
-                          <Ionicons
-                            name={expanded ? "chevron-up" : "chevron-down"}
-                            size={24}
-                            color="#64748b"
-                          />
-                        </View>
-                      </View>
-
-                      {/* Quick Overview */}
-                      <View style={styles.quickMetrics}>
-                        <View style={styles.quickMetric}>
-                          <Ionicons
-                            name="trophy-outline"
-                            size={18}
-                            color="#10b981"
-                          />
-                          <Text style={styles.quickMetricText}>
-                            {timeline.target_weight_lbs} lbs
-                          </Text>
-                        </View>
-                        <View style={styles.quickMetric}>
-                          <Ionicons
-                            name="trending-down"
-                            size={18}
-                            color="#f59e0b"
-                          />
-                          <Text style={styles.quickMetricText}>
-                            {timeline.weekly_rate} lbs/wk
-                          </Text>
-                        </View>
-                        <View style={styles.quickMetric}>
-                          <Ionicons
-                            name="analytics-outline"
-                            size={18}
-                            color="#8b5cf6"
-                          />
-                          <Text style={styles.quickMetricText}>
-                            {Math.abs(timeline.weight_change_lbs)} lbs total
-                          </Text>
-                        </View>
-                      </View>
-
-                      {selected && (
-                        <View style={styles.selectedIndicator}>
-                          <Ionicons
-                            name="checkmark-circle"
-                            size={18}
-                            color="#3b82f6"
-                          />
-                          <Text style={styles.selectedText}>Selected</Text>
-                        </View>
-                      )}
-                    </View>
+                          <View style={styles.approachRight}>
+                            <Text style={[styles.approachWeeks, selectedApproach === id && styles.approachWeeksActive]}>{t.timeline_weeks}</Text>
+                            <Text style={styles.approachWeeksLabel}>weeks</Text>
+                          </View>
+                        </TouchableOpacity>
+                      );
+                    })}
+                  </>
+                )}
+                {selectedApproach && (
+                  <TouchableOpacity style={styles.confirmButton} onPress={handleConfirm} disabled={loading}>
+                    {loading ? <ActivityIndicator color={COLORS.white} /> : <Text style={styles.confirmButtonText}>Apply Customization</Text>}
                   </TouchableOpacity>
-                </View>
-              );
-            })}
-          </View>
+                )}
+              </View>
+            </Animated.View>
+          )}
 
-          {assessment.important_notes &&
-            assessment.important_notes.length > 0 && (
-              <View style={styles.notesCard}>
-                <View style={styles.notesHeader}>
-                  <Ionicons
-                    name="information-circle"
-                    size={24}
-                    color="#3b82f6"
-                  />
-                  <Text style={styles.notesTitle}>Important Notes</Text>
-                </View>
-                {assessment.important_notes.map((note, index) => (
-                  <View key={index} style={styles.noteItem}>
-                    <Ionicons
-                      name="checkmark-circle"
-                      size={16}
-                      color="#10b981"
-                    />
-                    <Text style={styles.noteText}>{note}</Text>
+          {/* Nutrition Plan */}
+          {customization && (
+            <View style={styles.card}>
+              <View style={styles.cardHeader}>
+                <Ionicons name="nutrition-outline" size={scale(18)} color={COLORS.primary} />
+                <Text style={styles.cardHeaderText}>Nutrition Plan {isCustomized && "(Customized)"}</Text>
+              </View>
+              <View style={styles.calorieCard}>
+                <Text style={styles.calorieLabel}>Daily Calorie Target</Text>
+                <Text style={styles.calorieValue}>{customization.target_calories}</Text>
+                <Text style={styles.calorieSubtext}>kcal/day ({customization.calorie_adjustment} deficit)</Text>
+              </View>
+              <Text style={styles.sectionLabel}>Macro Breakdown</Text>
+              <View style={styles.macroGrid}>
+                {[
+                  { label: "Protein", value: customization.macro_breakdown.protein.grams, pct: customization.macro_breakdown.protein.percentage, colors: COLORS.statAge },
+                  { label: "Carbs", value: customization.macro_breakdown.carbohydrates.grams, pct: customization.macro_breakdown.carbohydrates.percentage, colors: COLORS.statWeight },
+                  { label: "Fat", value: customization.macro_breakdown.fat.grams, pct: customization.macro_breakdown.fat.percentage, colors: COLORS.statTDEE },
+                ].map((m, i) => (
+                  <View key={i} style={[styles.macroBox, { backgroundColor: m.colors.bg }]}>
+                    <Text style={[styles.macroValue, { color: m.colors.text }]}>{m.value}g</Text>
+                    <Text style={styles.macroLabel}>{m.label}</Text>
+                    <Text style={[styles.macroPercent, { color: m.colors.text }]}>{m.pct}%</Text>
                   </View>
                 ))}
               </View>
-            )}
+              <View style={styles.nutrientRow}>
+                <View style={styles.nutrientBox}><Text style={styles.nutrientValue}>{customization.nutrition_targets.fiber_g}g</Text><Text style={styles.nutrientLabel}>Fiber</Text></View>
+                <View style={styles.nutrientBox}><Text style={styles.nutrientValue}>{customization.nutrition_targets.sodium_mg}</Text><Text style={styles.nutrientLabel}>Sodium (mg)</Text></View>
+              </View>
+              <View style={styles.timelineCard}>
+                <Text style={styles.timelineTitle}>Timeline</Text>
+                <View style={styles.timelineGrid}>
+                  <View style={styles.timelineRow}>
+                    <Text style={styles.timelineLabel}>Current</Text>
+                    <Text style={styles.timelineValue}>{customization.weight_lbs} lbs</Text>
+                  </View>
+                  <View style={styles.timelineRow}>
+                    <Text style={styles.timelineLabel}>Target</Text>
+                    <Text style={styles.timelineValue}>{customization.target_weight_lbs} lbs</Text>
+                  </View>
+              <View style={styles.timelineRow}>
+  <Text style={styles.timelineLabel}>
+    {customization?.goal === "lose"
+      ? "To Lose"
+      : customization?.goal === "gain"
+      ? "To Gain"
+      : "To Maintain"}
+  </Text>
 
-          {/* Medical Disclaimer */}
-          <View style={styles.disclaimer}>
-            <Ionicons name="warning-outline" size={24} color="#f59e0b" />
-            <View style={{ flex: 1 }}>
-              <Text style={styles.disclaimerText}>
-                <Text style={styles.disclaimerBold}>Medical Disclaimer: </Text>
-                This service provides nutritional information for educational
-                purposes only. Always consult with your healthcare provider
-                before making dietary changes.
+  <Text style={styles.timelineValue}>
+    {(customization?.timeline_details?.weight_to_lose_lbs ??
+      customization?.timeline_details?.weight_to_gain_lbs ??
+      customization?.timeline_details?.weight_to_maintain_lbs ??
+      0) + " lbs"}
+  </Text>
+</View>
+
+<View style={styles.timelineRow}>
+  <Text style={styles.timelineLabel}>
+    {customization?.goal === "maintain" ? "Weekly Target" : "Weekly"}
+  </Text>
+
+  <Text style={styles.timelineValue}>
+    {(customization?.timeline_details?.expected_weekly_loss_lbs ??
+      customization?.timeline_details?.expected_weekly_gain_lbs ??
+      customization?.timeline_details?.expected_weekly_maintain_lbs ??
+      0) + " lb"}
+  </Text>
+</View>
+
+                  <View style={[styles.timelineRow, { marginTop: verticalScale(8), paddingTop: verticalScale(8), borderTopWidth: 1, borderTopColor: COLORS.border }]}>
+                    <Text style={styles.timelineLabel}>Est. End Date</Text>
+                    <Text style={[styles.timelineValue, { color: COLORS.primary, fontWeight: "700" }]}>{customization.timeline_details.estimated_end_date}</Text>
+                  </View>
+                </View>
+              </View>
+            </View>
+          )}
+
+          {/* Wellness Guidance */}
+          {customization?.wellness_guidance && (
+            <View style={styles.card}>
+              <View style={styles.cardHeader}>
+                <Ionicons name="heart-outline" size={scale(18)} color={COLORS.primary} />
+                <Text style={styles.cardHeaderText}>Wellness Guidance</Text>
+              </View>
+              {[
+                { icon: "bulb-outline", title: "Mental Health", items: customization.wellness_guidance.mental_health },
+                { icon: "moon-outline", title: "Sleep & Recovery", items: customization.wellness_guidance.sleep_and_recovery },
+                { icon: "leaf-outline", title: "Stress Management", items: customization.wellness_guidance.stress_management },
+                { icon: "trending-up-outline", title: "Long-term", items: customization.wellness_guidance.long_term_sustainability },
+              ].map((s, i) => s.items && s.items.length > 0 && (
+                <View key={i} style={styles.guidanceSection}>
+                  <View style={styles.guidanceHeader}>
+                    <Ionicons name={s.icon as any} size={scale(18)} color={COLORS.primary} />
+                    <Text style={styles.guidanceTitle}>{s.title}</Text>
+                  </View>
+                  {s.items.map((item, j) => <Text key={j} style={styles.guidanceText}>• {item}</Text>)}
+                </View>
+              ))}
+            </View>
+          )}
+
+          {/* Safety Notice */}
+          {assessment?.safety_assessment && (
+            <View style={styles.safetyBanner}>
+              <Ionicons name="warning-outline" size={scale(18)} color={COLORS.warning} />
+              <Text style={styles.safetyText}>
+                <Text style={styles.safetyBold}>Safety:</Text> Risk level is <Text style={styles.safetyBold}>{assessment.safety_assessment.risk_level}</Text>. Consult a healthcare professional before starting.
               </Text>
             </View>
-          </View>
+          )}
+
+          {/* Start Button */}
+      <TouchableOpacity
+  style={styles.startButton}
+  activeOpacity={0.8}
+  onPress={async () => {
+    if (selectedTimeline) {
+      const saved = await saveSelectedTimeline(selectedTimeline);
+
+      if (saved) {
+        navigation.navigate("LandingMain");
+        Alert.alert("Success", "Your wellness journey has started!");
+      }
+    } else {
+      Alert.alert("Select Timeline", "Please choose a timeline to continue.");
+    }
+  }}
+>
+            <LinearGradient colors={[COLORS.primary, COLORS.primaryLight]} style={styles.startButtonGradient} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}>
+              <Text style={styles.startButtonText}>{savingTimeline ? "Starting..." : "Start My Journey"}</Text>
+              <Ionicons name="arrow-forward" size={scale(20)} color={COLORS.white} style={{ marginLeft: scale(8) }} />
+            </LinearGradient>
+          </TouchableOpacity>
         </Animated.View>
-      </ScrollView>
-
-      {/* Bottom Action Button */}
-      <View style={styles.bottomActions}>
-        <TouchableOpacity
-          style={[
-            styles.startButton,
-            (!selectedTimeline || savingTimeline) && styles.startButtonDisabled,
-          ]}
-          onPress={handleStartJourney}
-          disabled={!selectedTimeline || savingTimeline}
-        >
-          <LinearGradient
-            colors={
-              selectedTimeline && !savingTimeline
-                ? ["#3b82f6", "#8b5cf6"]
-                : ["#d1d5db", "#9ca3af"]
-            }
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 0 }}
-            style={styles.startButtonGradient}
-          >
-            {savingTimeline ? (
-              <ActivityIndicator color="#fff" />
-            ) : (
-              <>
-                <Text style={styles.startButtonText}>Start My Journey</Text>
-                <Ionicons name="arrow-forward" size={20} color="#fff" />
-              </>
-            )}
-          </LinearGradient>
-        </TouchableOpacity>
-      </View>
-    </View>
+      )}
+    </ScrollView>
   );
-};
+}
 
-export default GoalAssessmentScreen;
+const styles = StyleSheet.create({
+  container: { flex: 1, backgroundColor: COLORS.background },
+  content: { padding: scale(16), paddingBottom: verticalScale(80) },
+  loadingContainer: { flex: 1, justifyContent: "center", alignItems: "center", padding: scale(40), minHeight: verticalScale(400) },
+  loadingText: { marginTop: verticalScale(16), fontSize: FONT.base, color: COLORS.textSecondary },
+  errorContainer: { flex: 1, justifyContent: "center", alignItems: "center", padding: scale(40), minHeight: verticalScale(400) },
+  errorText: { fontSize: FONT.base, color: COLORS.error, textAlign: "center", marginVertical: verticalScale(16) },
+  retryButton: { backgroundColor: COLORS.primary, paddingVertical: verticalScale(12), paddingHorizontal: scale(28), borderRadius: scale(10) },
+  retryButtonText: { color: COLORS.white, fontSize: FONT.base, fontWeight: "600" },
+
+  // Header
+
+  headerTopRow: { flexDirection: "row", justifyContent: "space-between", alignItems: "flex-start" },
+  headerTitleContainer: { flex: 1, marginRight: scale(12) },
+  headerTitle: { fontSize: FONT.xxl, fontWeight: "700", color: COLORS.white },
+  headerSubtitle: { fontSize: FONT.sm, color: "rgba(255,255,255,0.85)", marginTop: verticalScale(4) },
+  menuButton: { padding: scale(8), backgroundColor: "rgba(255,255,255,0.2)", borderRadius: scale(50) },
+  headerDesc: { fontSize: FONT.sm, color: "rgba(255,255,255,0.8)", marginTop: verticalScale(12), lineHeight: FONT.sm * 1.5 },
+
+  // Card
+  card: { backgroundColor: COLORS.cardBg, borderRadius: scale(14), marginBottom: verticalScale(12), overflow: "hidden", borderWidth: 1, borderColor: COLORS.border },
+  cardHeader: { flexDirection: "row", alignItems: "center", paddingHorizontal: scale(16), paddingVertical: verticalScale(12), borderBottomWidth: 1, borderBottomColor: COLORS.borderLight },
+  cardHeaderText: { fontSize: FONT.base, fontWeight: "600", color: COLORS.textPrimary, marginLeft: scale(8) },
+
+  // Stats
+  statsGrid: { flexDirection: "row", padding: scale(12), gap: scale(8) },
+  statBox: { flex: 1, backgroundColor: COLORS.borderLight, borderRadius: scale(10), padding: scale(12), alignItems: "center" },
+  statValue: { fontSize: FONT.lg, fontWeight: "700", color: COLORS.textPrimary },
+  statLabel: { fontSize: FONT.xs, color: COLORS.textSecondary, marginTop: verticalScale(2) },
+
+  // Status
+  statusBanner: { flexDirection: "row", backgroundColor: COLORS.borderLight, borderRadius: scale(10), padding: scale(12), marginHorizontal: scale(12), marginBottom: verticalScale(12), alignItems: "center" },
+  statusText: { flex: 1, marginLeft: scale(10) },
+  statusTitle: { fontSize: FONT.base, fontWeight: "600", color: COLORS.textPrimary },
+  statusSubtitle: { fontSize: FONT.xs, color: COLORS.textSecondary, marginTop: verticalScale(2) },
+
+  // Recommended
+  recommendedCard: { backgroundColor: COLORS.borderLight, borderRadius: scale(10), padding: scale(12), marginHorizontal: scale(12), marginBottom: verticalScale(12), borderLeftWidth: 3, borderLeftColor: COLORS.primary },
+  recommendedBadge: { fontSize: FONT.xs, color: COLORS.primary, fontWeight: "700", marginBottom: verticalScale(4), letterSpacing: 0.5 },
+  recommendedContent: { flexDirection: "row", justifyContent: "space-between", alignItems: "center" },
+  recommendedTitle: { fontSize: FONT.base, fontWeight: "600", color: COLORS.textPrimary },
+  recommendedSubtitle: { fontSize: FONT.xs, color: COLORS.textSecondary, marginTop: verticalScale(2) },
+  weeksContainer: { alignItems: "flex-end" },
+  weeksValue: { fontSize: FONT.xxl, fontWeight: "700", color: COLORS.primary },
+  weeksLabel: { fontSize: FONT.xs, color: COLORS.textSecondary },
+
+  // Notes
+  notesContainer: { padding: scale(12), paddingTop: 0 },
+  notesTitle: { fontSize: FONT.xs, color: COLORS.textSecondary, fontWeight: "600", marginBottom: verticalScale(6) },
+  noteText: { fontSize: FONT.xs, color: COLORS.textSecondary, marginBottom: verticalScale(2), lineHeight: FONT.xs * 1.5 },
+headerCard: {
+  borderRadius: 20,
+  overflow: "hidden",
+  marginBottom: verticalScale(16),
+},
+
+headerImage: {
+  borderRadius: 20,
+},
+
+headerOverlay: {
+  flex: 1,
+  padding: scale(18),
+  justifyContent: "flex-end",
+},
+  // Customize
+  customizeHeader: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", padding: scale(16) },
+  customizeLeft: { flexDirection: "row", alignItems: "center", flex: 1 },
+  customizeIcon: { width: scale(40), height: scale(40), borderRadius: scale(20), backgroundColor: COLORS.borderLight, alignItems: "center", justifyContent: "center", marginRight: scale(12) },
+  customizeTitle: { fontSize: FONT.base, fontWeight: "600", color: COLORS.textPrimary },
+  customizeSubtitle: { fontSize: FONT.xs, color: COLORS.textSecondary, marginTop: verticalScale(2) },
+  customizeContent: { marginTop: verticalScale(-8) },
+  stepTitle: { fontSize: FONT.sm, fontWeight: "600", color: COLORS.textPrimary, marginBottom: verticalScale(12), paddingHorizontal: scale(16), paddingTop: verticalScale(16) },
+
+  // Target Grid
+  targetGrid: { flexDirection: "row", paddingHorizontal: scale(12), gap: scale(8) },
+  targetButton: { flex: 1, padding: scale(12), borderRadius: scale(10), borderWidth: 1.5, borderColor: COLORS.border, backgroundColor: COLORS.white, alignItems: "center" },
+  targetButtonActive: { borderColor: COLORS.primary, backgroundColor: "rgba(79, 70, 229, 0.05)" },
+  targetValue: { fontSize: FONT.lg, fontWeight: "700", color: COLORS.textPrimary },
+  targetValueActive: { color: COLORS.primary },
+  targetLabel: { fontSize: FONT.xs, color: COLORS.textSecondary, marginTop: verticalScale(2) },
+  targetDiff: { fontSize: FONT.xs, color: COLORS.textTertiary, marginTop: verticalScale(2) },
+  targetDiffActive: { color: COLORS.primary },
+
+  // Approach
+  approachButton: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", padding: scale(12), borderRadius: scale(10), borderWidth: 1.5, borderColor: COLORS.border, backgroundColor: COLORS.white, marginHorizontal: scale(12), marginBottom: verticalScale(8) },
+  approachButtonActive: { borderColor: COLORS.primary, backgroundColor: "rgba(79, 70, 229, 0.05)" },
+  approachLeft: { flexDirection: "row", alignItems: "center" },
+  approachName: { fontSize: FONT.sm, fontWeight: "600", color: COLORS.textPrimary },
+  approachNameActive: { color: COLORS.primary },
+  approachRate: { fontSize: FONT.xs, color: COLORS.textSecondary, marginTop: verticalScale(2) },
+  approachWeeks: { fontSize: FONT.base, fontWeight: "700", color: COLORS.textPrimary },
+  approachWeeksActive: { color: COLORS.primary },
+  confirmButton: { backgroundColor: COLORS.primary, margin: scale(12), padding: verticalScale(14), borderRadius: scale(10), alignItems: "center" },
+  confirmButtonText: { color: COLORS.white, fontSize: FONT.base, fontWeight: "600" },
+
+  // Calorie
+  calorieCard: { backgroundColor: COLORS.borderLight, margin: scale(12), padding: scale(20), borderRadius: scale(12), alignItems: "center" },
+  calorieLabel: { fontSize: FONT.sm, color: COLORS.textSecondary },
+  calorieValue: { fontSize: FONT.xxxl, fontWeight: "700", color: COLORS.primary, marginVertical: verticalScale(4) },
+  calorieSubtext: { fontSize: FONT.xs, color: COLORS.textSecondary },
+
+  // Macros
+  sectionLabel: { fontSize: FONT.xs, color: COLORS.textSecondary, fontWeight: "600", paddingHorizontal: scale(12), marginBottom: verticalScale(8) },
+  macroGrid: { flexDirection: "row", paddingHorizontal: scale(12), gap: scale(8), marginBottom: verticalScale(12) },
+  macroBox: { flex: 1, backgroundColor: COLORS.borderLight, borderRadius: scale(10), padding: scale(12), alignItems: "center" },
+  macroValue: { fontSize: FONT.lg, fontWeight: "700", color: COLORS.textPrimary },
+  macroLabel: { fontSize: FONT.xs, color: COLORS.textSecondary, marginTop: verticalScale(2) },
+  macroPercent: { fontSize: FONT.xs, color: COLORS.primary, marginTop: verticalScale(2) },
+
+  // Nutrients
+  nutrientRow: { flexDirection: "row", paddingHorizontal: scale(12), gap: scale(8), marginBottom: verticalScale(12) },
+  nutrientBox: { flex: 1, backgroundColor: COLORS.borderLight, borderRadius: scale(8), padding: scale(10), alignItems: "center" },
+  nutrientValue: { fontSize: FONT.base, fontWeight: "700", color: COLORS.textPrimary },
+  nutrientLabel: { fontSize: FONT.xs, color: COLORS.textSecondary, marginTop: verticalScale(2) },
+
+  // Timeline Card
+  timelineCard: { backgroundColor: COLORS.borderLight, borderRadius: scale(10), padding: scale(12), margin: scale(12), marginTop: 0 },
+  timelineTitle: { fontSize: FONT.xs, color: COLORS.textSecondary, fontWeight: "600", marginBottom: verticalScale(10) },
+  timelineRow: { flexDirection: "row", justifyContent: "space-between", marginBottom: verticalScale(6) },
+  timelineLabel: { fontSize: FONT.sm, color: COLORS.textSecondary },
+  timelineValue: { fontSize: FONT.sm, fontWeight: "600", color: COLORS.textPrimary },
+
+  // Guidance
+  guidanceSection: { backgroundColor: COLORS.borderLight, borderRadius: scale(10), padding: scale(12), marginHorizontal: scale(12), marginBottom: verticalScale(10) },
+  guidanceHeader: { flexDirection: "row", alignItems: "center", marginBottom: verticalScale(8) },
+  guidanceTitle: { fontSize: FONT.sm, fontWeight: "600", color: COLORS.textPrimary, marginLeft: scale(8) },
+  guidanceText: { fontSize: FONT.xs, color: COLORS.textSecondary, marginLeft: scale(26), marginBottom: verticalScale(4), lineHeight: FONT.xs * 1.6 },
+
+  // Safety
+  safetyBanner: { flexDirection: "row", backgroundColor: "rgba(245, 158, 11, 0.1)", borderWidth: 1, borderColor: "rgba(245, 158, 11, 0.3)", padding: scale(12), borderRadius: scale(10), marginBottom: verticalScale(16), alignItems: "flex-start" },
+  safetyText: { fontSize: FONT.xs, color: COLORS.textSecondary, flex: 1, marginLeft: scale(8), lineHeight: FONT.xs * 1.5 },
+  safetyBold: { fontWeight: "700", color: COLORS.textPrimary },
+
+  // Start Button
+  startButton: { borderRadius: scale(12), overflow: "hidden", marginBottom: verticalScale(20) },
+  startButtonGradient: { flexDirection: "row", padding: verticalScale(16), alignItems: "center", justifyContent: "center" },
+  startButtonText: { color: COLORS.white, fontSize: FONT.lg, fontWeight: "700" },
+});

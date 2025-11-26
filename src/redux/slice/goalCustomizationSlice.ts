@@ -73,7 +73,7 @@ export const fetchGoalCustomization = createAsyncThunk<
       const userId =
         state.auth?.user?.userId ||
         state.auth?.user?.userId;
-
+console.log(userId)
       if (!userId) {
         console.warn("⚠️ No userId found in auth state — cannot save nutrition goal");
       }
@@ -91,6 +91,7 @@ export const fetchGoalCustomization = createAsyncThunk<
       }
 
       const data: GoalCustomizationResponse = response.data;
+      console.log("resepsne",data)
       console.log("📦 Goal Customization Response:", data);
 
       // Save to backend if userId exists

@@ -587,7 +587,7 @@ const HealthTrackMonitorScreen: React.FC = () => {
                     imageStyle={styles.statImageStyle}
                   >
                     <LinearGradient
-                      colors={["rgba(59, 130, 246, 0.88)", "rgba(37, 99, 235, 0.85)"]}
+                      colors={["rgba(59, 130, 246, 0.65)", "rgba(37, 99, 235, 0.60)"]}
                       style={styles.trackingOverlay}
                     >
                       <Text style={styles.statLabelWithBg}>Steps</Text>
@@ -605,7 +605,7 @@ const HealthTrackMonitorScreen: React.FC = () => {
                     imageStyle={styles.statImageStyle}
                   >
                     <LinearGradient
-                      colors={["rgba(239, 68, 68, 0.88)", "rgba(220, 38, 38, 0.85)"]}
+                      colors={["rgba(239, 68, 68, 0.65)", "rgba(220, 38, 38, 0.60)"]}
                       style={styles.trackingOverlay}
                     >
                       <Text style={styles.statLabelWithBg}>Heart Rate</Text>
@@ -623,7 +623,7 @@ const HealthTrackMonitorScreen: React.FC = () => {
                     imageStyle={styles.statImageStyle}
                   >
                     <LinearGradient
-                      colors={["rgba(16, 185, 129, 0.88)", "rgba(5, 150, 105, 0.85)"]}
+                      colors={["rgba(16, 185, 129, 0.65)", "rgba(5, 150, 105, 0.60)"]}
                       style={styles.trackingOverlay}
                     >
                       <Text style={styles.statLabelWithBg}>Status</Text>
@@ -763,8 +763,8 @@ const HealthTrackMonitorScreen: React.FC = () => {
                   >
                     <LinearGradient
                       colors={[
-                        "rgba(59, 130, 246, 0.88)",
-                        "rgba(37, 99, 235, 0.85)",
+                        "rgba(59, 130, 246, 0.65)",
+                        "rgba(37, 99, 235, 0.60)",
                       ]}
                       style={styles.statOverlay}
                     >
@@ -786,8 +786,8 @@ const HealthTrackMonitorScreen: React.FC = () => {
                   >
                     <LinearGradient
                       colors={[
-                        "rgba(236, 72, 153, 0.88)",
-                        "rgba(251, 146, 60, 0.85)",
+                        "rgba(236, 72, 153, 0.65)",
+                        "rgba(251, 146, 60, 0.60)",
                       ]}
                       style={styles.statOverlay}
                     >
@@ -809,8 +809,8 @@ const HealthTrackMonitorScreen: React.FC = () => {
                   >
                     <LinearGradient
                       colors={[
-                        "rgba(16, 185, 129, 0.88)",
-                        "rgba(5, 150, 105, 0.85)",
+                        "rgba(16, 185, 129, 0.65)",
+                        "rgba(5, 150, 105, 0.60)",
                       ]}
                       style={styles.statOverlay}
                     >
@@ -904,8 +904,8 @@ const HealthTrackMonitorScreen: React.FC = () => {
                 >
                   <LinearGradient
                     colors={[
-                      "rgba(236, 72, 153, 0.88)",
-                      "rgba(251, 146, 60, 0.85)",
+                      "rgba(236, 72, 153, 0.30)",
+                      "rgba(251, 146, 60, 0.25)",
                     ]}
                     style={styles.statOverlay}
                   >
@@ -927,8 +927,8 @@ const HealthTrackMonitorScreen: React.FC = () => {
                 >
                   <LinearGradient
                     colors={[
-                      "rgba(16, 185, 129, 0.88)",
-                      "rgba(5, 150, 105, 0.85)",
+                      "rgba(16, 185, 129, 0.30)",
+                      "rgba(5, 150, 105, 0.25)",
                     ]}
                     style={styles.statOverlay}
                   >
@@ -950,8 +950,8 @@ const HealthTrackMonitorScreen: React.FC = () => {
                 >
                   <LinearGradient
                     colors={[
-                      "rgba(239, 68, 68, 0.88)",
-                      "rgba(220, 38, 38, 0.85)",
+                      "rgba(239, 68, 68, 0.30)",
+                      "rgba(220, 38, 38, 0.25)",
                     ]}
                     style={styles.statOverlay}
                   >

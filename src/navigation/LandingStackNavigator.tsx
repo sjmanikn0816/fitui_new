@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { createStackNavigator } from "@react-navigation/stack";
+import { useAppDispatch, useAppSelector } from "@/redux/store/hooks";
+import { fetchUserById } from "@/redux/slice/auth/authSlice";
 
 import LandingScreen from "@/screens/main/LandinScreen";
 import GoalAssessmentScreen from "@/screens/main/GoalAssesment";
@@ -13,10 +15,12 @@ import MealPlanEmailScreen from "@/components/mealPlanEmail/MealPlanEmailScreen"
 import AllScreensMenu from "@/screens/main/AllScreensMenu";
 import { ProfileStackNavigator } from "./ProfileStackNavigator";
 import { SecureStorage } from "@/services/secureStorage";
+import WeeklyMealPlanner from "@/screens/main/profile/WeeklyPlanScreen";
+import WellnessScreen from "@/screens/main/assesment/WellnessScreen";
 
 const LandingStack = createStackNavigator();
 
-const defaultHeaderOptions = (title, subtitle) => ({
+const defaultHeaderOptions = (title: string, subtitle: string) => ({
   headerShown: true,
   headerTitle: () => <HeaderWithSubtitle subtitle={subtitle} title={title} />,
   headerStyle: { backgroundColor: Colors.white },
@@ -25,69 +29,57 @@ const defaultHeaderOptions = (title, subtitle) => ({
 });
 
 export const LandingStackNavigator = () => {
-  const [initialRoute, setInitialRoute] = useState<"GoalAssessment" | "LandingMain">("GoalAssessment");
-  const [loading, setLoading] = useState(true);
+  const dispatch = useAppDispatch();
 
-useEffect(() => {
-  const checkGoalStatus = async () => {
-    try {
-      const assessmentDone = await SecureStorage.getItem("goalAssessmentComplete");
+  const user = useAppSelector((state) => state.auth.user);
 
-      const userJson = await SecureStorage.getItem("user");
-      const userObj = userJson ? JSON.parse(userJson) : null;
-
-      const journeyStarted = userObj?.journeyStarted === true;
-
-      console.log("Assessment Done:", assessmentDone);
-      console.log("Journey Started:", journeyStarted);
-
-      // Only go to LandingMain **if BOTH are true**
-      if (assessmentDone === "true" && journeyStarted) {
-        setInitialRoute("LandingMain");
-      } else {
-        setInitialRoute("GoalAssessment");
-      }
-
-    } catch (error) {
-      console.log("Error reading storage:", error);
-      setInitialRoute("GoalAssessment"); // fallback
-    }
-
-    setLoading(false);
-  };
-
-  checkGoalStatus();
-}, []);
-
-  if (loading) return null; // or a splash/loading screen
 
   return (
     <LandingStack.Navigator
-      initialRouteName={initialRoute}
+      initialRouteName="LandingMain"
       screenOptions={{ headerShown: false }}
     >
-      <LandingStack.Screen name="GoalAssessment" component={GoalAssessmentScreen} />
+      {/* FIRST TIME USER LOGIN FLOW */}
+   
+
+      {/* MAIN LANDING PAGE AFTER GOAL SETUP */}
       <LandingStack.Screen name="LandingMain" component={LandingScreen} />
-      <LandingStack.Screen name="GoalCustomization" component={GoalCustomizationStackNavigator} />
-    
+
+      {/* GOAL CUSTOMIZATION FLOW */}
+      {/* <LandingStack.Screen
+        name="GoalCustomization"
+        component={GoalCustomizationStackNavigator}
+      /> */}
+
+      {/* MAIN DASHBOARD */}
       <LandingStack.Screen name="Dashboard" component={DashboardScreen} />
-      
+
+      {/* RESTAURANT DETAILS */}
       <LandingStack.Screen
         name="RestaurantDetail"
         component={RestaurantDetailScreen}
         options={defaultHeaderOptions("Restaurant Details", "Back")}
       />
 
+      {/* MEAL PLAN SHARE */}
       <LandingStack.Screen
         name="MealPlanEmail"
         component={MealPlanEmailScreen}
         options={defaultHeaderOptions("Share Meal Plan", "Back")}
       />
+
+      {/* TIMELINE DETAILS */}
       <LandingStack.Screen
         name="TimelineDetails"
         component={TimelineDetailsScreen}
         options={{ headerShown: false }}
       />
+
+      {/* HIDDEN DEVELOPER MENU */}
+
+
+      {/* PROFILE FLOW */}
+
     </LandingStack.Navigator>
   );
 };

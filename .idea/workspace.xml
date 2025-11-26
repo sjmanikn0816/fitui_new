@@ -1,0 +1,338 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="NONE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="c4e97291-b7b6-4217-a01d-0fc0826d50a7" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.env.example" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/caches/deviceStreaming.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/deviceManager.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/fitaiUI.iml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/markdown.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.vscode/settings.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/App.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/App.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CONFIG.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app.json" beforeDir="false" afterPath="$PROJECT_DIR$/app.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/babel.config.js" beforeDir="false" afterPath="$PROJECT_DIR$/babel.config.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/index.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/metro.config.js" beforeDir="false" afterPath="$PROJECT_DIR$/metro.config.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/patches/@react-native-voice+voice+3.2.4.patch" beforeDir="false" afterPath="$PROJECT_DIR$/patches/@react-native-voice+voice+3.2.4.patch" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/react-native.config.js" beforeDir="false" afterPath="$PROJECT_DIR$/react-native.config.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/app.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/bump-version.js" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/bump-version.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/fix-android.bat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/AnalyzeButton.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/AnalyzeButton.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/ConditionSelector.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/ConditionSelector.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/DashboardHeader.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/DashboardHeader.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/HorizontalCardList.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/HorizontalCardList.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/ResponseLevelSection.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/ResponseLevelSection.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/TextInputSection.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/TextInputSection.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/debug/HealthSyncDebugger.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/debug/HealthSyncDebugger.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/device/DeviceManagementScreen.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/device/DeviceManagementScreen.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/foodanalysis/ActionButtons.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/foodanalysis/ActionButtons.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/foodanalysis/AnalyzeButton.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/foodanalysis/AnalyzeButton.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/foodanalysis/CaloriesCard.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/foodanalysis/CaloriesCard.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/foodanalysis/FoodItemCard.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/foodanalysis/FoodItemCard.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/foodanalysis/MacroCard.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/foodanalysis/MacroCard.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/foodanalysis/NutrientsSection.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/foodanalysis/NutrientsSection.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/foodanalysis/QualityScoreSection.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/foodanalysis/QualityScoreSection.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/foodanalysis/ResponseLevelSection.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/foodanalysis/ResponseLevelSection.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/foodanalysis/TextInputSection.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/foodanalysis/TextInputSection.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/foodanalysis/WarningsSection.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/foodanalysis/WarningsSection.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/health/HealthDashboard.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/health/HealthDashboard.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/healthtrack/BalanceScoreCard.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/healthtrack/BalanceScoreCard.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/healthtrack/HealthGoalsSection.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/healthtrack/HealthGoalsSection.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/healthtrack/HealthInsightsSection.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/healthtrack/HealthInsightsSection.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/healthtrack/QuickLogSection.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/healthtrack/QuickLogSection.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/healthtrack/TodaysMetricsSection.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/healthtrack/TodaysMetricsSection.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/healthtrack/styles/BalananceScoreCardStyles.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/healthtrack/styles/BalananceScoreCardStyles.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/healthtrack/styles/HealthGoalsStyles.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/healthtrack/styles/HealthGoalsStyles.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/healthtrack/styles/HealthInseightsSection.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/healthtrack/styles/HealthInseightsSection.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/healthtrack/styles/QuickLogsSectionStyles.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/healthtrack/styles/QuickLogsSectionStyles.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/healthtrack/styles/TodayMetricSectionStyles.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/healthtrack/styles/TodayMetricSectionStyles.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/helpcenter/HelpOptionCard.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/helpcenter/HelpOptionCard.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/helpcenter/QuickMessageCard.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/helpcenter/QuickMessageCard.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/icons/Icons.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/icons/Icons.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/mealPlanEmail/ActionButtons.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/mealPlanEmail/ActionButtons.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/mealPlanEmail/FormInputs.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/mealPlanEmail/FormInputs.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/mealPlanEmail/HeaderBar.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/mealPlanEmail/HeaderBar.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/mealPlanEmail/MealPlanButtons.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/mealPlanEmail/MealPlanButtons.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/mealPlanEmail/MealPlanEmailScreen.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/mealPlanEmail/MealPlanEmailScreen.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/mealPlanEmail/MealPlanForm.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/mealPlanEmail/MealPlanForm.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/mealPlanEmail/MealPlanPreview.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/mealPlanEmail/MealPlanPreview.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/mealplan/AIRecommendationsSection.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/mealplan/AIRecommendationsSection.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/mealplan/AiRecomendationBanner.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/mealplan/AiRecomendationBanner.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/mealplan/EmailComponent.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/mealplan/EmailComponent.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/mealplan/HomeScreen.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/mealplan/HomeScreen.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/mealplan/MealCard.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/mealplan/MealCard.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/mealplan/MealDetailScreen.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/mealplan/MealDetailScreen.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/mealplan/MealItem.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/mealplan/MealItem.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/mealplan/MealPlanComponent.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/mealplan/MealPlanComponent.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/mealplan/MealPlannerScreen.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/mealplan/MealPlannerScreen.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/mealplan/NutritionTargets.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/mealplan/NutritionTargets.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/mealplan/QucikActionButton.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/mealplan/QucikActionButton.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/mealplan/RecipeCard.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/mealplan/RecipeCard.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/mealplan/RecipesForYouSection.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/mealplan/RecipesForYouSection.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/mealplan/RestaurantCard.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/mealplan/RestaurantCard.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/mealplan/SafetyAlert.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/mealplan/SafetyAlert.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/modals/DeviceRegistrationModal.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/modals/DeviceRegistrationModal.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/modals/HealthPermissionModal.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/modals/HealthPermissionModal.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/notification/DeliveryMethodSelector.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/notification/DeliveryMethodSelector.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/notification/NotificationCard.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/notification/NotificationCard.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/notification/NotificationToggle.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/notification/NotificationToggle.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/nutritionplan/MealCard.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/nutritionplan/MealCard.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/nutritionplan/NutritionPlanHeader.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/nutritionplan/NutritionPlanHeader.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/nutritionplan/NutritionPlanOverview.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/nutritionplan/NutritionPlanOverview.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/nutritionplan/NutritionalTargets.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/nutritionplan/NutritionalTargets.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/nutritionplan/SampleMeals.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/nutritionplan/SampleMeals.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/profile/HealthSummaryCard.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/profile/HealthSummaryCard.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/profile/MenuSection.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/profile/MenuSection.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/profile/UserProfileCard.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/profile/UserProfileCard.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/styles/ClinicalComponentStyles.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/styles/ClinicalComponentStyles.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/styles/DashboardHeader.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/styles/DashboardHeader.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/styles/MealItemStyles.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/styles/MealItemStyles.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/styles/MealkitCardStyles.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/styles/MealkitCardStyles.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/styles/QucikActionButtonStyles.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/styles/QucikActionButtonStyles.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/styles/ReceipCardStyles.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/styles/ReceipCardStyles.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/ui/AnalysisResultBox.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/ui/AnalysisResultBox.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/ui/AnimatedTextInline.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/ui/AnimatedTextInline.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/ui/Button.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/ui/Button.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/ui/Card.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/ui/Card.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/ui/ConformationModal.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/ui/ConformationModal.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/ui/CustomPicker.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/ui/CustomPicker.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/ui/DatePickerInput.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/ui/DatePickerInput.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/ui/Dropdown.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/ui/Dropdown.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/ui/ErrorModal.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/ui/ErrorModal.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/ui/ErrorModalStyles.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/ui/ErrorModalStyles.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/ui/GlobalModal.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/ui/GlobalModal.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/ui/HeaderNav.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/ui/HeaderNav.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/ui/HeaderWithSubtitle.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/ui/HeaderWithSubtitle.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/ui/HeightInput.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/ui/HeightInput.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/ui/ImagePickerComponent.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/ui/ImagePickerComponent.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/ui/ImagePickerModal.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/ui/ImagePickerModal.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/ui/ImagePickerSection.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/ui/ImagePickerSection.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/ui/Input.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/ui/Input.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/ui/InputSection.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/ui/InputSection.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/ui/Loading.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/ui/Loading.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/ui/LoadingSpinner.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/ui/LoadingSpinner.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/ui/Logo.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/ui/Logo.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/ui/MainHeaderNav.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/ui/MainHeaderNav.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/ui/ProfilePhotoSection.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/ui/ProfilePhotoSection.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/ui/ProgressSteps.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/ui/ProgressSteps.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/ui/ScrollContainer.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/ui/ScrollContainer.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/ui/SignOutButton.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/ui/SignOutButton.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/ui/SpeechBubbleBackground.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/ui/SpeechBubbleBackground.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/ui/StatusModal.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/ui/StatusModal.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/ui/Swicth.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/ui/Swicth.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/ui/TermsModal.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/ui/TermsModal.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/ui/TopMenuBar.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/ui/TopMenuBar.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/ui/styles/ButtonStyles.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/ui/styles/ButtonStyles.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/ui/styles/CardStyles.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/ui/styles/CardStyles.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/ui/styles/DropdownStyles.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/ui/styles/DropdownStyles.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/ui/styles/HeaderNavStyles.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/ui/styles/HeaderNavStyles.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/ui/styles/InputStyles.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/ui/styles/InputStyles.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/ui/styles/LogoStyles.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/ui/styles/LogoStyles.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/ui/styles/PicketModalStyles.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/ui/styles/PicketModalStyles.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/ui/styles/ProgressStepStyles.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/ui/styles/ProgressStepStyles.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/ui/styles/ScrollContainerStyles.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/ui/styles/ScrollContainerStyles.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/constants/Colors.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/constants/Colors.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/constants/Spacing.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/constants/Spacing.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/constants/String.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/constants/String.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/constants/Typography.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/constants/Typography.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/constants/config.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/constants/config.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/constants/endpoints.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/constants/endpoints.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/context/AuthContext.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/context/AuthContext.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/context/HealthPermissionProvider.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/context/HealthPermissionProvider.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/data/dummyData.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/data/dummyData.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/data/profileMenu.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/data/profileMenu.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/env.d.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/env.d.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/hooks/useLiveHealthMetrics.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/hooks/useLiveHealthMetrics.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/navigation/AllScreenMenuNavigaor.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/navigation/AllScreenMenuNavigaor.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/navigation/AuthNavigator.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/navigation/AuthNavigator.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/navigation/FoodAnalysisStackNavigator.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/navigation/FoodAnalysisStackNavigator.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/navigation/GoalAssesmentStackNavigator.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/navigation/GoalAssesmentStackNavigator.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/navigation/GoalCustomizationStackNavigator.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/navigation/GoalCustomizationStackNavigator.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/navigation/HealthTrackNavigotor.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/navigation/HealthTrackNavigotor.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/navigation/LandingStackNavigator.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/navigation/LandingStackNavigator.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/navigation/MainNavigator.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/navigation/MainNavigator.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/navigation/MainStackNavigator.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/navigation/MainStackNavigator.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/navigation/MainTabsStack.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/navigation/MainTabsStack.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/navigation/NutritionStackNavigator.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/navigation/NutritionStackNavigator.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/navigation/ProfileStackNavigator.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/navigation/ProfileStackNavigator.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/navigation/RootNavigator.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/navigation/RootNavigator.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/navigation/Screen.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/navigation/Screen.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/redux/slice/auth/authSlice.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/redux/slice/auth/authSlice.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/redux/slice/changePasswordSlice.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/redux/slice/changePasswordSlice.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/redux/slice/conformationSlice.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/redux/slice/conformationSlice.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/redux/slice/goalAssessmentSlice.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/redux/slice/goalAssessmentSlice.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/redux/slice/goalCustomizationSlice.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/redux/slice/goalCustomizationSlice.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/redux/slice/healthProfileSlice.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/redux/slice/healthProfileSlice.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/redux/slice/mealPlanSlice.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/redux/slice/mealPlanSlice.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/redux/slice/modalSlice.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/redux/slice/modalSlice.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/redux/slice/nutritionGoalSlice.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/redux/slice/nutritionGoalSlice.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/redux/slice/profileSlice.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/redux/slice/profileSlice.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/redux/slice/restaurantDetailSlice.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/redux/slice/restaurantDetailSlice.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/redux/slice/restaurantSlice.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/redux/slice/restaurantSlice.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/redux/store/hooks.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/redux/store/hooks.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/redux/store/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/redux/store/index.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/screens/SplashScreen.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/screens/SplashScreen.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/screens/TermsScreen.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/screens/TermsScreen.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/screens/TimelineDetailsScreen.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/screens/TimelineDetailsScreen.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/screens/auth/GoogleLoginWebView.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/screens/auth/GoogleLoginWebView.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/screens/auth/HealthProfileScreen.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/screens/auth/HealthProfileScreen.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/screens/auth/PersonalDetailsScreen.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/screens/auth/PersonalDetailsScreen.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/screens/auth/SignInScreen.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/screens/auth/SignInScreen.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/screens/auth/SignUpScreen.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/screens/auth/SignUpScreen.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/screens/auth/components/ProgressSteps.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/screens/auth/components/ProgressSteps.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/screens/auth/components/ToggleCardSelector.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/screens/auth/components/ToggleCardSelector.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/screens/debug/HealthSyncDebugScreen.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/screens/debug/HealthSyncDebugScreen.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/screens/main/AllScreensMenu.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/screens/main/AllScreensMenu.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/screens/main/DashboardScreen.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/screens/main/DashboardScreen.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/screens/main/Dashboardtabs/DineInScreen.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/screens/main/Dashboardtabs/DineInScreen.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/screens/main/Dashboardtabs/GoShopScreen.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/screens/main/Dashboardtabs/GoShopScreen.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/screens/main/Dashboardtabs/GoalCustomizationTab.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/screens/main/Dashboardtabs/GoalCustomizationTab.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/screens/main/Dashboardtabs/MakeItScreen.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/screens/main/Dashboardtabs/MakeItScreen.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/screens/main/Dashboardtabs/MomitScreen.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/screens/main/Dashboardtabs/MomitScreen.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/screens/main/Dashboardtabs/NewMakeitScreen.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/screens/main/Dashboardtabs/NewMakeitScreen.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/screens/main/Dashboardtabs/RestaurantDetailScreen.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/screens/main/Dashboardtabs/RestaurantDetailScreen.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/screens/main/Dashboardtabs/styles/DashboardMenuStyles.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/screens/main/Dashboardtabs/styles/DashboardMenuStyles.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/screens/main/Dashboardtabs/styles/DashboardScreenStyles.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/screens/main/Dashboardtabs/styles/DashboardScreenStyles.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/screens/main/Dashboardtabs/styles/DineInScreenStyles.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/screens/main/Dashboardtabs/styles/DineInScreenStyles.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/screens/main/Dashboardtabs/styles/FavoritesScreenStyles.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/screens/main/Dashboardtabs/styles/FavoritesScreenStyles.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/screens/main/Dashboardtabs/styles/FoofAnalysisScreenStyles.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/screens/main/Dashboardtabs/styles/FoofAnalysisScreenStyles.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/screens/main/Dashboardtabs/styles/GoShopScreenStyles.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/screens/main/Dashboardtabs/styles/GoShopScreenStyles.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/screens/main/Dashboardtabs/styles/GoalCustomizationStyles.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/screens/main/Dashboardtabs/styles/GoalCustomizationStyles.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/screens/main/Dashboardtabs/styles/MakeitScreenStyles.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/screens/main/Dashboardtabs/styles/MakeitScreenStyles.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/screens/main/Dashboardtabs/styles/MomItScreenStyles.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/screens/main/Dashboardtabs/styles/MomItScreenStyles.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/screens/main/Dashboardtabs/styles/ProfileScreenStyles.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/screens/main/Dashboardtabs/styles/ProfileScreenStyles.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/screens/main/FoodAnalysisResultsScreen.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/screens/main/FoodAnalysisResultsScreen.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/screens/main/FoodAnalysisScreen.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/screens/main/FoodAnalysisScreen.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/screens/main/GoalAssesment.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/screens/main/GoalAssesment.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/screens/main/HealthTrackMonitorScreen.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/screens/main/HealthTrackMonitorScreen.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/screens/main/LandinScreen.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/screens/main/LandinScreen.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/screens/main/NutritionPlanScreen.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/screens/main/NutritionPlanScreen.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/screens/main/PatientNutritionOverviewScreen.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/screens/main/PatientNutritionOverviewScreen.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/screens/main/ProfileScreen.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/screens/main/ProfileScreen.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/screens/main/VoiceSearchSection.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/screens/main/VoiceSearchSection.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/screens/main/WeightJourneyRegistrationScreen.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/screens/main/WeightJourneyRegistrationScreen.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/screens/main/profile/AppSetting.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/screens/main/profile/AppSetting.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/screens/main/profile/ChangePasswordScreen.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/screens/main/profile/ChangePasswordScreen.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/screens/main/profile/EditProfileComponents/AddressAndContactInfo.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/screens/main/profile/EditProfileComponents/AddressAndContactInfo.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/screens/main/profile/EditProfileComponents/BasicAndPhysicalInfo.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/screens/main/profile/EditProfileComponents/BasicAndPhysicalInfo.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/screens/main/profile/EditProfileComponents/HealthAndFitnessInfo.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/screens/main/profile/EditProfileComponents/HealthAndFitnessInfo.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/screens/main/profile/HelpCenterScreen.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/screens/main/profile/HelpCenterScreen.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/screens/main/profile/NotificationScreen.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/screens/main/profile/NotificationScreen.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/screens/main/profile/PrivacyPolicyScreen.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/screens/main/profile/PrivacyPolicyScreen.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/screens/main/profile/PrivacySecurityScreen.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/screens/main/profile/PrivacySecurityScreen.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/screens/main/profile/ProfileEditScreen.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/screens/main/profile/ProfileEditScreen.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/screens/main/profile/TermsConditionsScreen.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/screens/main/profile/TermsConditionsScreen.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/screens/main/profile/styles/NotificationScreenStyles.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/screens/main/profile/styles/NotificationScreenStyles.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/screens/main/profile/styles/PrivacySecurityScreenStyles.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/screens/main/profile/styles/PrivacySecurityScreenStyles.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/screens/main/profile/styles/ProfileeditScreenStyles.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/screens/main/profile/styles/ProfileeditScreenStyles.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/screens/main/profile/useUserId.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/screens/main/profile/useUserId.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/screens/styles/AllScreenStyles.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/screens/styles/AllScreenStyles.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/screens/styles/GoalAssesmentScreen.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/screens/styles/GoalAssesmentScreen.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/screens/styles/HealthProfileScreenStyles.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/screens/styles/HealthProfileScreenStyles.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/screens/styles/HealthTrackMonitorStyles.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/screens/styles/HealthTrackMonitorStyles.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/screens/styles/LandingScreenStyles.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/screens/styles/LandingScreenStyles.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/screens/styles/NutritionPlanStyles.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/screens/styles/NutritionPlanStyles.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/screens/styles/PersonalDetailsStyles.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/screens/styles/PersonalDetailsStyles.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/screens/styles/ProfileScreenStyles.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/screens/styles/ProfileScreenStyles.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/screens/styles/SignInScreenStyles.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/screens/styles/SignInScreenStyles.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/screens/styles/SignUpScreenStyles.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/screens/styles/SignUpScreenStyles.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/screens/styles/SignnUpScreenStyles.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/screens/styles/SignnUpScreenStyles.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/screens/styles/TersmScreenStyles.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/screens/styles/TersmScreenStyles.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/screens/styles/TimelineDetailStyles.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/screens/styles/TimelineDetailStyles.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/screens/styles/WeightJourneyRegistrationStyles.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/screens/styles/WeightJourneyRegistrationStyles.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/services/DeviceIdentificationService.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/services/DeviceIdentificationService.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/services/DeviceRegistrationService.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/services/DeviceRegistrationService.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/services/HealthDataCacheService.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/services/HealthDataCacheService.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/services/HealthDataSyncService.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/services/HealthDataSyncService.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/services/HealthPermissionService.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/services/HealthPermissionService.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/services/HealthService.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/services/HealthService.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/services/UserService.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/services/UserService.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/services/VoicePermission.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/services/VoicePermission.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/services/WeightJourneyService.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/services/WeightJourneyService.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/services/aiApi.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/services/aiApi.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/services/aiTokenService.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/services/aiTokenService.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/services/api.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/services/api.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/services/baseTokenRefresh.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/services/baseTokenRefresh.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/services/locationService.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/services/locationService.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/services/notificationService.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/services/notificationService.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/services/requestPermissions.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/services/requestPermissions.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/services/secureStorage.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/services/secureStorage.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/types/hooks.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/types/hooks.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/types/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/types/index.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/types/menu.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/types/menu.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/types/peronsaldetail.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/types/peronsaldetail.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/types/types.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/types/types.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/types/useMealPlanActions.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/types/useMealPlanActions.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/utils/errorHandler.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/errorHandler.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/utils/generateHTMLContent.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/generateHTMLContent.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/utils/htmlGenerator.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/htmlGenerator.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/utils/promptValidator.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/promptValidator.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/utils/responsive.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/responsive.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/utils/safetyErrorHandler.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/safetyErrorHandler.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/utils/validation.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/validation.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/utils/validationSchema.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/validationSchema.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tsconfig.json" beforeDir="false" afterPath="$PROJECT_DIR$/tsconfig.json" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ClangdSettings">
+    <option name="formatViaClangd" value="false" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 4
+}</component>
+  <component name="ProjectId" id="35p1EQciolsE0Eg2L5urcmjmEE9" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "RunOnceActivity.cidr.known.project.marker": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.readMode.enableVisualFormatting": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "cf.first.check.clang-format": "false",
+    "cidr.known.project.marker": "true",
+    "git-widget-placeholder": "claude/fix-account-creation-error-01HgMZybFLk3LemUd54mR2FW",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "C:/Users/sjman/StudioProjects/fitui_new"
+  }
+}]]></component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\sjman\StudioProjects\fitui_new" />
+      <recent name="C:\Users\sjman\StudioProjects\fitui_new\src\constants" />
+    </key>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="c4e97291-b7b6-4217-a01d-0fc0826d50a7" name="Changes" comment="" />
+      <created>1763792087164</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1763792087164</updated>
+    </task>
+    <servers />
+  </component>
+</project>

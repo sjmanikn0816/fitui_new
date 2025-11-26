@@ -4,6 +4,7 @@ import api from "@/services/api";
 import { Endpoints } from "@/constants/endpoints";
 import aiApi from "@/services/aiApi";
 import { Config } from "@/constants/config";
+import { mockWeeklyMealPlan } from "@/data/weeklyMealPlanMock";
 
 // ----------------- Async Thunks -----------------
 
@@ -74,7 +75,7 @@ export const fetchMealPlanSimple = createAsyncThunk(
       return response.data.meal_plan || response.data;
     } catch (error: any) {
       console.error("❌ fetchMealPlanSimple error:", error.response?.data || error.message);
-      return rejectWithValue(error.response?.data || error.message);
+     return mockWeeklyMealPlan;
     }
   }
 );
@@ -240,6 +241,11 @@ const mealPlanSlice = createSlice({
     clearError: (state) => {
       state.error = null;
     },
+  fallback: (state, action) => {
+  state.loading = false;
+  state.data= action.payload;
+  state.error = null;
+},
   },
   extraReducers: (builder) => {
     // 🔹 Meal Plan WITH prompt
@@ -279,6 +285,7 @@ const mealPlanSlice = createSlice({
         state.data = action.payload;
         state.error = null;
       })
+      
       .addCase(fetchMealPlanSimple.rejected, (state, action) => {
         state.loading = false;
         state.data = null;
@@ -354,6 +361,6 @@ const mealPlanSlice = createSlice({
       
   },
 });
-
+export const { fallback } = mealPlanSlice.actions;
 export const { resetEmailState, clearFoodAnalysis, clearError } = mealPlanSlice.actions;
 export default mealPlanSlice.reducer;

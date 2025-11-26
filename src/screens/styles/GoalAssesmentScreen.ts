@@ -181,10 +181,10 @@ export const styles = StyleSheet.create({
     gap: 12,
   },
   statCard: {
-    width: 140,
-    height: 160,
+    width: 120,
+    padding: 16,
     borderRadius: 16,
-    overflow: 'hidden',
+    alignItems: 'center',
     ...Platform.select({
       ios: {
         shadowColor: '#000',
@@ -197,33 +197,11 @@ export const styles = StyleSheet.create({
       },
     }),
   },
-  statImageBg: {
-    width: '100%',
-    height: '100%',
-  },
-  statImageStyle: {
-    borderRadius: 16,
-  },
-  statOverlay: {
-    flex: 1,
-    padding: 16,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
   statLabel: {
     fontSize: 12,
     color: '#475569',
     marginTop: 8,
     fontWeight: '500',
-  },
-  statLabelWithBg: {
-    fontSize: 13,
-    color: 'rgba(255,255,255,1)',
-    fontWeight: '700',
-    marginTop: 8,
-    textShadowColor: 'rgba(0, 0, 0, 0.5)',
-    textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 3,
   },
   statValue: {
     fontSize: 24,
@@ -231,87 +209,9 @@ export const styles = StyleSheet.create({
     color: '#1e293b',
     marginTop: 4,
   },
-  statValueWithBg: {
-    fontSize: 28,
-    fontWeight: '900',
-    color: '#fff',
-    marginTop: 4,
-    textShadowColor: 'rgba(0, 0, 0, 0.6)',
-    textShadowOffset: { width: 0, height: 2 },
-    textShadowRadius: 6,
-    letterSpacing: 0.5,
-  },
   statUnit: {
     fontSize: 11,
     color: '#64748b',
-    marginTop: 2,
-  },
-  statUnitWithBg: {
-    fontSize: 12,
-    color: 'rgba(255,255,255,1)',
-    fontWeight: '600',
-    marginTop: 4,
-    textShadowColor: 'rgba(0, 0, 0, 0.5)',
-    textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 3,
-  },
-  // New styles for small vertical grid layout with light backgrounds
-  statsGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    paddingHorizontal: 20,
-    gap: 12,
-    justifyContent: 'space-between',
-  },
-  statCardSmall: {
-    width: '48%',
-    height: 110,
-    borderRadius: 14,
-    overflow: 'hidden',
-    ...Platform.select({
-      ios: {
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.08,
-        shadowRadius: 4,
-      },
-      android: {
-        elevation: 2,
-      },
-    }),
-  },
-  statImageBgSmall: {
-    width: '100%',
-    height: '100%',
-  },
-  statImageStyleSmall: {
-    borderRadius: 14,
-  },
-  statOverlaySmall: {
-    flex: 1,
-    padding: 12,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  statLabelLight: {
-    fontSize: 11,
-    color: '#475569',
-    fontWeight: '700',
-    marginTop: 6,
-    textTransform: 'uppercase',
-    letterSpacing: 0.5,
-  },
-  statValueLight: {
-    fontSize: 22,
-    fontWeight: '900',
-    color: '#1e293b',
-    marginTop: 4,
-    letterSpacing: 0.3,
-  },
-  statUnitLight: {
-    fontSize: 10,
-    color: '#64748b',
-    fontWeight: '600',
     marginTop: 2,
   },
   timelinesContainer: {

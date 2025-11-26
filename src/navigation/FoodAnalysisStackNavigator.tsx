@@ -38,56 +38,10 @@ export const FoodAnalysisStackNavigator = () => {
         component={FoodAnalysisResultsScreen}
         // options={defaultHeaderOptions("Analysis Results", "Back")}
       />
-
-      {/* Dashboard screen for navigation from FoodAnalysis */}
-      <FoodAnalysisStack.Screen
-        name="Dashboard"
-        component={DashboardScreen}
-      />
-
-      {/* Restaurant Detail screen */}
-      <FoodAnalysisStack.Screen
-        name="RestaurantDetail"
-        component={RestaurantDetailScreen}
-        options={defaultHeaderOptions("Restaurant Details", "Back")}
-      />
-
-      {/* Meal Plan Email screen */}
-      <FoodAnalysisStack.Screen
-        name="MealPlanEmail"
-        component={MealPlanEmailScreen}
-        options={defaultHeaderOptions("Share Meal Plan", "Back")}
-      />
-
-      {/* All Screens Menu */}
-      <FoodAnalysisStack.Screen
-        name="AllScreensMenu"
-        component={AllScreensMenu}
-      />
+   
 
       {/* Profile Stack */}
-      <FoodAnalysisStack.Screen
-        name="Profile"
-        component={ProfileStackNavigator}
-      />
-
-      {/* Goal Customization */}
-      <FoodAnalysisStack.Screen
-        name="GoalCustomization"
-        component={GoalCustomizationStackNavigator}
-      />
-
-      {/* Goal Assessment */}
-      <FoodAnalysisStack.Screen
-        name="GoalAssessment"
-        component={GoalAssessmentScreen}
-      />
-
-      {/* Landing */}
-      <FoodAnalysisStack.Screen
-        name="LandingMain"
-        component={LandingScreen}
-      />
+     
     </FoodAnalysisStack.Navigator>
   );
 };

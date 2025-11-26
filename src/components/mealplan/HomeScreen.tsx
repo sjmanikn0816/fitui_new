@@ -1,4 +1,4 @@
-// HomeScreen.tsx - Updated with Share functionality and empty-section hide fix
+// HomeScreen.tsx - Updated with AI label + Share functionality + empty-section hide fix
 import React, { useState } from "react";
 import { View, Text, ScrollView, StyleSheet, TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
@@ -26,14 +26,27 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
   const plan = mealPlan ? (mealPlan[`${planType}_plan`] as any) : null;
   const navigation = useNavigation();
 
+  // AI flag logic
+  const isAiGenerated = Boolean(mealPlan?.daily_plan);
+
+  // AI Label Component
+  const AiGeneratedLabel = () => (
+    <View style={styles.aiLabelContainer}>
+      <Ionicons name="sparkles-outline" size={14} color="#2563eb" />
+      <Text style={styles.aiLabelText}>AI-Generated</Text>
+    </View>
+  );
+
   const renderMeals = (type: string, meals: Meal[]) =>
     meals.map((meal, idx) => (
-      <MealCard
-        key={`${type}-${idx}`}
-        title={type}
-        meal={meal}
-        onPress={() => onSelectMeal(type, meal)}
-      />
+      <View key={`${type}-${idx}`}>
+        <AiGeneratedLabel />
+        <MealCard
+          title={type}
+          meal={meal}
+          onPress={() => onSelectMeal(type, meal)}
+        />
+      </View>
     ));
 
   const groupByWeek = (dailyPlans: any[]) => {
@@ -100,6 +113,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
                 {dayPlan.breakfast_options?.length > 0 && (
                   <View style={styles.section}>
                     <Text style={styles.sectionTitle}>Breakfast</Text>
+                    <AiGeneratedLabel />
                     {renderMeals("Breakfast", dayPlan.breakfast_options)}
                   </View>
                 )}
@@ -107,6 +121,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
                 {dayPlan.lunch_options?.length > 0 && (
                   <View style={styles.section}>
                     <Text style={styles.sectionTitle}>Lunch</Text>
+                    <AiGeneratedLabel />
                     {renderMeals("Lunch", dayPlan.lunch_options)}
                   </View>
                 )}
@@ -114,6 +129,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
                 {dayPlan.dinner_options?.length > 0 && (
                   <View style={styles.section}>
                     <Text style={styles.sectionTitle}>Dinner</Text>
+                    <AiGeneratedLabel />
                     {renderMeals("Dinner", dayPlan.dinner_options)}
                   </View>
                 )}
@@ -139,8 +155,59 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
   // *** AI Suggestion Screen ***
   if (suggestionData) {
     return (
-      <>
-        <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+      <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+        <View style={styles.header}>
+          <View>
+            <Text style={styles.headerTitle}>Today's Plan</Text>
+            <Text style={styles.headerDate}>
+              {new Date().toLocaleDateString("en-US", {
+                weekday: "long",
+                month: "long",
+                day: "numeric",
+                year: "numeric",
+              })}
+            </Text>
+          </View>
+          <ShareButton />
+        </View>
+
+        {/* AI Label */}
+
+
+        {suggestionData.breakfast_options?.length > 0 && (
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Breakfast</Text>
+     
+            {renderMeals("Breakfast", suggestionData.breakfast_options)}
+          </View>
+        )}
+
+        {suggestionData.lunch_options?.length > 0 && (
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Lunch</Text>
+
+            {renderMeals("Lunch", suggestionData.lunch_options)}
+          </View>
+        )}
+
+        {suggestionData.dinner_options?.length > 0 && (
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Dinner</Text>
+        
+            {renderMeals("Dinner", suggestionData.dinner_options)}
+          </View>
+        )}
+
+        <MedicalBanner />
+      </ScrollView>
+    );
+  }
+
+  // *** NORMAL PLAN RENDERING ***
+  return (
+    <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+      {planType === "daily" && (
+        <>
           <View style={styles.header}>
             <View>
               <Text style={styles.headerTitle}>Today's Plan</Text>
@@ -156,100 +223,56 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
             <ShareButton />
           </View>
 
-          {suggestionData.breakfast_options?.length > 0 && (
+          {/* {isAiGenerated && <AiGeneratedLabel />} */}
+
+          {plan?.daily_nutrition_target && !suggestionData && (
             <View style={styles.section}>
-              <Text style={styles.sectionTitle}>Breakfast</Text>
-              {renderMeals("Breakfast", suggestionData.breakfast_options)}
+              <NutritionTargets nutritionTargets={plan.daily_nutrition_target} />
             </View>
           )}
+        </>
+      )}
 
-          {suggestionData.lunch_options?.length > 0 && (
-            <View style={styles.section}>
-              <Text style={styles.sectionTitle}>Lunch</Text>
-              {renderMeals("Lunch", suggestionData.lunch_options)}
-            </View>
+      {planType === "weekly" && (
+        <View style={styles.weeklyHeader}>
+          <Text style={styles.headerTitle}>Weekly Plan</Text>
+          <ShareButton />
+        </View>
+      )}
+
+      {planType === "weekly"
+        ? renderWeeklyPlan()
+        : plan && (
+            <>
+              {plan.breakfast_options?.length > 0 && (
+                <View style={styles.section}>
+                  <Text style={styles.sectionTitle}>Breakfast</Text>
+        
+                  {renderMeals("Breakfast", plan.breakfast_options)}
+                </View>
+              )}
+
+              {plan.lunch_options?.length > 0 && (
+                <View style={styles.section}>
+                  <Text style={styles.sectionTitle}>Lunch</Text>
+            
+                  {renderMeals("Lunch", plan.lunch_options)}
+                </View>
+              )}
+
+              {plan.dinner_options?.length > 0 && (
+                <View style={styles.section}>
+                  <Text style={styles.sectionTitle}>Dinner</Text>
+              
+                  {renderMeals("Dinner", plan.dinner_options)}
+                </View>
+              )}
+            </>
           )}
 
-          {suggestionData.dinner_options?.length > 0 && (
-            <View style={styles.section}>
-              <Text style={styles.sectionTitle}>Dinner</Text>
-              {renderMeals("Dinner", suggestionData.dinner_options)}
-            </View>
-          )}
-
-          <MedicalBanner />
-        </ScrollView>
-      </>
-    );
-  }
-
-  // *** NORMAL RENDERING ***
-  return (
-    <>
-      <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-        {planType === "daily" && (
-          <>
-            <View style={styles.header}>
-              <View>
-                <Text style={styles.headerTitle}>Today's Plan</Text>
-                <Text style={styles.headerDate}>
-                  {new Date().toLocaleDateString("en-US", {
-                    weekday: "long",
-                    month: "long",
-                    day: "numeric",
-                    year: "numeric",
-                  })}
-                </Text>
-              </View>
-              <ShareButton />
-            </View>
-
-            {plan?.daily_nutrition_target && !suggestionData && (
-              <View style={styles.section}>
-                <NutritionTargets nutritionTargets={plan.daily_nutrition_target} />
-              </View>
-            )}
-          </>
-        )}
-
-        {planType === "weekly" && (
-          <View style={styles.weeklyHeader}>
-            <Text style={styles.headerTitle}>Weekly Plan</Text>
-            <ShareButton />
-          </View>
-        )}
-
-        {planType === "weekly"
-          ? renderWeeklyPlan()
-          : plan && (
-              <>
-                {plan.breakfast_options?.length > 0 && (
-                  <View style={styles.section}>
-                    <Text style={styles.sectionTitle}>Breakfast</Text>
-                    {renderMeals("Breakfast", plan.breakfast_options)}
-                  </View>
-                )}
-
-                {plan.lunch_options?.length > 0 && (
-                  <View style={styles.section}>
-                    <Text style={styles.sectionTitle}>Lunch</Text>
-                    {renderMeals("Lunch", plan.lunch_options)}
-                  </View>
-                )}
-
-                {plan.dinner_options?.length > 0 && (
-                  <View style={styles.section}>
-                    <Text style={styles.sectionTitle}>Dinner</Text>
-                    {renderMeals("Dinner", plan.dinner_options)}
-                  </View>
-                )}
-              </>
-            )}
-
-        <MedicalBanner />
-        <View style={{ height: 10 }} />
-      </ScrollView>
-    </>
+      <MedicalBanner />
+      <View style={{ height: 10 }} />
+    </ScrollView>
   );
 };
 
@@ -301,6 +324,25 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     marginLeft: 16,
   },
+
+  // AI Label Styles
+  aiLabelContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    alignSelf: "flex-start",
+    backgroundColor: "#eff6ff",
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 8,
+    marginBottom: 8,
+  },
+  aiLabelText: {
+    fontSize: 12,
+    fontWeight: "600",
+    color: "#2563eb",
+    marginLeft: 4,
+  },
+
   shareButton: {
     flexDirection: "row",
     alignItems: "center",
