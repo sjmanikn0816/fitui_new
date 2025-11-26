@@ -1,54 +1,22 @@
-// HomeScreen.tsx - Redesigned with advanced dark mode styling consistent with HealthTrackMonitorScreen
-import React, { useState } from "react";
+// HomeScreen.tsx - Clean competitive nutrition app design with refresh functionality
+import React, { useState, useCallback } from "react";
 import {
   View,
   Text,
   ScrollView,
   StyleSheet,
   TouchableOpacity,
-  ImageBackground,
-  Dimensions,
+  ActivityIndicator,
+  RefreshControl,
 } from "react-native";
-import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
-import MealCard from "./MealCard";
 import { Meal, MealPlan } from "@/types/types";
 import NutritionTargets from "./NutritionTargets";
 import { Colors } from "@/constants/Colors";
 import MedicalBanner from "./AiRecomendationBanner";
 import { useNavigation } from "@react-navigation/native";
-
-const { width: screenWidth } = Dimensions.get("window");
-
-// Advanced color palette matching HealthTrackMonitorScreen
-const CARD_COLORS = {
-  // Breakfast - Orange/Amber
-  breakfastPrimary: "#FB923C",
-  breakfastSecondary: "#FBBF24",
-  breakfastGlow: "rgba(251, 146, 60, 0.4)",
-  breakfastBg: ["#7c2d12", "#b45309"] as [string, string],
-
-  // Lunch - Green/Teal
-  lunchPrimary: "#34D399",
-  lunchSecondary: "#5EEAD4",
-  lunchGlow: "rgba(52, 211, 153, 0.4)",
-  lunchBg: ["#065f46", "#059669"] as [string, string],
-
-  // Dinner - Purple/Blue
-  dinnerPrimary: "#A78BFA",
-  dinnerSecondary: "#C4B5FD",
-  dinnerGlow: "rgba(167, 139, 250, 0.4)",
-  dinnerBg: ["#4c1d95", "#6d28d9"] as [string, string],
-
-  // Header - Blue gradient
-  headerBg: ["#1e3a5f", "#2563eb"] as [string, string],
-
-  // Common
-  textPrimary: "#FFFFFF",
-  textSecondary: "rgba(255, 255, 255, 0.9)",
-  textMuted: "rgba(255, 255, 255, 0.75)",
-  textLabel: "rgba(255, 255, 255, 0.85)",
-};
+import { useAppDispatch, useAppSelector } from "@/redux/store/hooks";
+import { fetchMealPlanSimple } from "@/redux/slice/mealPlanSlice";
 
 interface HomeScreenProps {
   mealPlan: MealPlan;
@@ -57,38 +25,87 @@ interface HomeScreenProps {
   suggestionData?: any;
 }
 
+// Meal type configurations
+const MEAL_CONFIG = {
+  Breakfast: {
+    icon: "sunny-outline" as const,
+    color: "#F59E0B",
+    bgColor: "rgba(245, 158, 11, 0.1)",
+    time: "7:00 - 9:00 AM",
+  },
+  Lunch: {
+    icon: "partly-sunny-outline" as const,
+    color: "#10B981",
+    bgColor: "rgba(16, 185, 129, 0.1)",
+    time: "12:00 - 2:00 PM",
+  },
+  Dinner: {
+    icon: "moon-outline" as const,
+    color: "#8B5CF6",
+    bgColor: "rgba(139, 92, 246, 0.1)",
+    time: "6:00 - 8:00 PM",
+  },
+  Snack: {
+    icon: "cafe-outline" as const,
+    color: "#EC4899",
+    bgColor: "rgba(236, 72, 153, 0.1)",
+    time: "Anytime",
+  },
+};
+
 const HomeScreen: React.FC<HomeScreenProps> = ({
   mealPlan,
   planType,
   onSelectMeal,
   suggestionData,
 }) => {
-  const [showShareModal, setShowShareModal] = useState(false);
+  const [refreshingSection, setRefreshingSection] = useState<string | null>(null);
+  const [isRefreshing, setIsRefreshing] = useState(false);
   const plan = mealPlan ? (mealPlan[`${planType}_plan`] as any) : null;
   const navigation = useNavigation();
+  const dispatch = useAppDispatch();
+  const { loading } = useAppSelector((state) => state.mealPlan);
+  const userProfile = useAppSelector((state) => state.auth.user);
 
-  // AI flag logic
-  const isAiGenerated = Boolean(mealPlan?.daily_plan);
+  // Refresh handler for a specific meal section
+  const handleRefreshMeal = useCallback(async (mealType: string) => {
+    setRefreshingSection(mealType);
+    try {
+      const payload = {
+        health_goals: userProfile?.healthGoals || ["general_wellness"],
+        dietary_restrictions: userProfile?.dietaryRestrictions || [],
+        allergies: userProfile?.allergies || [],
+        cuisine_preferences: userProfile?.cuisinePreferences || [],
+        plan_type: planType,
+        target_daily_calories: userProfile?.targetCalories || 2000,
+      };
+      await dispatch(fetchMealPlanSimple(payload));
+    } catch (error) {
+      console.error("Error refreshing meal:", error);
+    } finally {
+      setRefreshingSection(null);
+    }
+  }, [dispatch, planType, userProfile]);
 
-  // AI Label Component - Redesigned
-  const AiGeneratedLabel = () => (
-    <View style={styles.aiLabelContainer}>
-      <Ionicons name="sparkles" size={14} color="#60A5FA" />
-      <Text style={styles.aiLabelText}>AI-Generated</Text>
-    </View>
-  );
-
-  const renderMeals = (type: string, meals: Meal[]) =>
-    meals.map((meal, idx) => (
-      <View key={`${type}-${idx}`}>
-        <AiGeneratedLabel />
-        <MealCard
-          title={type}
-          meal={meal}
-          onPress={() => onSelectMeal(type, meal)}
-        />
-      </View>
-    ));
+  // Pull to refresh handler
+  const handlePullRefresh = useCallback(async () => {
+    setIsRefreshing(true);
+    try {
+      const payload = {
+        health_goals: userProfile?.healthGoals || ["general_wellness"],
+        dietary_restrictions: userProfile?.dietaryRestrictions || [],
+        allergies: userProfile?.allergies || [],
+        cuisine_preferences: userProfile?.cuisinePreferences || [],
+        plan_type: planType,
+        target_daily_calories: userProfile?.targetCalories || 2000,
+      };
+      await dispatch(fetchMealPlanSimple(payload));
+    } catch (error) {
+      console.error("Error refreshing:", error);
+    } finally {
+      setIsRefreshing(false);
+    }
+  }, [dispatch, planType, userProfile]);
 
   const groupByWeek = (dailyPlans: any[]) => {
     const weeks: any[] = [];
@@ -113,79 +130,113 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
     return weeks;
   };
 
-  // Get meal section config
-  const getMealConfig = (type: string) => {
-    switch (type.toLowerCase()) {
-      case "breakfast":
-        return {
-          colors: CARD_COLORS.breakfastBg,
-          primary: CARD_COLORS.breakfastPrimary,
-          glow: CARD_COLORS.breakfastGlow,
-          icon: "sunny" as const,
-        };
-      case "lunch":
-        return {
-          colors: CARD_COLORS.lunchBg,
-          primary: CARD_COLORS.lunchPrimary,
-          glow: CARD_COLORS.lunchGlow,
-          icon: "partly-sunny" as const,
-        };
-      case "dinner":
-        return {
-          colors: CARD_COLORS.dinnerBg,
-          primary: CARD_COLORS.dinnerPrimary,
-          glow: CARD_COLORS.dinnerGlow,
-          icon: "moon" as const,
-        };
-      default:
-        return {
-          colors: CARD_COLORS.lunchBg,
-          primary: CARD_COLORS.lunchPrimary,
-          glow: CARD_COLORS.lunchGlow,
-          icon: "restaurant" as const,
-        };
-    }
+  // Single Meal Item Component - Clean design
+  const MealItem = ({ meal, type, index }: { meal: Meal; type: string; index: number }) => {
+    const config = MEAL_CONFIG[type as keyof typeof MEAL_CONFIG] || MEAL_CONFIG.Lunch;
+
+    return (
+      <TouchableOpacity
+        style={styles.mealItem}
+        onPress={() => onSelectMeal(type, meal)}
+        activeOpacity={0.7}
+      >
+        <View style={styles.mealItemLeft}>
+          <View style={[styles.mealItemIndex, { backgroundColor: config.bgColor }]}>
+            <Text style={[styles.mealItemIndexText, { color: config.color }]}>
+              {index + 1}
+            </Text>
+          </View>
+          <View style={styles.mealItemInfo}>
+            <Text style={styles.mealItemName} numberOfLines={1}>
+              {meal.name}
+            </Text>
+            <View style={styles.mealItemMeta}>
+              <Ionicons name="time-outline" size={12} color="#9CA3AF" />
+              <Text style={styles.mealItemMetaText}>
+                {meal.prep_time_minutes || 15} min
+              </Text>
+              <View style={styles.metaDot} />
+              <Text style={styles.mealItemMetaText}>
+                {meal.difficulty || "Easy"}
+              </Text>
+            </View>
+          </View>
+        </View>
+        <View style={styles.mealItemRight}>
+          <View style={styles.nutritionBadge}>
+            <Text style={styles.nutritionValue}>
+              {meal.nutrition?.calories || 0}
+            </Text>
+            <Text style={styles.nutritionUnit}>kcal</Text>
+          </View>
+          <Ionicons name="chevron-forward" size={18} color="#D1D5DB" />
+        </View>
+      </TouchableOpacity>
+    );
   };
 
-  // Meal Section Card Component
-  const MealSectionCard = ({
+  // Meal Section Component - Clean design with refresh
+  const MealSection = ({
     type,
     meals,
+    showRefresh = true,
   }: {
     type: string;
     meals: Meal[];
+    showRefresh?: boolean;
   }) => {
-    const config = getMealConfig(type);
+    const config = MEAL_CONFIG[type as keyof typeof MEAL_CONFIG] || MEAL_CONFIG.Lunch;
+    const isRefreshingThis = refreshingSection === type;
+
     return (
-      <LinearGradient
-        colors={config.colors}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        style={styles.mealSectionCard}
-      >
-        <View
-          style={[styles.cardGlow, { backgroundColor: config.glow }]}
-        />
-        <View style={styles.mealSectionHeader}>
-          <View
-            style={[
-              styles.mealIconContainer,
-              { backgroundColor: config.glow },
-            ]}
-          >
-            <Ionicons name={config.icon} size={22} color={config.primary} />
+      <View style={styles.mealSection}>
+        <View style={styles.sectionHeader}>
+          <View style={styles.sectionHeaderLeft}>
+            <View style={[styles.sectionIcon, { backgroundColor: config.bgColor }]}>
+              <Ionicons name={config.icon} size={18} color={config.color} />
+            </View>
+            <View>
+              <Text style={styles.sectionTitle}>{type}</Text>
+              <Text style={styles.sectionTime}>{config.time}</Text>
+            </View>
           </View>
-          <Text style={styles.mealSectionTitle}>{type}</Text>
-          <View style={[styles.mealBadge, { backgroundColor: config.glow }]}>
-            <Text style={[styles.mealBadgeText, { color: config.primary }]}>
-              {meals.length} {meals.length === 1 ? "option" : "options"}
+          {showRefresh && (
+            <TouchableOpacity
+              style={styles.refreshButton}
+              onPress={() => handleRefreshMeal(type)}
+              disabled={isRefreshingThis || loading}
+            >
+              {isRefreshingThis ? (
+                <ActivityIndicator size="small" color={config.color} />
+              ) : (
+                <Ionicons name="refresh" size={18} color={config.color} />
+              )}
+            </TouchableOpacity>
+          )}
+        </View>
+
+        <View style={styles.mealList}>
+          {meals.map((meal, idx) => (
+            <MealItem key={`${type}-${idx}`} meal={meal} type={type} index={idx} />
+          ))}
+        </View>
+
+        {/* Quick nutrition summary */}
+        <View style={styles.sectionFooter}>
+          <View style={styles.quickStat}>
+            <Ionicons name="flame-outline" size={14} color="#F59E0B" />
+            <Text style={styles.quickStatText}>
+              {meals.reduce((sum, m) => sum + (m.nutrition?.calories || 0), 0)} kcal total
+            </Text>
+          </View>
+          <View style={styles.quickStat}>
+            <MaterialCommunityIcons name="food-drumstick-outline" size={14} color="#10B981" />
+            <Text style={styles.quickStatText}>
+              {meals.reduce((sum, m) => sum + (m.nutrition?.protein || 0), 0)}g protein
             </Text>
           </View>
         </View>
-        <View style={styles.mealCardsContainer}>
-          {renderMeals(type, meals)}
-        </View>
-      </LinearGradient>
+      </View>
     );
   };
 
@@ -197,45 +248,31 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
     return (
       <View>
         {plan?.daily_nutrition_target && !suggestionData && (
-          <View style={styles.section}>
+          <View style={styles.nutritionContainer}>
             <NutritionTargets nutritionTargets={plan.daily_nutrition_target} />
           </View>
         )}
 
         {weeks.map((week, weekIdx) => (
-          <View key={`week-${weekIdx}`} style={{ marginBottom: 24 }}>
-            <LinearGradient
-              colors={["#1e3a5f", "#1e40af"]}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 0 }}
-              style={styles.weekHeaderCard}
-            >
-              <MaterialCommunityIcons
-                name="calendar-week"
-                size={20}
-                color="#60A5FA"
-              />
+          <View key={`week-${weekIdx}`} style={styles.weekContainer}>
+            <View style={styles.weekHeader}>
+              <MaterialCommunityIcons name="calendar-week" size={18} color="#3B82F6" />
               <Text style={styles.weekHeaderText}>
-                Week {week.weekNumber} —{" "}
-                {new Date(week.startDate).toLocaleDateString("en-US", {
+                Week {week.weekNumber} • {new Date(week.startDate).toLocaleDateString("en-US", {
                   month: "short",
                   day: "numeric",
-                })}{" "}
-                to{" "}
-                {new Date(week.endDate).toLocaleDateString("en-US", {
+                })} - {new Date(week.endDate).toLocaleDateString("en-US", {
                   month: "short",
                   day: "numeric",
                 })}
               </Text>
-            </LinearGradient>
+            </View>
 
             {week.days.map((dayPlan: any, dayIdx: number) => (
               <View key={dayIdx} style={styles.dayContainer}>
                 <View style={styles.dayHeader}>
-                  <View style={styles.dayIconContainer}>
-                    <Ionicons name="calendar" size={16} color="#60A5FA" />
-                  </View>
-                  <Text style={styles.weekDayTitle}>
+                  <View style={styles.dayIndicator} />
+                  <Text style={styles.dayTitle}>
                     {new Date(dayPlan.date).toLocaleDateString("en-US", {
                       weekday: "long",
                       month: "short",
@@ -245,24 +282,13 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
                 </View>
 
                 {dayPlan.breakfast_options?.length > 0 && (
-                  <MealSectionCard
-                    type="Breakfast"
-                    meals={dayPlan.breakfast_options}
-                  />
+                  <MealSection type="Breakfast" meals={dayPlan.breakfast_options} />
                 )}
-
                 {dayPlan.lunch_options?.length > 0 && (
-                  <MealSectionCard
-                    type="Lunch"
-                    meals={dayPlan.lunch_options}
-                  />
+                  <MealSection type="Lunch" meals={dayPlan.lunch_options} />
                 )}
-
                 {dayPlan.dinner_options?.length > 0 && (
-                  <MealSectionCard
-                    type="Dinner"
-                    meals={dayPlan.dinner_options}
-                  />
+                  <MealSection type="Dinner" meals={dayPlan.dinner_options} />
                 )}
               </View>
             ))}
@@ -272,85 +298,68 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
     );
   };
 
-  // Share Button - Redesigned
+  // Share Button
   const ShareButton = () => (
     <TouchableOpacity
       style={styles.shareButton}
       onPress={() => navigation.navigate("MealPlanEmail", { mealPlan })}
     >
-      <LinearGradient
-        colors={["#34D399", "#10B981"]}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 0 }}
-        style={styles.shareButtonGradient}
-      >
-        <Ionicons name="share-outline" size={18} color="#fff" />
-        <Text style={styles.shareButtonText}>Share</Text>
-      </LinearGradient>
+      <Ionicons name="share-outline" size={18} color="#3B82F6" />
     </TouchableOpacity>
   );
 
-  // Header Component - Redesigned
-  const HeaderSection = ({ title, subtitle }: { title: string; subtitle?: string }) => (
-    <LinearGradient
-      colors={CARD_COLORS.headerBg}
-      start={{ x: 0, y: 0 }}
-      end={{ x: 1, y: 1 }}
-      style={styles.headerCard}
-    >
-      <View style={[styles.cardGlow, { backgroundColor: "rgba(96, 165, 250, 0.3)" }]} />
-      <View style={styles.headerContent}>
-        <View style={styles.headerTextContainer}>
-          <View style={styles.headerTitleRow}>
-            <MaterialCommunityIcons
-              name="food-apple"
-              size={24}
-              color="#60A5FA"
-              style={{ marginRight: 8 }}
-            />
-            <Text style={styles.headerTitle}>{title}</Text>
-          </View>
-          {subtitle && <Text style={styles.headerDate}>{subtitle}</Text>}
-        </View>
+  // Header Component
+  const Header = ({ title, subtitle }: { title: string; subtitle?: string }) => (
+    <View style={styles.header}>
+      <View style={styles.headerLeft}>
+        <Text style={styles.headerTitle}>{title}</Text>
+        {subtitle && <Text style={styles.headerSubtitle}>{subtitle}</Text>}
+      </View>
+      <View style={styles.headerRight}>
+        <TouchableOpacity
+          style={styles.headerButton}
+          onPress={handlePullRefresh}
+          disabled={isRefreshing}
+        >
+          {isRefreshing ? (
+            <ActivityIndicator size="small" color="#3B82F6" />
+          ) : (
+            <Ionicons name="refresh" size={20} color="#3B82F6" />
+          )}
+        </TouchableOpacity>
         <ShareButton />
       </View>
-    </LinearGradient>
+    </View>
   );
 
-  // *** AI Suggestion Screen ***
+  // AI Suggestion Screen
   if (suggestionData) {
     return (
-      <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-        <HeaderSection
+      <ScrollView
+        style={styles.container}
+        showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl refreshing={isRefreshing} onRefresh={handlePullRefresh} />
+        }
+      >
+        <Header
           title="Today's Plan"
           subtitle={new Date().toLocaleDateString("en-US", {
             weekday: "long",
             month: "long",
             day: "numeric",
-            year: "numeric",
           })}
         />
 
-        <View style={styles.contentContainer}>
+        <View style={styles.content}>
           {suggestionData.breakfast_options?.length > 0 && (
-            <MealSectionCard
-              type="Breakfast"
-              meals={suggestionData.breakfast_options}
-            />
+            <MealSection type="Breakfast" meals={suggestionData.breakfast_options} />
           )}
-
           {suggestionData.lunch_options?.length > 0 && (
-            <MealSectionCard
-              type="Lunch"
-              meals={suggestionData.lunch_options}
-            />
+            <MealSection type="Lunch" meals={suggestionData.lunch_options} />
           )}
-
           {suggestionData.dinner_options?.length > 0 && (
-            <MealSectionCard
-              type="Dinner"
-              meals={suggestionData.dinner_options}
-            />
+            <MealSection type="Dinner" meals={suggestionData.dinner_options} />
           )}
         </View>
 
@@ -361,18 +370,23 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
     );
   }
 
-  // *** NORMAL PLAN RENDERING ***
+  // Normal Plan Rendering
   return (
-    <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+    <ScrollView
+      style={styles.container}
+      showsVerticalScrollIndicator={false}
+      refreshControl={
+        <RefreshControl refreshing={isRefreshing} onRefresh={handlePullRefresh} />
+      }
+    >
       {planType === "daily" && (
         <>
-          <HeaderSection
+          <Header
             title="Today's Plan"
             subtitle={new Date().toLocaleDateString("en-US", {
               weekday: "long",
               month: "long",
               day: "numeric",
-              year: "numeric",
             })}
           />
 
@@ -384,34 +398,21 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
         </>
       )}
 
-      {planType === "weekly" && (
-        <HeaderSection title="Weekly Plan" />
-      )}
+      {planType === "weekly" && <Header title="Weekly Plan" />}
 
-      <View style={styles.contentContainer}>
+      <View style={styles.content}>
         {planType === "weekly"
           ? renderWeeklyPlan()
           : plan && (
               <>
                 {plan.breakfast_options?.length > 0 && (
-                  <MealSectionCard
-                    type="Breakfast"
-                    meals={plan.breakfast_options}
-                  />
+                  <MealSection type="Breakfast" meals={plan.breakfast_options} />
                 )}
-
                 {plan.lunch_options?.length > 0 && (
-                  <MealSectionCard
-                    type="Lunch"
-                    meals={plan.lunch_options}
-                  />
+                  <MealSection type="Lunch" meals={plan.lunch_options} />
                 )}
-
                 {plan.dinner_options?.length > 0 && (
-                  <MealSectionCard
-                    type="Dinner"
-                    meals={plan.dinner_options}
-                  />
+                  <MealSection type="Dinner" meals={plan.dinner_options} />
                 )}
               </>
             )}
@@ -420,7 +421,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
       <View style={styles.bannerContainer}>
         <MedicalBanner />
       </View>
-      <View style={{ height: 20 }} />
+      <View style={{ height: 24 }} />
     </ScrollView>
   );
 };
@@ -428,212 +429,261 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.gray100,
+    backgroundColor: "#F9FAFB",
   },
 
-  // Header Styles
-  headerCard: {
-    borderRadius: 20,
-    margin: 16,
-    marginBottom: 8,
-    padding: 20,
-    overflow: "hidden",
-    position: "relative",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.15,
-    shadowRadius: 12,
-    elevation: 6,
-  },
-  headerContent: {
+  // Header
+  header: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
+    paddingHorizontal: 20,
+    paddingTop: 16,
+    paddingBottom: 12,
+    backgroundColor: "#FFFFFF",
+    borderBottomWidth: 1,
+    borderBottomColor: "#F3F4F6",
   },
-  headerTextContainer: {
+  headerLeft: {
     flex: 1,
   },
-  headerTitleRow: {
+  headerRight: {
     flexDirection: "row",
     alignItems: "center",
+    gap: 8,
   },
   headerTitle: {
     fontSize: 24,
-    fontWeight: "800",
-    color: "#FFFFFF",
-    letterSpacing: 0.3,
+    fontWeight: "700",
+    color: "#111827",
+    letterSpacing: -0.5,
   },
-  headerDate: {
+  headerSubtitle: {
     fontSize: 14,
-    color: "rgba(255, 255, 255, 0.85)",
-    marginTop: 6,
-    marginLeft: 32,
-    fontWeight: "500",
+    color: "#6B7280",
+    marginTop: 2,
+  },
+  headerButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 12,
+    backgroundColor: "#EFF6FF",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  shareButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 12,
+    backgroundColor: "#EFF6FF",
+    justifyContent: "center",
+    alignItems: "center",
   },
 
-  // Content Container
-  contentContainer: {
+  // Content
+  content: {
     paddingHorizontal: 16,
+    paddingTop: 8,
   },
   nutritionContainer: {
     paddingHorizontal: 16,
-    marginBottom: 8,
+    paddingVertical: 8,
+    backgroundColor: "#FFFFFF",
   },
   bannerContainer: {
     paddingHorizontal: 16,
     marginTop: 8,
   },
 
-  // Card Glow Effect
-  cardGlow: {
-    position: "absolute",
-    top: -50,
-    right: -50,
-    width: 150,
-    height: 150,
-    borderRadius: 75,
-    opacity: 0.6,
-  },
-
-  // Meal Section Card Styles
-  mealSectionCard: {
-    borderRadius: 20,
-    padding: 18,
-    marginBottom: 16,
-    borderWidth: 1,
-    borderColor: "rgba(255, 255, 255, 0.15)",
+  // Meal Section
+  mealSection: {
+    backgroundColor: "#FFFFFF",
+    borderRadius: 16,
+    marginBottom: 12,
     overflow: "hidden",
-    position: "relative",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.15,
-    shadowRadius: 10,
-    elevation: 5,
+    borderWidth: 1,
+    borderColor: "#F3F4F6",
   },
-  mealSectionHeader: {
+  sectionHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingHorizontal: 16,
+    paddingVertical: 14,
+    borderBottomWidth: 1,
+    borderBottomColor: "#F3F4F6",
+  },
+  sectionHeaderLeft: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 16,
   },
-  mealIconContainer: {
-    width: 40,
-    height: 40,
-    borderRadius: 12,
+  sectionIcon: {
+    width: 36,
+    height: 36,
+    borderRadius: 10,
     justifyContent: "center",
     alignItems: "center",
     marginRight: 12,
   },
-  mealSectionTitle: {
-    flex: 1,
-    fontSize: 18,
+  sectionTitle: {
+    fontSize: 16,
     fontWeight: "700",
-    color: "#FFFFFF",
-    letterSpacing: 0.3,
+    color: "#111827",
   },
-  mealBadge: {
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 12,
-  },
-  mealBadgeText: {
+  sectionTime: {
     fontSize: 12,
+    color: "#9CA3AF",
+    marginTop: 1,
+  },
+  refreshButton: {
+    width: 36,
+    height: 36,
+    borderRadius: 10,
+    backgroundColor: "#F9FAFB",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+
+  // Meal List
+  mealList: {
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+  },
+
+  // Meal Item
+  mealItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingVertical: 12,
+    paddingHorizontal: 8,
+    borderBottomWidth: 1,
+    borderBottomColor: "#F9FAFB",
+  },
+  mealItemLeft: {
+    flexDirection: "row",
+    alignItems: "center",
+    flex: 1,
+  },
+  mealItemIndex: {
+    width: 28,
+    height: 28,
+    borderRadius: 8,
+    justifyContent: "center",
+    alignItems: "center",
+    marginRight: 12,
+  },
+  mealItemIndexText: {
+    fontSize: 13,
     fontWeight: "700",
   },
-  mealCardsContainer: {
-    marginTop: 4,
+  mealItemInfo: {
+    flex: 1,
+  },
+  mealItemName: {
+    fontSize: 15,
+    fontWeight: "600",
+    color: "#1F2937",
+    marginBottom: 3,
+  },
+  mealItemMeta: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  mealItemMetaText: {
+    fontSize: 12,
+    color: "#9CA3AF",
+    marginLeft: 4,
+  },
+  metaDot: {
+    width: 3,
+    height: 3,
+    borderRadius: 2,
+    backgroundColor: "#D1D5DB",
+    marginHorizontal: 8,
+  },
+  mealItemRight: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  nutritionBadge: {
+    flexDirection: "row",
+    alignItems: "baseline",
+    backgroundColor: "#FEF3C7",
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 8,
+    marginRight: 8,
+  },
+  nutritionValue: {
+    fontSize: 14,
+    fontWeight: "700",
+    color: "#D97706",
+  },
+  nutritionUnit: {
+    fontSize: 10,
+    color: "#D97706",
+    marginLeft: 2,
+  },
+
+  // Section Footer
+  sectionFooter: {
+    flexDirection: "row",
+    justifyContent: "flex-start",
+    gap: 16,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    backgroundColor: "#F9FAFB",
+    borderTopWidth: 1,
+    borderTopColor: "#F3F4F6",
+  },
+  quickStat: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  quickStatText: {
+    fontSize: 12,
+    color: "#6B7280",
+    marginLeft: 4,
+    fontWeight: "500",
   },
 
   // Weekly Styles
-  weekHeaderCard: {
+  weekContainer: {
+    marginBottom: 20,
+  },
+  weekHeader: {
     flexDirection: "row",
     alignItems: "center",
-    paddingHorizontal: 16,
-    paddingVertical: 14,
-    borderRadius: 14,
-    marginHorizontal: 16,
-    marginBottom: 16,
+    paddingHorizontal: 4,
+    paddingVertical: 12,
   },
   weekHeaderText: {
-    fontSize: 16,
-    fontWeight: "700",
-    color: "#FFFFFF",
-    marginLeft: 10,
-    letterSpacing: 0.3,
+    fontSize: 15,
+    fontWeight: "600",
+    color: "#3B82F6",
+    marginLeft: 8,
   },
   dayContainer: {
-    marginBottom: 16,
-    paddingHorizontal: 16,
+    marginBottom: 12,
   },
   dayHeader: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 12,
     paddingVertical: 8,
-    paddingHorizontal: 12,
-    backgroundColor: "rgba(96, 165, 250, 0.1)",
-    borderRadius: 10,
+    marginBottom: 8,
   },
-  dayIconContainer: {
-    width: 28,
-    height: 28,
-    borderRadius: 8,
-    backgroundColor: "rgba(96, 165, 250, 0.2)",
-    justifyContent: "center",
-    alignItems: "center",
+  dayIndicator: {
+    width: 4,
+    height: 18,
+    backgroundColor: "#3B82F6",
+    borderRadius: 2,
     marginRight: 10,
   },
-  weekDayTitle: {
-    fontSize: 16,
-    fontWeight: "700",
-    color: "#1e3a5f",
-  },
-
-  // Section styles
-  section: {
-    paddingHorizontal: 16,
-    marginBottom: 16,
-  },
-
-  // AI Label Styles - Redesigned
-  aiLabelContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    alignSelf: "flex-start",
-    backgroundColor: "rgba(96, 165, 250, 0.2)",
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 10,
-    marginBottom: 10,
-  },
-  aiLabelText: {
-    fontSize: 12,
-    fontWeight: "700",
-    color: "#60A5FA",
-    marginLeft: 6,
-  },
-
-  // Share Button Styles - Redesigned
-  shareButton: {
-    borderRadius: 12,
-    overflow: "hidden",
-    shadowColor: "#10B981",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 4,
-  },
-  shareButtonGradient: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    gap: 6,
-  },
-  shareButtonText: {
-    color: "#fff",
+  dayTitle: {
     fontSize: 14,
-    fontWeight: "700",
-    letterSpacing: 0.3,
+    fontWeight: "600",
+    color: "#374151",
   },
 });
 
