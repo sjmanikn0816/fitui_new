@@ -4,15 +4,18 @@ const { width } = Dimensions.get("window");
 
 export const styles = StyleSheet.create({
   headerContent: {
-     borderBottomLeftRadius: 24,
+    borderBottomLeftRadius: 24,
     borderBottomRightRadius: 24,
-    paddingHorizontal: 20,
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.15,
-    shadowRadius: 3.84,
-    elevation: 3,
-    bottom:20,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+    elevation: 6,
+    overflow: "hidden",
+  },
+  headerImageStyle: {
+    borderBottomLeftRadius: 24,
+    borderBottomRightRadius: 24,
   },
 
   // Tabs
