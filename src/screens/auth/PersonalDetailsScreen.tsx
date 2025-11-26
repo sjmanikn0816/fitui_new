@@ -5,23 +5,22 @@ import { AuthStackParamList } from "../../navigation/AuthNavigator";
 import Button from "../../components/ui/Button";
 import Input from "../../components/ui/Input";
 import Animated, {
-  FadeInUp,
+  FadeIn,
+  FadeOut,
   FadeInDown,
-  FadeOutUp,
-  FadeOutLeft,
-  FadeInRight,
+  FadeInUp,
+  FadeOutDown,
   SlideInRight,
   SlideOutLeft,
+  SlideInLeft,
   useSharedValue,
   useAnimatedStyle,
-  withSpring,
   withTiming,
+  withSpring,
   withSequence,
-  withDelay,
   interpolate,
   Easing,
-  ZoomIn,
-  BounceIn,
+  runOnJS,
 } from "react-native-reanimated";
 
 import { Colors } from "@/constants/Colors";
@@ -52,6 +51,10 @@ import {
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
+// Professional easing curves
+const ELEGANT_EASING = Easing.bezier(0.25, 0.1, 0.25, 1);
+const SMOOTH_EASING = Easing.bezier(0.4, 0, 0.2, 1);
+
 type PersonalDetailsScreenNavigationProp = StackNavigationProp<
   AuthStackParamList,
   "PersonalDetails"
@@ -70,7 +73,7 @@ interface CardOption {
   emoji?: string;
 }
 
-// Animated Card Component with bounce effect
+// Elegant Animated Card Component
 const AnimatedCard = ({
   option,
   isSelected,
@@ -83,39 +86,38 @@ const AnimatedCard = ({
   index: number;
 }) => {
   const scale = useSharedValue(1);
-  const rotation = useSharedValue(0);
+  const opacity = useSharedValue(1);
 
   const animatedStyle = useAnimatedStyle(() => ({
-    transform: [
-      { scale: scale.value },
-      { rotateZ: `${rotation.value}deg` },
-    ],
+    transform: [{ scale: scale.value }],
+    opacity: opacity.value,
   }));
 
+  const handlePressIn = () => {
+    scale.value = withTiming(0.98, { duration: 100, easing: SMOOTH_EASING });
+    opacity.value = withTiming(0.9, { duration: 100 });
+  };
+
+  const handlePressOut = () => {
+    scale.value = withTiming(1, { duration: 200, easing: ELEGANT_EASING });
+    opacity.value = withTiming(1, { duration: 200 });
+  };
+
   const handlePress = () => {
-    // Bounce + slight rotation animation
-    scale.value = withSequence(
-      withSpring(0.95, { damping: 10, stiffness: 400 }),
-      withSpring(1.05, { damping: 10, stiffness: 400 }),
-      withSpring(1, { damping: 10, stiffness: 400 })
-    );
-    rotation.value = withSequence(
-      withTiming(-2, { duration: 50 }),
-      withTiming(2, { duration: 50 }),
-      withTiming(0, { duration: 50 })
-    );
     onPress();
   };
 
   return (
     <Animated.View
-      entering={FadeInUp.delay(index * 80).springify().damping(12)}
+      entering={FadeInUp.delay(index * 60).duration(400).easing(ELEGANT_EASING)}
       style={animatedStyle}
     >
       <TouchableOpacity
         style={[styles.modernCard, isSelected && styles.modernCardActive]}
         onPress={handlePress}
-        activeOpacity={0.8}
+        onPressIn={handlePressIn}
+        onPressOut={handlePressOut}
+        activeOpacity={1}
       >
         <View style={styles.modernCardContent}>
           {(option.icon || option.emoji) && (
@@ -124,7 +126,6 @@ const AnimatedCard = ({
                 styles.modernIconContainer,
                 isSelected && styles.modernIconContainerActive,
               ]}
-              entering={isSelected ? ZoomIn.springify() : undefined}
             >
               {option.emoji ? (
                 <Text style={styles.emojiIcon}>{option.emoji}</Text>
@@ -157,7 +158,7 @@ const AnimatedCard = ({
         {isSelected && (
           <Animated.View
             style={styles.checkmarkBadge}
-            entering={BounceIn.duration(400)}
+            entering={FadeIn.duration(200)}
           >
             <Check size={16} color="#fff" strokeWidth={3} />
           </Animated.View>
@@ -199,9 +200,8 @@ const PersonalDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
   const [direction, setDirection] = useState<"forward" | "backward">("forward");
   const totalSteps = 8;
 
-  // Reanimated shared values
+  // Animated values
   const progress = useSharedValue(0);
-  const progressGlow = useSharedValue(0);
 
   const dispatch = useAppDispatch();
   const { loading } = useAppSelector((state: RootState) => state.auth);
@@ -335,23 +335,16 @@ const PersonalDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
     return calculatedAge;
   })();
 
-  // Animated progress bar
+  // Smooth progress animation
   useEffect(() => {
-    progress.value = withSpring((currentStep / totalSteps) * 100, {
-      damping: 15,
-      stiffness: 100,
+    progress.value = withTiming((currentStep / totalSteps) * 100, {
+      duration: 500,
+      easing: ELEGANT_EASING,
     });
-    // Glow pulse effect
-    progressGlow.value = withSequence(
-      withTiming(1, { duration: 300 }),
-      withTiming(0.6, { duration: 500 })
-    );
   }, [currentStep]);
 
   const progressAnimatedStyle = useAnimatedStyle(() => ({
     width: `${progress.value}%`,
-    shadowOpacity: interpolate(progressGlow.value, [0.6, 1], [0.3, 0.8]),
-    shadowRadius: interpolate(progressGlow.value, [0.6, 1], [4, 12]),
   }));
 
   const goToNextStep = () => {
@@ -503,23 +496,16 @@ const PersonalDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
     return (
       <Animated.View
         style={styles.progressBarContainer}
-        entering={FadeInDown.delay(100).springify()}
+        entering={FadeInDown.duration(500).easing(ELEGANT_EASING)}
       >
         <View style={styles.progressBarBackground}>
           <Animated.View
-            style={[
-              styles.progressBarFill,
-              progressAnimatedStyle,
-              {
-                shadowColor: Colors.primary,
-                shadowOffset: { width: 0, height: 0 },
-              },
-            ]}
+            style={[styles.progressBarFill, progressAnimatedStyle]}
           />
         </View>
         <Animated.Text
           style={styles.progressText}
-          entering={FadeInUp.delay(200)}
+          entering={FadeIn.delay(200).duration(400)}
         >
           Step {currentStep} of {totalSteps}
         </Animated.Text>
@@ -542,8 +528,8 @@ const PersonalDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
     />
   );
 
-  // Toggle button with animation
-  const AnimatedToggle = ({
+  // Elegant Toggle Button
+  const ElegantToggle = ({
     isActive,
     label,
     onPress,
@@ -560,22 +546,25 @@ const PersonalDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
       transform: [{ scale: scale.value }],
     }));
 
-    const handlePress = () => {
-      scale.value = withSequence(
-        withSpring(0.9, { damping: 10 }),
-        withSpring(1, { damping: 10 })
-      );
-      onPress();
+    const handlePressIn = () => {
+      scale.value = withTiming(0.97, { duration: 100 });
+    };
+
+    const handlePressOut = () => {
+      scale.value = withTiming(1, { duration: 150, easing: ELEGANT_EASING });
     };
 
     return (
       <Animated.View
-        entering={FadeInUp.delay(delay).springify()}
+        entering={FadeInUp.delay(delay).duration(400).easing(ELEGANT_EASING)}
         style={animatedStyle}
       >
         <TouchableOpacity
           style={[styles.toggleButton, isActive && styles.toggleButtonActive]}
-          onPress={handlePress}
+          onPress={onPress}
+          onPressIn={handlePressIn}
+          onPressOut={handlePressOut}
+          activeOpacity={1}
         >
           <Text
             style={[
@@ -591,13 +580,14 @@ const PersonalDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
   };
 
   const renderStepContent = () => {
+    // Elegant slide transitions
     const enteringAnim = direction === "forward"
-      ? SlideInRight.springify().damping(15)
-      : FadeInUp.springify().damping(15);
+      ? SlideInRight.duration(350).easing(ELEGANT_EASING)
+      : SlideInLeft.duration(350).easing(ELEGANT_EASING);
 
     const exitingAnim = direction === "forward"
-      ? SlideOutLeft.springify().damping(15)
-      : FadeOutUp.springify().damping(15);
+      ? SlideOutLeft.duration(300).easing(SMOOTH_EASING)
+      : FadeOut.duration(200);
 
     switch (currentStep) {
       case 1:
@@ -610,25 +600,25 @@ const PersonalDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
           >
             <Animated.Text
               style={styles.stepEmoji}
-              entering={BounceIn.delay(200)}
+              entering={FadeIn.delay(150).duration(300)}
             >
               🎂
             </Animated.Text>
             <Animated.Text
               style={styles.stepTitle}
-              entering={FadeInUp.delay(100).springify()}
+              entering={FadeInUp.delay(50).duration(400).easing(ELEGANT_EASING)}
             >
               When were you born?
             </Animated.Text>
             <Animated.Text
               style={styles.stepSubtitle}
-              entering={FadeInUp.delay(150).springify()}
+              entering={FadeInUp.delay(100).duration(400).easing(ELEGANT_EASING)}
             >
               We use this to personalize your nutrition plan
             </Animated.Text>
             <Animated.View
               style={styles.inputGroup}
-              entering={FadeInUp.delay(200).springify()}
+              entering={FadeInUp.delay(150).duration(400).easing(ELEGANT_EASING)}
             >
               <Dropdown
                 label="Birth Year"
@@ -660,25 +650,25 @@ const PersonalDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
           >
             <Animated.Text
               style={styles.stepEmoji}
-              entering={BounceIn.delay(200)}
+              entering={FadeIn.delay(150).duration(300)}
             >
               ⚖️
             </Animated.Text>
             <Animated.Text
               style={styles.stepTitle}
-              entering={FadeInUp.delay(100).springify()}
+              entering={FadeInUp.delay(50).duration(400).easing(ELEGANT_EASING)}
             >
               Your body metrics
             </Animated.Text>
             <Animated.Text
               style={styles.stepSubtitle}
-              entering={FadeInUp.delay(150).springify()}
+              entering={FadeInUp.delay(100).duration(400).easing(ELEGANT_EASING)}
             >
               Help us calculate your ideal nutrition
             </Animated.Text>
             <Animated.View
               style={styles.inputGroup}
-              entering={FadeInUp.delay(200).springify()}
+              entering={FadeInUp.delay(150).duration(400).easing(ELEGANT_EASING)}
             >
               <Input
                 label="Weight (lbs)"
@@ -724,19 +714,19 @@ const PersonalDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
           >
             <Animated.Text
               style={styles.stepEmoji}
-              entering={BounceIn.delay(200)}
+              entering={FadeIn.delay(150).duration(300)}
             >
               👤
             </Animated.Text>
             <Animated.Text
               style={styles.stepTitle}
-              entering={FadeInUp.delay(100).springify()}
+              entering={FadeInUp.delay(50).duration(400).easing(ELEGANT_EASING)}
             >
               What's your biological sex?
             </Animated.Text>
             <Animated.Text
               style={styles.stepSubtitle}
-              entering={FadeInUp.delay(150).springify()}
+              entering={FadeInUp.delay(100).duration(400).easing(ELEGANT_EASING)}
             >
               This helps us personalize your calorie needs
             </Animated.Text>
@@ -763,19 +753,19 @@ const PersonalDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
           >
             <Animated.Text
               style={styles.stepEmoji}
-              entering={BounceIn.delay(200)}
+              entering={FadeIn.delay(150).duration(300)}
             >
               🥗
             </Animated.Text>
             <Animated.Text
               style={styles.stepTitle}
-              entering={FadeInUp.delay(100).springify()}
+              entering={FadeInUp.delay(50).duration(400).easing(ELEGANT_EASING)}
             >
               What's your food preference?
             </Animated.Text>
             <Animated.Text
               style={styles.stepSubtitle}
-              entering={FadeInUp.delay(150).springify()}
+              entering={FadeInUp.delay(100).duration(400).easing(ELEGANT_EASING)}
             >
               We'll tailor meal suggestions for you
             </Animated.Text>
@@ -791,21 +781,21 @@ const PersonalDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
             </View>
             <Animated.View
               style={styles.toggleQuestion}
-              entering={FadeInUp.delay(400).springify()}
+              entering={FadeInUp.delay(300).duration(400).easing(ELEGANT_EASING)}
             >
               <Text style={styles.toggleLabel}>Currently on any diet plan?</Text>
               <View style={styles.toggleButtons}>
-                <AnimatedToggle
+                <ElegantToggle
                   isActive={onDiet === true}
                   label="Yes"
                   onPress={() => setOnDiet(true)}
-                  delay={450}
+                  delay={350}
                 />
-                <AnimatedToggle
+                <ElegantToggle
                   isActive={onDiet === false}
                   label="No"
                   onPress={() => setOnDiet(false)}
-                  delay={500}
+                  delay={400}
                 />
               </View>
             </Animated.View>
@@ -822,19 +812,19 @@ const PersonalDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
           >
             <Animated.Text
               style={styles.stepEmoji}
-              entering={BounceIn.delay(200)}
+              entering={FadeIn.delay(150).duration(300)}
             >
               💪
             </Animated.Text>
             <Animated.Text
               style={styles.stepTitle}
-              entering={FadeInUp.delay(100).springify()}
+              entering={FadeInUp.delay(50).duration(400).easing(ELEGANT_EASING)}
             >
               How active are you?
             </Animated.Text>
             <Animated.Text
               style={styles.stepSubtitle}
-              entering={FadeInUp.delay(150).springify()}
+              entering={FadeInUp.delay(100).duration(400).easing(ELEGANT_EASING)}
             >
               This helps us estimate your daily calorie needs
             </Animated.Text>
@@ -861,19 +851,19 @@ const PersonalDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
           >
             <Animated.Text
               style={styles.stepEmoji}
-              entering={BounceIn.delay(200)}
+              entering={FadeIn.delay(150).duration(300)}
             >
               🌍
             </Animated.Text>
             <Animated.Text
               style={styles.stepTitle}
-              entering={FadeInUp.delay(100).springify()}
+              entering={FadeInUp.delay(50).duration(400).easing(ELEGANT_EASING)}
             >
               What's your ethnicity?
             </Animated.Text>
             <Animated.Text
               style={styles.stepSubtitle}
-              entering={FadeInUp.delay(150).springify()}
+              entering={FadeInUp.delay(100).duration(400).easing(ELEGANT_EASING)}
             >
               Helps us provide culturally relevant meal options
             </Animated.Text>
@@ -900,19 +890,19 @@ const PersonalDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
           >
             <Animated.Text
               style={styles.stepEmoji}
-              entering={BounceIn.delay(200)}
+              entering={FadeIn.delay(150).duration(300)}
             >
               ✈️
             </Animated.Text>
             <Animated.Text
               style={styles.stepTitle}
-              entering={FadeInUp.delay(100).springify()}
+              entering={FadeInUp.delay(50).duration(400).easing(ELEGANT_EASING)}
             >
               How often do you travel?
             </Animated.Text>
             <Animated.Text
               style={styles.stepSubtitle}
-              entering={FadeInUp.delay(150).springify()}
+              entering={FadeInUp.delay(100).duration(400).easing(ELEGANT_EASING)}
             >
               We'll suggest portable meal options
             </Animated.Text>
@@ -939,19 +929,19 @@ const PersonalDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
           >
             <Animated.Text
               style={styles.stepEmoji}
-              entering={BounceIn.delay(200)}
+              entering={FadeIn.delay(150).duration(300)}
             >
               🎯
             </Animated.Text>
             <Animated.Text
               style={styles.stepTitle}
-              entering={FadeInUp.delay(100).springify()}
+              entering={FadeInUp.delay(50).duration(400).easing(ELEGANT_EASING)}
             >
               What's your fitness goal?
             </Animated.Text>
             <Animated.Text
               style={styles.stepSubtitle}
-              entering={FadeInUp.delay(150).springify()}
+              entering={FadeInUp.delay(100).duration(400).easing(ELEGANT_EASING)}
             >
               Let's create your personalized plan
             </Animated.Text>
@@ -988,7 +978,7 @@ const PersonalDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
 
           <Animated.View
             style={styles.buttonContainer}
-            entering={FadeInUp.delay(300).springify()}
+            entering={FadeInUp.delay(200).duration(400).easing(ELEGANT_EASING)}
           >
             <Button
               title={currentStep === totalSteps ? "Complete Setup" : "Continue"}
