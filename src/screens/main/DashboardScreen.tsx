@@ -15,10 +15,9 @@ import { useAppSelector } from "@/redux/store/hooks";
 import MealPlannerScreen from "@/components/mealplan/MealPlannerScreen";
 import GoalCustomizationScreen from "./Dashboardtabs/GoalCustomizationTab";
 import ProfileScreen from "./ProfileScreen";
-import FuturisticStatsScreen from "./Dashboardtabs/FuturisticStatsScreen";
 import { styles } from "./Dashboardtabs/styles/DashboardScreenStyles";
 const DashboardScreen = ({ route }: any) => {
-  const [activeHeaderTab, setActiveHeaderTab] = useState("stats");
+  const [activeHeaderTab, setActiveHeaderTab] = useState("make-it");
   const [menuVisible, setMenuVisible] = useState(false);
   const slideAnim = useState(new Animated.Value(0))[0];
 
@@ -30,7 +29,6 @@ const DashboardScreen = ({ route }: any) => {
   const fromLanding = route?.params?.fromLanding;
 
   const allScreens = [
-    { id: "stats", label: "Stats", description: "Track your daily metrics" },
     { id: "make-it", label: "Make It", description: "Cook healthy meals" },
     { id: "go-shop", label: "Go Shop", description: "Shop ingredients" },
     { id: "dine-in", label: "Dine-In", description: "Find restaurants nearby" },
@@ -45,8 +43,6 @@ const DashboardScreen = ({ route }: any) => {
 
   const renderScreen = () => {
     switch (activeHeaderTab) {
-      case "stats":
-        return <FuturisticStatsScreen />;
       case "make-it":
         return (
           <MealPlannerScreen
