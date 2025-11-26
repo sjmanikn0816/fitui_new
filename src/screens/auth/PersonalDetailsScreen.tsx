@@ -207,9 +207,9 @@ const PersonalDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
   const { loading } = useAppSelector((state: RootState) => state.auth);
 
   const genders: CardOption[] = [
-    { label: "Male", value: "M", emoji: "👨" },
-    { label: "Female", value: "F", emoji: "👩" },
-    { label: "Other", value: "O", emoji: "🧑" },
+    { label: "Male", value: "M" },
+    { label: "Female", value: "F" },
+    { label: "Other", value: "O" },
   ];
 
   const dietOptions: CardOption[] = [
