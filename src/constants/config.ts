@@ -13,6 +13,11 @@ import {
   BEARES_CLIENT,
 } from "@env";
 
+// Debug: Log environment variables on load
+console.log("🔧 ENV CONFIG LOADED:");
+console.log("   API_BASE_URL:", API_BASE_URL || "❌ UNDEFINED");
+console.log("   AI_BASE_URL:", AI_BASE_URL || "❌ UNDEFINED");
+
 /**
  * Application Configuration
  * All configuration values are loaded from environment variables
