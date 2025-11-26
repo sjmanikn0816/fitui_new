@@ -7,16 +7,22 @@ import { useAppSelector } from "@/redux/store/hooks";
 import { MealPlan, Meal } from "@/types";
 import LoadingSpinner from "../ui/LoadingSpinner";
 
+type TabId = "make-it" | "go-shop" | "dine-in" | "mom-it";
+
 interface MealPlannerProps {
   mealType?: string;
   surpriseMode?: boolean;
   fromLanding?: boolean;
+  activeTab?: TabId;
+  onTabChange?: (tab: TabId) => void;
 }
 
 const MealPlannerScreen: React.FC<MealPlannerProps> = ({
   mealType,
   surpriseMode = false,
   fromLanding = false,
+  activeTab = "make-it",
+  onTabChange,
 }) => {
   const [activeScreen, setActiveScreen] = useState<"home" | "mealDetail">(
     "home"
@@ -76,6 +82,8 @@ const MealPlannerScreen: React.FC<MealPlannerProps> = ({
               mealPlan={mealPlan}
               planType="daily"
               onSelectMeal={handleSelectMeal}
+              activeTab={activeTab}
+              onTabChange={onTabChange}
             />
           )}
         </ScrollView>

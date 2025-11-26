@@ -18,11 +18,15 @@ import { useNavigation } from "@react-navigation/native";
 
 const { width: screenWidth } = Dimensions.get("window");
 
+type TabId = "make-it" | "go-shop" | "dine-in" | "mom-it";
+
 interface HomeScreenProps {
   mealPlan: MealPlan;
   planType: "daily" | "weekly" | "monthly";
   onSelectMeal: (type: string, meal: Meal) => void;
   suggestionData?: any;
+  activeTab?: TabId;
+  onTabChange?: (tab: TabId) => void;
 }
 
 // Meal type configurations
@@ -53,11 +57,20 @@ const MEAL_CONFIG = {
   },
 };
 
+const TABS: { id: TabId; label: string }[] = [
+  { id: "make-it", label: "Make It" },
+  { id: "go-shop", label: "Go Shop" },
+  { id: "dine-in", label: "Dine-In" },
+  { id: "mom-it", label: "Mom It" },
+];
+
 const HomeScreen: React.FC<HomeScreenProps> = ({
   mealPlan,
   planType,
   onSelectMeal,
   suggestionData,
+  activeTab = "make-it",
+  onTabChange,
 }) => {
   const plan = mealPlan ? (mealPlan[`${planType}_plan`] as any) : null;
   const navigation = useNavigation();
@@ -286,6 +299,30 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
                 <Text style={styles.headerInfoValue}>{totalNutrition.fat}g</Text>
               </View>
             </View>
+
+            {/* Tabs */}
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              style={styles.tabsContainer}
+              contentContainerStyle={styles.tabsContent}
+            >
+              {TABS.map((tab) => {
+                const isActive = activeTab === tab.id;
+                return (
+                  <TouchableOpacity
+                    key={tab.id}
+                    style={[styles.tab, isActive && styles.activeTab]}
+                    onPress={() => onTabChange?.(tab.id)}
+                    activeOpacity={0.8}
+                  >
+                    <Text style={[styles.tabText, isActive && styles.activeTabText]}>
+                      {tab.label}
+                    </Text>
+                  </TouchableOpacity>
+                );
+              })}
+            </ScrollView>
           </LinearGradient>
         </ImageBackground>
       </View>
@@ -405,6 +442,33 @@ const styles = StyleSheet.create({
     textShadowColor: "rgba(0, 0, 0, 0.2)",
     textShadowOffset: { width: 0, height: 1 },
     textShadowRadius: 2,
+  },
+
+  // Tabs
+  tabsContainer: {
+    marginTop: 12,
+  },
+  tabsContent: {
+    flexDirection: "row",
+    gap: 8,
+  },
+  tab: {
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 20,
+    backgroundColor: "rgba(255,255,255,0.2)",
+  },
+  activeTab: {
+    backgroundColor: "#fff",
+  },
+  tabText: {
+    color: "#fff",
+    fontSize: 14,
+    fontWeight: "500",
+  },
+  activeTabText: {
+    color: "#10B981",
+    fontWeight: "600",
   },
 
   // Content
