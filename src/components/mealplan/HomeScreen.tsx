@@ -1,4 +1,4 @@
-// HomeScreen.tsx - Clean design with DashboardHeader-consistent styling
+// HomeScreen.tsx - Redesigned to match HealthTrackMonitorScreen style
 import React from "react";
 import {
   View,
@@ -6,13 +6,13 @@ import {
   ScrollView,
   StyleSheet,
   TouchableOpacity,
-  Platform,
+  ImageBackground,
   Dimensions,
 } from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { Meal, MealPlan } from "@/types/types";
 import NutritionTargets from "./NutritionTargets";
-import { Colors } from "@/constants/Colors";
 import MedicalBanner from "./AiRecomendationBanner";
 import { useNavigation } from "@react-navigation/native";
 
@@ -62,11 +62,32 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
   const plan = mealPlan ? (mealPlan[`${planType}_plan`] as any) : null;
   const navigation = useNavigation();
 
-  // Empty refresh handler - placeholder for future implementation
+  // Empty refresh handler - placeholder for future
   const handleRefresh = () => {
-    // TODO: Implement refresh functionality
     console.log("Refresh pressed");
   };
+
+  const handleMenuPress = () => {
+    navigation.navigate("AllScreensMenu");
+  };
+
+  // Calculate total nutrition from all meals
+  const calculateTotalNutrition = () => {
+    const meals = [
+      ...(plan?.breakfast_options || suggestionData?.breakfast_options || []),
+      ...(plan?.lunch_options || suggestionData?.lunch_options || []),
+      ...(plan?.dinner_options || suggestionData?.dinner_options || []),
+    ];
+
+    return {
+      calories: meals.reduce((sum, m) => sum + (m.nutrition?.calories || 0), 0),
+      protein: meals.reduce((sum, m) => sum + (m.nutrition?.protein || 0), 0),
+      carbs: meals.reduce((sum, m) => sum + (m.nutrition?.carbs || 0), 0),
+      fat: meals.reduce((sum, m) => sum + (m.nutrition?.fat || 0), 0),
+    };
+  };
+
+  const totalNutrition = calculateTotalNutrition();
 
   const groupByWeek = (dailyPlans: any[]) => {
     const weeks: any[] = [];
@@ -75,7 +96,6 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
 
     dailyPlans.forEach((dayPlan, index) => {
       currentWeek.push(dayPlan);
-
       if ((index + 1) % 7 === 0 || index === dailyPlans.length - 1) {
         weeks.push({
           weekNumber: weeks.length + 1,
@@ -87,7 +107,6 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
         weekStartDate = dailyPlans[index + 1]?.date;
       }
     });
-
     return weeks;
   };
 
@@ -101,37 +120,25 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
         onPress={() => onSelectMeal(type, meal)}
         activeOpacity={0.7}
       >
-        <View style={styles.mealItemLeft}>
-          <View style={[styles.mealItemIndex, { backgroundColor: config.bgColor }]}>
-            <Text style={[styles.mealItemIndexText, { color: config.color }]}>
-              {index + 1}
-            </Text>
-          </View>
-          <View style={styles.mealItemInfo}>
-            <Text style={styles.mealItemName} numberOfLines={1}>
-              {meal.name}
-            </Text>
-            <View style={styles.mealItemMeta}>
-              <Ionicons name="time-outline" size={12} color="#9CA3AF" />
-              <Text style={styles.mealItemMetaText}>
-                {meal.prep_time_minutes || 15} min
-              </Text>
-              <View style={styles.metaDot} />
-              <Text style={styles.mealItemMetaText}>
-                {meal.difficulty || "Easy"}
-              </Text>
-            </View>
+        <View style={[styles.mealItemIndex, { backgroundColor: config.bgColor }]}>
+          <Text style={[styles.mealItemIndexText, { color: config.color }]}>
+            {index + 1}
+          </Text>
+        </View>
+        <View style={styles.mealItemContent}>
+          <Text style={styles.mealItemName} numberOfLines={1}>{meal.name}</Text>
+          <View style={styles.mealItemMeta}>
+            <Ionicons name="time-outline" size={12} color="#9CA3AF" />
+            <Text style={styles.mealItemMetaText}>{meal.prep_time_minutes || 15} min</Text>
+            <View style={styles.metaDot} />
+            <Text style={styles.mealItemMetaText}>{meal.difficulty || "Easy"}</Text>
           </View>
         </View>
-        <View style={styles.mealItemRight}>
-          <View style={styles.nutritionBadge}>
-            <Text style={styles.nutritionValue}>
-              {meal.nutrition?.calories || 0}
-            </Text>
-            <Text style={styles.nutritionUnit}>kcal</Text>
-          </View>
-          <Ionicons name="chevron-forward" size={18} color="#D1D5DB" />
+        <View style={styles.mealItemCalories}>
+          <Text style={styles.calorieValue}>{meal.nutrition?.calories || 0}</Text>
+          <Text style={styles.calorieUnit}>kcal</Text>
         </View>
+        <Ionicons name="chevron-forward" size={18} color="#D1D5DB" />
       </TouchableOpacity>
     );
   };
@@ -152,31 +159,25 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
               <Text style={styles.sectionTime}>{config.time}</Text>
             </View>
           </View>
-          <TouchableOpacity
-            style={styles.refreshButton}
-            onPress={handleRefresh}
-          >
-            <Ionicons name="refresh" size={18} color={config.color} />
+          <TouchableOpacity style={styles.refreshBtn} onPress={handleRefresh}>
+            <Ionicons name="refresh" size={16} color={config.color} />
           </TouchableOpacity>
         </View>
 
-        <View style={styles.mealList}>
-          {meals.map((meal, idx) => (
-            <MealItem key={`${type}-${idx}`} meal={meal} type={type} index={idx} />
-          ))}
-        </View>
+        {meals.map((meal, idx) => (
+          <MealItem key={`${type}-${idx}`} meal={meal} type={type} index={idx} />
+        ))}
 
-        {/* Quick nutrition summary */}
         <View style={styles.sectionFooter}>
-          <View style={styles.quickStat}>
+          <View style={styles.footerStat}>
             <Ionicons name="flame-outline" size={14} color="#F59E0B" />
-            <Text style={styles.quickStatText}>
-              {meals.reduce((sum, m) => sum + (m.nutrition?.calories || 0), 0)} kcal total
+            <Text style={styles.footerStatText}>
+              {meals.reduce((sum, m) => sum + (m.nutrition?.calories || 0), 0)} kcal
             </Text>
           </View>
-          <View style={styles.quickStat}>
+          <View style={styles.footerStat}>
             <MaterialCommunityIcons name="food-drumstick-outline" size={14} color="#10B981" />
-            <Text style={styles.quickStatText}>
+            <Text style={styles.footerStatText}>
               {meals.reduce((sum, m) => sum + (m.nutrition?.protein || 0), 0)}g protein
             </Text>
           </View>
@@ -187,54 +188,36 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
 
   const renderWeeklyPlan = () => {
     if (!plan?.daily_plans) return null;
-
     const weeks = groupByWeek(plan.daily_plans);
 
     return (
       <View>
         {plan?.daily_nutrition_target && !suggestionData && (
-          <View style={styles.nutritionContainer}>
+          <View style={styles.nutritionTargetContainer}>
             <NutritionTargets nutritionTargets={plan.daily_nutrition_target} />
           </View>
         )}
 
         {weeks.map((week, weekIdx) => (
-          <View key={`week-${weekIdx}`} style={styles.weekContainer}>
+          <View key={`week-${weekIdx}`} style={styles.weekBlock}>
             <View style={styles.weekHeaderBar}>
-              <MaterialCommunityIcons name="calendar-week" size={18} color="#FFFFFF" />
+              <MaterialCommunityIcons name="calendar-week" size={18} color="#fff" />
               <Text style={styles.weekHeaderText}>
-                Week {week.weekNumber} • {new Date(week.startDate).toLocaleDateString("en-US", {
-                  month: "short",
-                  day: "numeric",
-                })} - {new Date(week.endDate).toLocaleDateString("en-US", {
-                  month: "short",
-                  day: "numeric",
-                })}
+                Week {week.weekNumber} • {new Date(week.startDate).toLocaleDateString("en-US", { month: "short", day: "numeric" })} - {new Date(week.endDate).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
               </Text>
             </View>
 
             {week.days.map((dayPlan: any, dayIdx: number) => (
-              <View key={dayIdx} style={styles.dayContainer}>
-                <View style={styles.dayHeader}>
+              <View key={dayIdx} style={styles.dayBlock}>
+                <View style={styles.dayHeaderRow}>
                   <View style={styles.dayIndicator} />
                   <Text style={styles.dayTitle}>
-                    {new Date(dayPlan.date).toLocaleDateString("en-US", {
-                      weekday: "long",
-                      month: "short",
-                      day: "numeric",
-                    })}
+                    {new Date(dayPlan.date).toLocaleDateString("en-US", { weekday: "long", month: "short", day: "numeric" })}
                   </Text>
                 </View>
-
-                {dayPlan.breakfast_options?.length > 0 && (
-                  <MealSection type="Breakfast" meals={dayPlan.breakfast_options} />
-                )}
-                {dayPlan.lunch_options?.length > 0 && (
-                  <MealSection type="Lunch" meals={dayPlan.lunch_options} />
-                )}
-                {dayPlan.dinner_options?.length > 0 && (
-                  <MealSection type="Dinner" meals={dayPlan.dinner_options} />
-                )}
+                {dayPlan.breakfast_options?.length > 0 && <MealSection type="Breakfast" meals={dayPlan.breakfast_options} />}
+                {dayPlan.lunch_options?.length > 0 && <MealSection type="Lunch" meals={dayPlan.lunch_options} />}
+                {dayPlan.dinner_options?.length > 0 && <MealSection type="Dinner" meals={dayPlan.dinner_options} />}
               </View>
             ))}
           </View>
@@ -243,123 +226,94 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
     );
   };
 
-  // Header Component - Consistent with DashboardHeader
-  const Header = ({ title, subtitle, description }: { title: string; subtitle?: string; description?: string }) => (
-    <View style={styles.header}>
-      {/* Menu Button */}
-      <TouchableOpacity
-        style={styles.menuButton}
-        onPress={() => navigation.navigate("AllScreensMenu")}
-        activeOpacity={0.7}
-      >
-        <Ionicons name="ellipsis-horizontal" size={22} color="#FFFFFF" />
-      </TouchableOpacity>
+  const activePlan = suggestionData || plan;
 
-      {/* Header Text */}
-      <View style={styles.headerTextContainer}>
-        <Text style={styles.headerTitle}>{title}</Text>
-        {subtitle && <Text style={styles.headerSubtitle}>{subtitle}</Text>}
-        {description && <Text style={styles.headerDescription}>{description}</Text>}
-      </View>
-
-      {/* Action Buttons */}
-      <View style={styles.headerActions}>
-        <TouchableOpacity
-          style={styles.headerActionButton}
-          onPress={handleRefresh}
-        >
-          <Ionicons name="refresh" size={20} color="#FFFFFF" />
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.headerActionButton}
-          onPress={() => navigation.navigate("MealPlanEmail", { mealPlan })}
-        >
-          <Ionicons name="share-outline" size={20} color="#FFFFFF" />
-        </TouchableOpacity>
-      </View>
-    </View>
-  );
-
-  // AI Suggestion Screen
-  if (suggestionData) {
-    return (
-      <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-        <Header
-          title="Today's Plan"
-          subtitle={new Date().toLocaleDateString("en-US", {
-            weekday: "long",
-            month: "long",
-            day: "numeric",
-          })}
-          description="Your personalized meal recommendations"
-        />
-
-        <View style={styles.content}>
-          {suggestionData.breakfast_options?.length > 0 && (
-            <MealSection type="Breakfast" meals={suggestionData.breakfast_options} />
-          )}
-          {suggestionData.lunch_options?.length > 0 && (
-            <MealSection type="Lunch" meals={suggestionData.lunch_options} />
-          )}
-          {suggestionData.dinner_options?.length > 0 && (
-            <MealSection type="Dinner" meals={suggestionData.dinner_options} />
-          )}
-        </View>
-
-        <View style={styles.bannerContainer}>
-          <MedicalBanner />
-        </View>
-      </ScrollView>
-    );
-  }
-
-  // Normal Plan Rendering
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-      {planType === "daily" && (
-        <>
-          <Header
-            title="Today's Plan"
-            subtitle={new Date().toLocaleDateString("en-US", {
-              weekday: "long",
-              month: "long",
-              day: "numeric",
-            })}
-            description="Your personalized meal recommendations"
-          />
+      {/* Header - HealthTrackMonitorScreen Style */}
+      <View style={styles.headerCard}>
+        <ImageBackground
+          source={{ uri: "https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=600&q=80" }}
+          style={styles.headerImageBg}
+          imageStyle={styles.headerImageStyle}
+        >
+          <LinearGradient
+            colors={["rgba(16, 185, 129, 0.93)", "rgba(5, 150, 105, 0.90)"]}
+            style={styles.headerOverlay}
+          >
+            <View style={styles.headerTopRow}>
+              <View>
+                <Text style={styles.headerTitle}>
+                  {planType === "weekly" ? "Weekly Plan" : "Today's Meals"}
+                </Text>
+                <Text style={styles.headerSubtitle}>
+                  {planType === "weekly"
+                    ? "Your meal schedule for the week"
+                    : new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })
+                  }
+                </Text>
+              </View>
 
-          {plan?.daily_nutrition_target && !suggestionData && (
-            <View style={styles.nutritionContainer}>
-              <NutritionTargets nutritionTargets={plan.daily_nutrition_target} />
+              <View style={styles.headerActions}>
+                <TouchableOpacity style={styles.headerBtn} onPress={handleRefresh}>
+                  <Ionicons name="refresh" size={20} color="#fff" />
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.headerBtn} onPress={() => navigation.navigate("MealPlanEmail", { mealPlan })}>
+                  <Ionicons name="share-outline" size={20} color="#fff" />
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.headerBtn} onPress={handleMenuPress}>
+                  <Ionicons name="ellipsis-horizontal" size={20} color="#fff" />
+                </TouchableOpacity>
+              </View>
             </View>
-          )}
-        </>
+
+            {/* Nutrition Summary Row */}
+            <View style={styles.headerInfoRow}>
+              <View style={styles.headerInfoItem}>
+                <Text style={styles.headerInfoLabel}>Calories</Text>
+                <Text style={styles.headerInfoValue}>{totalNutrition.calories}</Text>
+              </View>
+              <View style={styles.headerInfoItem}>
+                <Text style={styles.headerInfoLabel}>Protein</Text>
+                <Text style={styles.headerInfoValue}>{totalNutrition.protein}g</Text>
+              </View>
+              <View style={styles.headerInfoItem}>
+                <Text style={styles.headerInfoLabel}>Carbs</Text>
+                <Text style={styles.headerInfoValue}>{totalNutrition.carbs}g</Text>
+              </View>
+              <View style={styles.headerInfoItem}>
+                <Text style={styles.headerInfoLabel}>Fat</Text>
+                <Text style={styles.headerInfoValue}>{totalNutrition.fat}g</Text>
+              </View>
+            </View>
+          </LinearGradient>
+        </ImageBackground>
+      </View>
+
+      {/* Nutrition Targets Card */}
+      {activePlan?.daily_nutrition_target && planType === "daily" && (
+        <View style={styles.nutritionTargetContainer}>
+          <NutritionTargets nutritionTargets={activePlan.daily_nutrition_target} />
+        </View>
       )}
 
-      {planType === "weekly" && (
-        <Header
-          title="Weekly Plan"
-          subtitle="Your meal schedule for the week"
-          description="Plan ahead for healthier choices"
-        />
-      )}
-
+      {/* Content */}
       <View style={styles.content}>
-        {planType === "weekly"
-          ? renderWeeklyPlan()
-          : plan && (
-              <>
-                {plan.breakfast_options?.length > 0 && (
-                  <MealSection type="Breakfast" meals={plan.breakfast_options} />
-                )}
-                {plan.lunch_options?.length > 0 && (
-                  <MealSection type="Lunch" meals={plan.lunch_options} />
-                )}
-                {plan.dinner_options?.length > 0 && (
-                  <MealSection type="Dinner" meals={plan.dinner_options} />
-                )}
-              </>
+        {planType === "weekly" ? (
+          renderWeeklyPlan()
+        ) : (
+          <>
+            {activePlan?.breakfast_options?.length > 0 && (
+              <MealSection type="Breakfast" meals={activePlan.breakfast_options} />
             )}
+            {activePlan?.lunch_options?.length > 0 && (
+              <MealSection type="Lunch" meals={activePlan.lunch_options} />
+            )}
+            {activePlan?.dinner_options?.length > 0 && (
+              <MealSection type="Dinner" meals={activePlan.dinner_options} />
+            )}
+          </>
+        )}
       </View>
 
       <View style={styles.bannerContainer}>
@@ -373,74 +327,96 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F9FAFB",
+    backgroundColor: "#F3F4F6",
   },
 
-  // Header - DashboardHeader consistent style
-  header: {
-    backgroundColor: "#56D9E3",
-    paddingTop: Platform.OS === "ios" ? 60 : 50,
-    paddingBottom: 24,
-    paddingHorizontal: 20,
-    borderBottomLeftRadius: 24,
-    borderBottomRightRadius: 24,
+  // Header - HealthTrackMonitorScreen Style
+  headerCard: {
+    marginHorizontal: 16,
+    marginTop: 16,
     marginBottom: 16,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.15,
-    shadowRadius: 3.84,
-    elevation: 3,
-  },
-  menuButton: {
-    position: "absolute",
-    right: 16,
-    top: Platform.OS === "ios" ? 50 : 40,
-    backgroundColor: "rgba(255,255,255,0.2)",
-    padding: 8,
     borderRadius: 20,
-    borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.3)",
+    overflow: "hidden",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 12,
+    elevation: 6,
   },
-  headerTextContainer: {
-    marginTop: 10,
+  headerImageBg: {
+    width: "100%",
+    minHeight: 180,
+  },
+  headerImageStyle: {
+    borderRadius: 20,
+  },
+  headerOverlay: {
+    flex: 1,
+    padding: 20,
+    borderRadius: 20,
+    justifyContent: "space-between",
+  },
+  headerTopRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "flex-start",
   },
   headerTitle: {
-    fontSize: screenWidth > 400 ? 18 : 16,
-    fontWeight: "600",
-    color: "#FFFFFF",
+    fontSize: 24,
+    fontWeight: "800",
+    color: "#fff",
+    textShadowColor: "rgba(0, 0, 0, 0.3)",
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 3,
   },
   headerSubtitle: {
-    fontSize: screenWidth > 400 ? 22 : 19,
-    fontWeight: "700",
-    color: "#FFFFFF",
-    marginTop: 2,
-  },
-  headerDescription: {
-    fontSize: screenWidth > 400 ? 14 : 12,
-    color: "#FFFFFF",
-    opacity: 0.9,
-    marginTop: 2,
+    fontSize: 14,
+    color: "rgba(255,255,255,0.9)",
+    marginTop: 4,
   },
   headerActions: {
     flexDirection: "row",
-    marginTop: 16,
-    gap: 12,
+    gap: 8,
   },
-  headerActionButton: {
+  headerBtn: {
+    padding: 8,
     backgroundColor: "rgba(255,255,255,0.2)",
-    padding: 10,
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.3)",
+    borderColor: "rgba(255,255,255,0.25)",
+  },
+  headerInfoRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginTop: 20,
+    backgroundColor: "rgba(255,255,255,0.15)",
+    borderRadius: 12,
+    padding: 12,
+  },
+  headerInfoItem: {
+    alignItems: "center",
+  },
+  headerInfoLabel: {
+    fontSize: 11,
+    color: "rgba(255,255,255,0.8)",
+    marginBottom: 2,
+  },
+  headerInfoValue: {
+    fontSize: 16,
+    fontWeight: "700",
+    color: "#fff",
+    textShadowColor: "rgba(0, 0, 0, 0.2)",
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
   },
 
   // Content
   content: {
     paddingHorizontal: 16,
   },
-  nutritionContainer: {
+  nutritionTargetContainer: {
     paddingHorizontal: 16,
-    marginBottom: 8,
+    marginBottom: 12,
   },
   bannerContainer: {
     paddingHorizontal: 16,
@@ -449,12 +425,10 @@ const styles = StyleSheet.create({
 
   // Meal Section
   mealSection: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: "#fff",
     borderRadius: 16,
     marginBottom: 12,
     overflow: "hidden",
-    borderWidth: 1,
-    borderColor: "#F3F4F6",
   },
   sectionHeader: {
     flexDirection: "row",
@@ -487,35 +461,23 @@ const styles = StyleSheet.create({
     color: "#9CA3AF",
     marginTop: 1,
   },
-  refreshButton: {
-    width: 36,
-    height: 36,
-    borderRadius: 10,
+  refreshBtn: {
+    width: 32,
+    height: 32,
+    borderRadius: 8,
     backgroundColor: "#F9FAFB",
     justifyContent: "center",
     alignItems: "center",
-  },
-
-  // Meal List
-  mealList: {
-    paddingHorizontal: 12,
-    paddingVertical: 8,
   },
 
   // Meal Item
   mealItem: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-between",
     paddingVertical: 12,
-    paddingHorizontal: 8,
+    paddingHorizontal: 16,
     borderBottomWidth: 1,
     borderBottomColor: "#F9FAFB",
-  },
-  mealItemLeft: {
-    flexDirection: "row",
-    alignItems: "center",
-    flex: 1,
   },
   mealItemIndex: {
     width: 28,
@@ -529,7 +491,7 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: "700",
   },
-  mealItemInfo: {
+  mealItemContent: {
     flex: 1,
   },
   mealItemName: {
@@ -554,46 +516,33 @@ const styles = StyleSheet.create({
     backgroundColor: "#D1D5DB",
     marginHorizontal: 8,
   },
-  mealItemRight: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  nutritionBadge: {
-    flexDirection: "row",
-    alignItems: "baseline",
-    backgroundColor: "#FEF3C7",
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    borderRadius: 8,
+  mealItemCalories: {
+    alignItems: "flex-end",
     marginRight: 8,
   },
-  nutritionValue: {
-    fontSize: 14,
+  calorieValue: {
+    fontSize: 15,
     fontWeight: "700",
-    color: "#D97706",
+    color: "#F59E0B",
   },
-  nutritionUnit: {
+  calorieUnit: {
     fontSize: 10,
-    color: "#D97706",
-    marginLeft: 2,
+    color: "#9CA3AF",
   },
 
   // Section Footer
   sectionFooter: {
     flexDirection: "row",
-    justifyContent: "flex-start",
     gap: 16,
     paddingHorizontal: 16,
-    paddingVertical: 12,
+    paddingVertical: 10,
     backgroundColor: "#F9FAFB",
-    borderTopWidth: 1,
-    borderTopColor: "#F3F4F6",
   },
-  quickStat: {
+  footerStat: {
     flexDirection: "row",
     alignItems: "center",
   },
-  quickStatText: {
+  footerStatText: {
     fontSize: 12,
     color: "#6B7280",
     marginLeft: 4,
@@ -601,13 +550,13 @@ const styles = StyleSheet.create({
   },
 
   // Weekly Styles
-  weekContainer: {
+  weekBlock: {
     marginBottom: 20,
   },
   weekHeaderBar: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#56D9E3",
+    backgroundColor: "#10B981",
     paddingHorizontal: 16,
     paddingVertical: 12,
     borderRadius: 12,
@@ -616,13 +565,13 @@ const styles = StyleSheet.create({
   weekHeaderText: {
     fontSize: 15,
     fontWeight: "600",
-    color: "#FFFFFF",
+    color: "#fff",
     marginLeft: 8,
   },
-  dayContainer: {
+  dayBlock: {
     marginBottom: 12,
   },
-  dayHeader: {
+  dayHeaderRow: {
     flexDirection: "row",
     alignItems: "center",
     paddingVertical: 8,
@@ -631,7 +580,7 @@ const styles = StyleSheet.create({
   dayIndicator: {
     width: 4,
     height: 18,
-    backgroundColor: "#56D9E3",
+    backgroundColor: "#10B981",
     borderRadius: 2,
     marginRight: 10,
   },
