@@ -154,8 +154,8 @@ export const ShoppingScreen = () => {
 
       {/* 🌫️ Blur + Gradient + Center Message */}
       <BlurView
-        intensity={60}
-        tint="light"
+        intensity={80}
+        tint="dark"
         style={{
           position: "absolute",
           top: 0,
@@ -167,14 +167,14 @@ export const ShoppingScreen = () => {
         }}
       >
         <LinearGradient
-          colors={["rgba(255,255,255,0.3)", "rgba(0,0,0,0.3)"]}
+          colors={["rgba(10, 10, 12, 0.7)", "rgba(10, 10, 12, 0.9)"]}
           style={StyleSheet.absoluteFillObject}
         />
 
         <View style={localStyles.centerBox}>
           <Text style={localStyles.comingSoonText}>Coming Soon</Text>
           <Text style={localStyles.subText}>
-            We’re working on something exciting.{"\n"}Stay tuned for updates.
+            We're working on something exciting.{"\n"}Stay tuned for updates.
           </Text>
         </View>
       </BlurView>
@@ -186,27 +186,30 @@ const localStyles = StyleSheet.create({
   centerBox: {
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "rgba(255,255,255,0.85)",
-    paddingVertical: 24,
-    paddingHorizontal: 40,
-    bottom:150,
-    borderRadius: 20,
-    shadowColor: "#000",
-    shadowOpacity: 0.25,
-    shadowRadius: 8,
-    elevation: 4,
+    backgroundColor: Colors.bgCard,
+    paddingVertical: 32,
+    paddingHorizontal: 48,
+    bottom: 150,
+    borderRadius: 24,
+    borderWidth: 1,
+    borderColor: Colors.borderDark,
+    shadowColor: Colors.emerald,
+    shadowOpacity: 0.3,
+    shadowRadius: 20,
+    shadowOffset: { width: 0, height: 8 },
+    elevation: 8,
   },
   comingSoonText: {
-    fontSize: 28,
+    fontSize: 32,
     fontWeight: "700",
-    color: Colors.green,
+    color: Colors.emerald,
     textAlign: "center",
   },
   subText: {
     fontSize: 16,
-    color: "#333",
+    color: Colors.textSecondary,
     textAlign: "center",
-    marginTop: 8,
+    marginTop: 12,
   },
 });
 

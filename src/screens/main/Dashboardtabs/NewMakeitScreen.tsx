@@ -114,7 +114,7 @@ const MealPlannerScreen = ({ mealPlan, onFetchMealPlan }) => {
             <Text style={styles.mealCardTitle}>{title}</Text>
             <Text style={styles.mealCardName}>{meal.name}</Text>
             <View style={styles.mealMeta}>
-              <Clock size={12} color="#6B7280" />
+              <Clock size={12} color={Colors.textMuted} />
               <Text style={styles.metaText}>{meal.prep_time_minutes || 15} min</Text>
               <Text style={styles.separator}>•</Text>
               <Text style={styles.metaText}>{meal.difficulty || 'Easy'}</Text>
@@ -122,11 +122,11 @@ const MealPlannerScreen = ({ mealPlan, onFetchMealPlan }) => {
           </View>
         </View>
         <View style={styles.caloriesContainer}>
-          <Flame size={16} color="#f97316" />
+          <Flame size={16} color={Colors.orange} />
           <Text style={styles.caloriesText}>{meal.nutrition?.calories || 0} cal</Text>
         </View>
       </View>
-      <ChevronRight size={20} color="#9ca3af" />
+      <ChevronRight size={20} color={Colors.textMuted} />
     </TouchableOpacity>
   );
 
@@ -264,13 +264,13 @@ const MealPlannerScreen = ({ mealPlan, onFetchMealPlan }) => {
           <View style={styles.card}>
             <View style={styles.statsRow}>
               <View style={styles.statItem}>
-                <Clock size={16} color="#9ca3af" />
+                <Clock size={16} color={Colors.textMuted} />
                 <Text style={styles.statText}>
                   {selectedMeal?.prep_time_minutes || 15} min
                 </Text>
               </View>
               <View style={styles.statItem}>
-                <Activity size={16} color="#9ca3af" />
+                <Activity size={16} color={Colors.textMuted} />
                 <Text style={styles.statText}>
                   {selectedMeal?.difficulty || 'Easy'}
                 </Text>
@@ -288,7 +288,7 @@ const MealPlannerScreen = ({ mealPlan, onFetchMealPlan }) => {
           {/* Macros Card */}
           <View style={styles.card}>
             <View style={styles.cardTitleRow}>
-              <Activity size={16} color="#111827" />
+              <Activity size={16} color={Colors.emerald} />
               <Text style={styles.cardTitle}>Nutrition Facts</Text>
             </View>
             <View style={styles.macroGrid}>
@@ -384,13 +384,13 @@ const MealPlannerScreen = ({ mealPlan, onFetchMealPlan }) => {
           {recipe?.ingredients_detailed && recipe.ingredients_detailed.length > 0 && (
             <View style={styles.card}>
               <View style={styles.cardTitleRow}>
-                <Leaf size={16} color="#111827" />
+                <Leaf size={16} color={Colors.emerald} />
                 <Text style={styles.cardTitle}>Ingredients</Text>
               </View>
               {recipe.ingredients_detailed.map((item, idx) => (
                 <View key={idx} style={styles.ingredientRow}>
                   <View style={styles.checkCircle}>
-                    <Check size={12} color="#16a34a" />
+                    <Check size={12} color={Colors.emerald} />
                   </View>
                   <View style={styles.ingredientContent}>
                     <Text style={styles.ingredientName}>
@@ -409,7 +409,7 @@ const MealPlannerScreen = ({ mealPlan, onFetchMealPlan }) => {
           {recipe?.instructions && recipe.instructions.length > 0 && (
             <View style={styles.card}>
               <View style={styles.cardTitleRow}>
-                <ChefHat size={16} color="#111827" />
+                <ChefHat size={16} color={Colors.emerald} />
                 <Text style={styles.cardTitle}>Cooking Instructions</Text>
               </View>
               {recipe.instructions.map((step, idx) => (
@@ -452,60 +452,61 @@ const MealPlannerScreen = ({ mealPlan, onFetchMealPlan }) => {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#f9fafb',
+    backgroundColor: Colors.bgPrimary,
   },
   container: {
     flex: 1,
-    backgroundColor: '#f9fafb',
+    backgroundColor: Colors.bgPrimary,
   },
   centerContent: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     padding: 24,
+    backgroundColor: Colors.bgPrimary,
   },
   loadingText: {
     fontSize: 16,
-    color: '#6b7280',
+    color: Colors.textMuted,
   },
   errorText: {
     fontSize: 16,
-    color: '#ef4444',
+    color: Colors.red,
     marginBottom: 16,
     textAlign: 'center',
   },
   retryButton: {
-    backgroundColor: '#3b82f6',
+    backgroundColor: Colors.emerald,
     paddingHorizontal: 24,
     paddingVertical: 12,
-    borderRadius: 8,
+    borderRadius: 12,
   },
   retryButtonText: {
-    color: '#ffffff',
+    color: Colors.bgPrimary,
     fontSize: 16,
     fontWeight: '600',
   },
   header: {
-    backgroundColor: '#ffffff',
+    backgroundColor: Colors.bgCard,
     padding: 24,
     borderBottomWidth: 1,
-    borderBottomColor: '#f3f4f6',
+    borderBottomColor: Colors.borderDark,
   },
   headerTitle: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#111827',
+    color: Colors.textPrimary,
     marginBottom: 4,
   },
   headerDate: {
     fontSize: 15,
     fontWeight: '600',
-    color: '#111827',
+    color: Colors.emerald,
     marginBottom: 4,
   },
   subtitle: {
     fontSize: 13,
-    color: '#6B7280',
+    color: Colors.textMuted,
   },
   section: {
     padding: 16,
@@ -513,32 +514,34 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
     fontWeight: '700',
-    color: '#111827',
+    color: Colors.textPrimary,
     marginBottom: 12,
   },
   mealTypeHeader: {
     fontSize: 11,
     fontWeight: '700',
-    color: '#00C079',
+    color: Colors.emerald,
     textTransform: 'uppercase',
     marginTop: 12,
     marginBottom: 8,
   },
   card: {
-    backgroundColor: '#ffffff',
+    backgroundColor: Colors.bgCard,
     borderRadius: 16,
     padding: 20,
     marginBottom: 16,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 2,
-    elevation: 2,
+    borderWidth: 1,
+    borderColor: Colors.borderDark,
+    shadowColor: Colors.emerald,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
+    elevation: 4,
   },
   cardTitle: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#111827',
+    color: Colors.textPrimary,
     marginBottom: 16,
   },
   cardTitleRow: {
@@ -550,7 +553,7 @@ const styles = StyleSheet.create({
   targetGrid: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    backgroundColor: Colors.gray,
+    backgroundColor: Colors.bgCardHover,
     borderRadius: 20,
     padding: 10,
   },
@@ -561,38 +564,38 @@ const styles = StyleSheet.create({
   targetValue: {
     fontSize: 22,
     fontWeight: 'bold',
-    color: '#111827',
+    color: Colors.textPrimary,
   },
   targetLabel: {
     fontSize: 12,
-    color: '#6B7280',
+    color: Colors.textMuted,
     marginTop: 4,
     fontWeight: '500',
   },
   proteinText: {
-    color: '#3b82f6',
+    color: Colors.blue,
   },
   carbsText: {
-    color: '#16a34a',
+    color: Colors.emerald,
   },
   fatText: {
-    color: '#f97316',
+    color: Colors.orange,
   },
   mealCard: {
-    backgroundColor: '#ffffff',
+    backgroundColor: Colors.bgCard,
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: Colors.gray200,
+    borderColor: Colors.borderDark,
     padding: 16,
     marginBottom: 12,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 2,
-    elevation: 1,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.15,
+    shadowRadius: 4,
+    elevation: 3,
   },
   mealCardContent: {
     flex: 1,
@@ -606,7 +609,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: '#F0FDF4',
+    backgroundColor: 'rgba(52, 211, 153, 0.15)',
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 12,
@@ -621,14 +624,14 @@ const styles = StyleSheet.create({
   mealCardTitle: {
     fontSize: 11,
     fontWeight: '700',
-    color: '#6b7280',
+    color: Colors.textMuted,
     marginBottom: 2,
     textTransform: 'uppercase',
   },
   mealCardName: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#111827',
+    color: Colors.textPrimary,
     marginBottom: 4,
   },
   mealMeta: {
@@ -638,12 +641,12 @@ const styles = StyleSheet.create({
   },
   metaText: {
     fontSize: 13,
-    color: '#6B7280',
+    color: Colors.textMuted,
     fontWeight: '500',
   },
   separator: {
     fontSize: 13,
-    color: '#6B7280',
+    color: Colors.textMuted,
     marginHorizontal: 4,
   },
   caloriesContainer: {
@@ -655,35 +658,35 @@ const styles = StyleSheet.create({
   caloriesText: {
     fontSize: 14,
     fontWeight: '500',
-    color: '#4b5563',
+    color: Colors.textSecondary,
   },
   detailHeader: {
-    backgroundColor: '#ffffff',
+    backgroundColor: Colors.bgCard,
     padding: 24,
     borderBottomWidth: 1,
-    borderBottomColor: '#f3f4f6',
+    borderBottomColor: Colors.borderDark,
   },
   backButton: {
     fontSize: 14,
     fontWeight: '500',
-    color: '#3b82f6',
+    color: Colors.emerald,
     marginBottom: 12,
   },
   mealType: {
     fontSize: 14,
     fontWeight: '500',
-    color: '#6b7280',
+    color: Colors.textMuted,
     marginBottom: 8,
   },
   mealName: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#111827',
+    color: Colors.textPrimary,
     marginBottom: 8,
   },
   mealDescription: {
     fontSize: 14,
-    color: '#4b5563',
+    color: Colors.textSecondary,
     lineHeight: 20,
   },
   statsRow: {
@@ -698,10 +701,10 @@ const styles = StyleSheet.create({
   },
   statText: {
     fontSize: 14,
-    color: '#4b5563',
+    color: Colors.textSecondary,
   },
   scoreChip: {
-    backgroundColor: '#dcfce7',
+    backgroundColor: 'rgba(52, 211, 153, 0.15)',
     paddingHorizontal: 12,
     paddingVertical: 4,
     borderRadius: 12,
@@ -709,7 +712,7 @@ const styles = StyleSheet.create({
   scoreText: {
     fontSize: 12,
     fontWeight: '600',
-    color: '#15803d',
+    color: Colors.emerald,
   },
   macroGrid: {
     flexDirection: 'row',
@@ -723,11 +726,11 @@ const styles = StyleSheet.create({
   macroValue: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#111827',
+    color: Colors.textPrimary,
   },
   macroLabel: {
     fontSize: 12,
-    color: '#6B7280',
+    color: Colors.textMuted,
     marginTop: 4,
   },
   micronutrientList: {
@@ -740,12 +743,12 @@ const styles = StyleSheet.create({
   },
   micronutrientLabel: {
     fontSize: 14,
-    color: '#4b5563',
+    color: Colors.textSecondary,
   },
   micronutrientValue: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#111827',
+    color: Colors.textPrimary,
   },
   ingredientRow: {
     flexDirection: 'row',
@@ -757,7 +760,7 @@ const styles = StyleSheet.create({
     width: 20,
     height: 20,
     borderRadius: 10,
-    backgroundColor: '#dcfce7',
+    backgroundColor: 'rgba(52, 211, 153, 0.15)',
     alignItems: 'center',
     justifyContent: 'center',
     marginTop: 2,
@@ -768,13 +771,13 @@ const styles = StyleSheet.create({
   ingredientName: {
     fontSize: 14,
     fontWeight: '500',
-    color: '#111827',
+    color: Colors.textPrimary,
     marginBottom: 2,
     textTransform: 'capitalize',
   },
   ingredientDetails: {
     fontSize: 12,
-    color: '#6b7280',
+    color: Colors.textMuted,
   },
   instructionRow: {
     flexDirection: 'row',
@@ -785,29 +788,29 @@ const styles = StyleSheet.create({
     width: 24,
     height: 24,
     borderRadius: 12,
-    backgroundColor: '#dbeafe',
+    backgroundColor: 'rgba(96, 165, 250, 0.15)',
     alignItems: 'center',
     justifyContent: 'center',
   },
   stepNumberText: {
     fontSize: 12,
     fontWeight: '600',
-    color: '#2563eb',
+    color: Colors.blue,
   },
   instructionText: {
     flex: 1,
     fontSize: 14,
-    color: '#374151',
+    color: Colors.textSecondary,
     lineHeight: 20,
     paddingTop: 2,
   },
   healthBenefitsText: {
     fontSize: 14,
-    color: '#4b5563',
+    color: Colors.textSecondary,
     lineHeight: 20,
   },
   actionButton: {
-    backgroundColor: '#3b82f6',
+    backgroundColor: Colors.emerald,
     borderRadius: 16,
     padding: 16,
     flexDirection: 'row',
@@ -819,7 +822,7 @@ const styles = StyleSheet.create({
   actionButtonText: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#ffffff',
+    color: Colors.bgPrimary,
   },
 });
 
