@@ -3,13 +3,10 @@ import {
   View,
   TouchableOpacity,
   StyleSheet,
-  Platform,
   Image,
 } from "react-native";
 import { BottomTabBarProps } from "@react-navigation/bottom-tabs";
-import { MaterialIcons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { Colors } from "@/constants/Colors";
-import { FoodAnalysisIcon, KcalIcon } from "@/components/icons/Icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const CustomTabBar: React.FC<BottomTabBarProps> = ({
@@ -20,7 +17,12 @@ const CustomTabBar: React.FC<BottomTabBarProps> = ({
   const insets = useSafeAreaInsets();
 
   const getIcon = (routeName: string, focused: boolean, size: number) => {
-    const color = focused ? Colors.emerald : Colors.textMuted;
+    const iconStyle = {
+      width: size,
+      height: size,
+      resizeMode: "contain" as const,
+      tintColor: focused ? Colors.emerald : Colors.textMuted,
+    };
 
     switch (routeName) {
       case "Landing":
@@ -29,32 +31,74 @@ const CustomTabBar: React.FC<BottomTabBarProps> = ({
             <Image
               source={
                 focused
-                  ? require("assets/primaryAi.png")
-                  : require("assets/Ai.png")
+                  ? require("assets/Ai_inactive.png")
+                  : require("assets/Ai_active.png")
               }
-              style={{ width: 28, height: 28 }}
+              style={{ width: 28, height: 28, resizeMode: "contain" }}
             />
           </View>
         );
-      case "FoodAnalysis":
-        return <FoodAnalysisIcon size={size} color={color} focused={focused} />;
-      case "HealthTrack":
-        return <MaterialCommunityIcons name="walk" size={size} color={color} />;
-      case "Favorites":
-        return <MaterialIcons name="track-changes" size={size} color={color} />;
       case "NutritionPlan":
-        return <KcalIcon size={24} color={color} focused={focused} />;
+        return (
+          <Image
+            source={
+              focused
+                ? require("assets/nutrition_inactive.png")
+                : require("assets/nutrition_active.png")
+            }
+            style={iconStyle}
+          />
+        );
+      case "HealthTrack":
+        return (
+          <Image
+            source={
+              focused
+                ? require("assets/health_inactive.png")
+                : require("assets/health_active.png")
+            }
+            style={iconStyle}
+          />
+        );
+      case "GoalCustomizationMain":
+        return (
+          <Image
+            source={
+              focused
+                ? require("assets/goal_inactive.png")
+                : require("assets/goal_active.png")
+            }
+            style={iconStyle}
+          />
+        );
+      case "FoodAnalysis":
+        return (
+          <Image
+            source={
+              focused
+                ? require("assets/food_inactive.png")
+                : require("assets/food_active.png")
+            }
+            style={iconStyle}
+          />
+        );
       default:
-        return <MaterialIcons name="help" size={size} color={color} />;
+        return null;
     }
   };
+
+  // Filter out hidden tabs
+  const visibleRoutes = state.routes.filter(
+    (route) => route.name !== "AllScreensMenu"
+  );
 
   return (
     <View style={[styles.container, { paddingBottom: insets.bottom > 0 ? insets.bottom : 16 }]}>
       <View style={styles.tabBarContainer}>
-        {state.routes.map((route, index) => {
+        {visibleRoutes.map((route) => {
+          const routeIndex = state.routes.findIndex((r) => r.key === route.key);
           const { options } = descriptors[route.key];
-          const isFocused = state.index === index;
+          const isFocused = state.index === routeIndex;
           const isCenter = route.name === "Landing";
 
           const onPress = () => {
@@ -76,6 +120,9 @@ const CustomTabBar: React.FC<BottomTabBarProps> = ({
             });
           };
 
+          const icon = getIcon(route.name, isFocused, 26);
+          if (!icon) return null;
+
           return (
             <TouchableOpacity
               key={route.key}
@@ -89,7 +136,7 @@ const CustomTabBar: React.FC<BottomTabBarProps> = ({
                 isCenter && styles.centerTabButton,
               ]}
             >
-              {getIcon(route.name, isFocused, 24)}
+              {icon}
             </TouchableOpacity>
           );
         })}
