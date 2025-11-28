@@ -67,71 +67,74 @@ const DashboardHeader: React.FC<ExtendedHeaderProps> = ({
   const getHeaderConfig = (): HeaderConfig & { backIconColor?: string; gradientColors?: string[]; backgroundImage?: string } => {
     if (customHeaderConfig) return customHeaderConfig;
 
+    // Dark theme gradient colors - consistent across all tabs
+    const darkGradient = [Colors.bgPrimary, "rgba(10, 10, 12, 0.95)"];
+
     const defaultConfig = {
-      backgroundColor: backgroundColor || Colors.primary,
+      backgroundColor: backgroundColor || Colors.bgPrimary,
       title: title || "",
       subtitle: subtitle || "",
       description: description || "",
-      titleColor: Colors.white,
-      subtitleColor: Colors.white,
-      descriptionColor: Colors.white,
-      backIconColor: Colors.white,
-      gradientColors: ["rgba(16, 185, 129, 0.93)", "rgba(5, 150, 105, 0.90)"],
-      backgroundImage: "https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=600&q=80",
+      titleColor: Colors.textPrimary,
+      subtitleColor: Colors.emerald,
+      descriptionColor: Colors.textSecondary,
+      backIconColor: Colors.textPrimary,
+      gradientColors: darkGradient,
+      backgroundImage: undefined,
     };
 
     switch (activeTab) {
       case "make-it":
         return {
-          backgroundColor: "#10B981",
+          backgroundColor: Colors.bgPrimary,
           title: "Make It",
           subtitle: `${userAge}-year-old Health Warrior!`,
           description: "Your personalized nutrition journey continues",
-          titleColor: Colors.white,
-          subtitleColor: Colors.white,
-          descriptionColor: Colors.white,
-          backIconColor: Colors.white,
-          gradientColors: ["rgba(16, 185, 129, 0.93)", "rgba(5, 150, 105, 0.90)"],
-          backgroundImage: "https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=600&q=80",
+          titleColor: Colors.textPrimary,
+          subtitleColor: Colors.emerald,
+          descriptionColor: Colors.textSecondary,
+          backIconColor: Colors.textPrimary,
+          gradientColors: darkGradient,
+          backgroundImage: undefined,
         };
       case "go-shop":
         return {
-          backgroundColor: "#F59E0B",
+          backgroundColor: Colors.bgPrimary,
           title: "Go Shop",
           subtitle: "Fresh ingredients await",
           description: "Smart shopping for healthy living",
-          titleColor: Colors.white,
-          subtitleColor: Colors.white,
-          descriptionColor: Colors.white,
-          backIconColor: Colors.white,
-          gradientColors: ["rgba(245, 158, 11, 0.93)", "rgba(217, 119, 6, 0.90)"],
-          backgroundImage: "https://images.unsplash.com/photo-1542838132-92c53300491e?w=600&q=80",
+          titleColor: Colors.textPrimary,
+          subtitleColor: Colors.emerald,
+          descriptionColor: Colors.textSecondary,
+          backIconColor: Colors.textPrimary,
+          gradientColors: darkGradient,
+          backgroundImage: undefined,
         };
       case "dine-in":
         return {
-          backgroundColor: "#4CAF50",
+          backgroundColor: Colors.bgPrimary,
           title: "Dine-In",
           subtitle: "It's just a drive away",
           description: "Healthy eateries at driving distance",
-          titleColor: Colors.white,
-          subtitleColor: Colors.white,
-          descriptionColor: Colors.white,
-          backIconColor: Colors.white,
-          gradientColors: ["rgba(76, 175, 80, 0.93)", "rgba(56, 142, 60, 0.90)"],
-          backgroundImage: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=600&q=80",
+          titleColor: Colors.textPrimary,
+          subtitleColor: Colors.emerald,
+          descriptionColor: Colors.textSecondary,
+          backIconColor: Colors.textPrimary,
+          gradientColors: darkGradient,
+          backgroundImage: undefined,
         };
       case "mom-it":
         return {
-          backgroundColor: "#8B5CF6",
+          backgroundColor: Colors.bgPrimary,
           title: "Expert Guidance",
           subtitle: "Professional Support",
           description: "Connect with certified nutrition professionals",
-          titleColor: Colors.white,
-          subtitleColor: Colors.white,
-          descriptionColor: Colors.white,
-          backIconColor: Colors.white,
-          gradientColors: ["rgba(139, 92, 246, 0.93)", "rgba(109, 40, 217, 0.90)"],
-          backgroundImage: "https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=600&q=80",
+          titleColor: Colors.textPrimary,
+          subtitleColor: Colors.emerald,
+          descriptionColor: Colors.textSecondary,
+          backIconColor: Colors.textPrimary,
+          gradientColors: darkGradient,
+          backgroundImage: undefined,
         };
 
       default:
@@ -141,6 +144,130 @@ const DashboardHeader: React.FC<ExtendedHeaderProps> = ({
 
   const headerConfig = getHeaderConfig();
 
+  const renderHeaderContent = () => (
+    <LinearGradient
+      colors={headerConfig.gradientColors || [Colors.bgPrimary, "rgba(10, 10, 12, 0.95)"]}
+      style={{
+        flex: 1,
+        paddingTop: Platform.OS === "ios" ? 60 : 50,
+        paddingBottom: compact ? 12 : showTabs ? 20 : 16,
+        paddingHorizontal: 20,
+        minHeight: compact ? 90 : showTabs ? 200 : 130,
+      }}
+    >
+      {/* Menu Button */}
+      <TouchableOpacity
+        style={[
+          styles.menuButton,
+          {
+            position: "absolute",
+            right: 16,
+            top: Platform.OS === "ios" ? 50 : 60,
+            backgroundColor: Colors.bgCard,
+            padding: 8,
+            borderRadius: 50,
+            borderWidth: 1,
+            borderColor: Colors.borderDark,
+          },
+          extraMenuStyle,
+        ]}
+        onPress={handleMorePress}
+        activeOpacity={0.7}
+      >
+        <Ionicons name="ellipsis-horizontal" size={22} color={Colors.textPrimary} />
+      </TouchableOpacity>
+
+      {/* Header Title Section */}
+      <View style={styles.headerTextContainer}>
+        <View style={styles.headerRow}>
+          {showBackIcon && (
+            <TouchableOpacity
+              onPress={onBackPress || (() => navigation.goBack())}
+              style={{
+                marginRight: 8,
+                backgroundColor: Colors.bgCard,
+                padding: 6,
+                borderRadius: 20,
+                borderWidth: 1,
+                borderColor: Colors.borderDark,
+              }}
+            >
+              <Ionicons
+                name="arrow-back"
+                size={22}
+                color={headerConfig.backIconColor || Colors.textPrimary}
+              />
+            </TouchableOpacity>
+          )}
+
+          <Text
+            style={[
+              styles.greetingText,
+              { color: headerConfig.titleColor },
+            ]}
+            numberOfLines={2}
+          >
+            {headerConfig.title}
+          </Text>
+        </View>
+
+        {headerConfig.subtitle ? (
+          <Text
+            style={[
+              styles.welcomeText,
+              { color: headerConfig.subtitleColor },
+            ]}
+          >
+            {headerConfig.subtitle}
+          </Text>
+        ) : null}
+
+        {headerConfig.description ? (
+          <Text
+            style={[
+              styles.descriptionText,
+              { color: headerConfig.descriptionColor },
+            ]}
+          >
+            {headerConfig.description}
+          </Text>
+        ) : null}
+      </View>
+
+      {/* Tabs Section */}
+      {showTabs && (
+        <View style={styles.modernTabsContainer}>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.scrollableTabs}
+          >
+            {tabs.map((tab) => {
+              const isActive = activeTab === tab.id;
+              return (
+                <TouchableOpacity
+                  key={tab.id}
+                  style={[styles.headerTab, isActive && styles.activeHeaderTab]}
+                  onPress={() => onTabChange?.(tab.id)}
+                  activeOpacity={0.8}
+                >
+                  <Text
+                    style={[
+                      styles.headerTabText,
+                      isActive && styles.activeHeaderTabText,
+                    ]}
+                  >
+                    {tab.label}
+                  </Text>
+                </TouchableOpacity>
+              );
+            })}
+          </ScrollView>
+        </View>
+      )}
+    </LinearGradient>
+  );
+
   return (
     <View style={[styles.headerContent, { overflow: "hidden" }]}>
       <StatusBar
@@ -149,142 +276,19 @@ const DashboardHeader: React.FC<ExtendedHeaderProps> = ({
         barStyle="light-content"
         animated
       />
-      <ImageBackground
-        source={{ uri: headerConfig.backgroundImage }}
-        style={{
-          minHeight: compact ? 90 : showTabs ? 200 : 130,
-        }}
-        imageStyle={styles.headerImageStyle}
-      >
-        <LinearGradient
-          colors={headerConfig.gradientColors || ["rgba(16, 185, 129, 0.93)", "rgba(5, 150, 105, 0.90)"]}
+      {headerConfig.backgroundImage ? (
+        <ImageBackground
+          source={{ uri: headerConfig.backgroundImage }}
           style={{
-            flex: 1,
-            paddingTop: Platform.OS === "ios" ? 60 : 50,
-            paddingBottom: compact ? 12 : showTabs ? 20 : 16,
-            paddingHorizontal: 20,
+            minHeight: compact ? 90 : showTabs ? 200 : 130,
           }}
+          imageStyle={styles.headerImageStyle}
         >
-          {/* Menu Button */}
-          <TouchableOpacity
-            style={[
-              styles.menuButton,
-              {
-                position: "absolute",
-                right: 16,
-                top: Platform.OS === "ios" ? 50 : 60,
-                backgroundColor: "rgba(255,255,255,0.15)",
-                padding: 8,
-                borderRadius: 50,
-                borderWidth: 1,
-                borderColor: "rgba(255,255,255,0.25)",
-              },
-              extraMenuStyle,
-            ]}
-            onPress={handleMorePress}
-            activeOpacity={0.7}
-          >
-            <Ionicons name="ellipsis-horizontal" size={22} color={Colors.white} />
-          </TouchableOpacity>
-
-          {/* Header Title Section */}
-          <View style={styles.headerTextContainer}>
-            <View style={styles.headerRow}>
-              {showBackIcon && (
-                <TouchableOpacity
-                  onPress={onBackPress || (() => navigation.goBack())}
-                  style={{
-                    marginRight: 8,
-                    backgroundColor: "rgba(255,255,255,0.15)",
-                    padding: 6,
-                    borderRadius: 20,
-                  }}
-                >
-                  <Ionicons
-                    name="arrow-back"
-                    size={22}
-                    color={headerConfig.backIconColor || Colors.white}
-                  />
-                </TouchableOpacity>
-              )}
-
-              <Text
-                style={[
-                  styles.greetingText,
-                  {
-                    color: headerConfig.titleColor,
-                    textShadowColor: "rgba(0, 0, 0, 0.3)",
-                    textShadowOffset: { width: 0, height: 1 },
-                    textShadowRadius: 3,
-                  },
-                ]}
-                numberOfLines={2}
-              >
-                {headerConfig.title}
-              </Text>
-            </View>
-
-            {headerConfig.subtitle ? (
-              <Text
-                style={[
-                  styles.welcomeText,
-                  {
-                    color: headerConfig.subtitleColor,
-                    textShadowColor: "rgba(0, 0, 0, 0.2)",
-                    textShadowOffset: { width: 0, height: 1 },
-                    textShadowRadius: 2,
-                  },
-                ]}
-              >
-                {headerConfig.subtitle}
-              </Text>
-            ) : null}
-
-            {headerConfig.description ? (
-              <Text
-                style={[
-                  styles.descriptionText,
-                  { color: headerConfig.descriptionColor },
-                ]}
-              >
-                {headerConfig.description}
-              </Text>
-            ) : null}
-          </View>
-
-          {/* Tabs Section */}
-          {showTabs && (
-            <View style={styles.modernTabsContainer}>
-              <ScrollView
-                horizontal
-                showsHorizontalScrollIndicator={false}
-                contentContainerStyle={styles.scrollableTabs}
-              >
-                {tabs.map((tab) => {
-                  const isActive = activeTab === tab.id;
-                  return (
-                    <TouchableOpacity
-                      key={tab.id}
-                      style={[styles.headerTab, isActive && styles.activeHeaderTab]}
-                      onPress={() => onTabChange?.(tab.id)}
-                      activeOpacity={0.8}
-                    >
-                      <Text
-                        style={[
-                          styles.headerTabText,
-                          isActive && styles.activeHeaderTabText,
-                        ]}
-                      >
-                        {tab.label}
-                      </Text>
-                    </TouchableOpacity>
-                  );
-                })}
-              </ScrollView>
-            </View>
-          )}
-        </LinearGradient>
-      </ImageBackground>
+          {renderHeaderContent()}
+        </ImageBackground>
+      ) : (
+        renderHeaderContent()
+      )}
     </View>
   );
 };

@@ -6,28 +6,22 @@ import {
   Animated,
   Dimensions,
   Image,
+  Text,
+  StatusBar,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
+import { Colors } from "@/constants/Colors";
 
 const { width, height } = Dimensions.get("window");
-
-// Color Scheme
-const Colors = {
-  primary: "#0277BD",
-  primaryDark: "#01579B",
-  white: "#FFFFFF",
-  black: "#000000",
-  lightBlue: "#E3F2FD",
-  mediumBlue: "#B3E5FC",
-  skyBlue: "#81D4FA",
-};
 
 export default function SplashScreen() {
   const fadeAnim = useState(new Animated.Value(0))[0];
   const scaleAnim = useState(new Animated.Value(0.8))[0];
   const slideAnim = useState(new Animated.Value(50))[0];
+  const pulseAnim = useState(new Animated.Value(1))[0];
 
   useEffect(() => {
+    // Main entrance animation
     Animated.parallel([
       Animated.timing(fadeAnim, {
         toValue: 1,
@@ -45,19 +39,42 @@ export default function SplashScreen() {
         useNativeDriver: true,
       }),
     ]).start();
-  }, [fadeAnim, scaleAnim, slideAnim]);
+
+    // Pulse animation for glow effect
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(pulseAnim, {
+          toValue: 1.1,
+          duration: 1500,
+          useNativeDriver: true,
+        }),
+        Animated.timing(pulseAnim, {
+          toValue: 1,
+          duration: 1500,
+          useNativeDriver: true,
+        }),
+      ])
+    ).start();
+  }, [fadeAnim, scaleAnim, slideAnim, pulseAnim]);
 
   return (
-    <LinearGradient
-      colors={[Colors.lightBlue, Colors.mediumBlue, Colors.skyBlue]}
-      start={{ x: 0, y: 0 }}
-      end={{ x: 1, y: 1 }}
-      style={styles.container}
-    >
-      {/* Water wave background - Top */}
-      <View style={styles.waveContainer}>
-        <View style={styles.wave} />
-        <View style={[styles.wave, styles.wave2]} />
+    <View style={styles.container}>
+      <StatusBar barStyle="light-content" backgroundColor={Colors.bgPrimary} />
+
+      {/* Ambient Background Orbs */}
+      <View style={styles.ambientBg}>
+        <LinearGradient
+          colors={["rgba(52, 211, 153, 0.15)", "transparent"]}
+          style={styles.ambientOrb1}
+        />
+        <LinearGradient
+          colors={["rgba(96, 165, 250, 0.08)", "transparent"]}
+          style={styles.ambientOrb2}
+        />
+        <LinearGradient
+          colors={["rgba(167, 139, 250, 0.06)", "transparent"]}
+          style={styles.ambientOrb3}
+        />
       </View>
 
       {/* Logo Container with Animation */}
@@ -70,18 +87,29 @@ export default function SplashScreen() {
           },
         ]}
       >
-        {/* FitAI Logo Circle with Primary Color */}
+        {/* Glowing Ring Effect */}
+        <Animated.View
+          style={[
+            styles.glowRing,
+            { transform: [{ scale: pulseAnim }] },
+          ]}
+        />
+
+        {/* Main Logo Circle */}
         <View style={styles.logoBorder}>
-          <View style={styles.logoBox}>
+          <LinearGradient
+            colors={[Colors.emerald, Colors.emeraldDark]}
+            style={styles.logoBox}
+          >
             <Image
-              source={require(".././../assets/icon.png")}
+              source={require("../../assets/icon.png")}
               style={styles.logoImage}
               resizeMode="contain"
             />
-          </View>
+          </LinearGradient>
         </View>
 
-        {/* Animated Text Below Logo */}
+        {/* Animated Text */}
         <Animated.View
           style={[
             styles.textContainer,
@@ -91,19 +119,24 @@ export default function SplashScreen() {
             },
           ]}
         >
-          <View style={styles.textLine} />
-          <View style={[styles.textLine, { width: "70%" }]} />
+          <Text style={styles.brandText}>fitAI</Text>
+          <Text style={styles.taglineText}>Your Personal Health Companion</Text>
         </Animated.View>
       </Animated.View>
 
-      {/* Bottom water accent with primary color */}
-      <View style={styles.bottomWave} />
+      {/* Bottom gradient fade */}
+      <LinearGradient
+        colors={["transparent", "rgba(52, 211, 153, 0.05)"]}
+        style={styles.bottomGradient}
+      />
 
-      {/* Floating bubbles decoration */}
-      <View style={[styles.bubble, { bottom: 120, left: 30 }]} />
-      <View style={[styles.bubble, { bottom: 200, right: 40, width: 16, height: 16 }]} />
-      <View style={[styles.bubble, { bottom: 80, right: 80, width: 12, height: 12 }]} />
-    </LinearGradient>
+      {/* Floating particles */}
+      <View style={[styles.particle, { bottom: 150, left: 40 }]} />
+      <View style={[styles.particle, { bottom: 250, right: 50, width: 8, height: 8 }]} />
+      <View style={[styles.particle, { bottom: 100, right: 100, width: 6, height: 6 }]} />
+      <View style={[styles.particle, { top: 180, left: 60, width: 4, height: 4 }]} />
+      <View style={[styles.particle, { top: 250, right: 80, width: 5, height: 5 }]} />
+    </View>
   );
 }
 
@@ -112,88 +145,115 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: Colors.lightBlue,
+    backgroundColor: Colors.bgPrimary,
   },
-  waveContainer: {
+  ambientBg: {
     position: "absolute",
-    top: -50,
-    width: width * 1.5,
-    height: 200,
-    opacity: 0.25,
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    overflow: "hidden",
   },
-  wave: {
+  ambientOrb1: {
     position: "absolute",
-    width: "100%",
-    height: 100,
-    backgroundColor: Colors.primary,
-    borderRadius: 100,
+    top: -80,
+    right: -60,
+    width: 280,
+    height: 280,
+    borderRadius: 140,
   },
-  wave2: {
-    top: 50,
-    opacity: 0.6,
-    backgroundColor: Colors.primaryDark,
+  ambientOrb2: {
+    position: "absolute",
+    top: height * 0.4,
+    left: -100,
+    width: 220,
+    height: 220,
+    borderRadius: 110,
+  },
+  ambientOrb3: {
+    position: "absolute",
+    bottom: 100,
+    right: -40,
+    width: 180,
+    height: 180,
+    borderRadius: 90,
   },
   logoContainer: {
     alignItems: "center",
     justifyContent: "center",
     zIndex: 10,
   },
+  glowRing: {
+    position: "absolute",
+    width: 200,
+    height: 200,
+    borderRadius: 100,
+    backgroundColor: "transparent",
+    borderWidth: 2,
+    borderColor: "rgba(52, 211, 153, 0.2)",
+    shadowColor: Colors.emerald,
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.5,
+    shadowRadius: 30,
+  },
   logoBorder: {
-    width: 160,
-    height: 160,
-    borderRadius: 40,
-    borderWidth: 4,
-    borderColor: Colors.primary,
-    padding: 8,
+    width: 140,
+    height: 140,
+    borderRadius: 70,
+    padding: 4,
+    backgroundColor: Colors.bgCard,
+    borderWidth: 1,
+    borderColor: Colors.borderDark,
     marginBottom: 30,
-    backgroundColor: Colors.white,
-    shadowColor: Colors.black,
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.15,
-    shadowRadius: 12,
-    elevation: 8,
+    shadowColor: Colors.emerald,
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.3,
+    shadowRadius: 20,
+    elevation: 10,
   },
   logoBox: {
     flex: 1,
-    borderRadius: 32,
-    backgroundColor: Colors.white,
+    borderRadius: 66,
     justifyContent: "center",
     alignItems: "center",
-    borderWidth: 1,
-    borderColor: Colors.lightBlue,
   },
   logoImage: {
-    width: "80%",
-    height: "80%",
+    width: "70%",
+    height: "70%",
   },
   textContainer: {
     alignItems: "center",
-    gap: 10,
-    marginTop: 20,
+    gap: 8,
+    marginTop: 10,
   },
-  textLine: {
-    width: "90%",
-    height: 8,
-    backgroundColor: Colors.primary,
-    borderRadius: 4,
-    opacity: 0.5,
+  brandText: {
+    fontSize: 48,
+    fontWeight: "800",
+    color: Colors.textPrimary,
+    letterSpacing: 2,
+    textShadowColor: "rgba(52, 211, 153, 0.5)",
+    textShadowOffset: { width: 0, height: 0 },
+    textShadowRadius: 20,
   },
-  bottomWave: {
+  taglineText: {
+    fontSize: 14,
+    color: Colors.textMuted,
+    letterSpacing: 1,
+    marginTop: 4,
+  },
+  bottomGradient: {
     position: "absolute",
     bottom: 0,
     width: "100%",
-    height: 120,
-    backgroundColor: Colors.primary,
-    opacity: 0.08,
-    borderTopLeftRadius: 120,
-    borderTopRightRadius: 120,
+    height: 200,
   },
-  bubble: {
+  particle: {
     position: "absolute",
-    width: 20,
-    height: 20,
-    borderRadius: 10,
-    backgroundColor: Colors.primary,
-    opacity: 0.12,
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    backgroundColor: Colors.emerald,
+    opacity: 0.2,
   },
 });

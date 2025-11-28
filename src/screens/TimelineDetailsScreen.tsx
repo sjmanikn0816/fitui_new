@@ -12,6 +12,7 @@ import { LinearGradient } from "expo-linear-gradient";
 
 import { verticalScale } from "@/utils/responsive";
 import { SecureStorage } from "@/services/secureStorage";
+import { Colors } from "@/constants/Colors";
 
 export const TimelineDetailsScreen = ({ route, navigation }) => {
   const { timeline, assessment } = route.params;
@@ -50,7 +51,7 @@ export const TimelineDetailsScreen = ({ route, navigation }) => {
     <View style={styles.container}>
       {/* ===== HEADER ===== */}
       <LinearGradient
-        colors={["#3b82f6", "#8b5cf6"]}
+        colors={[Colors.bgPrimary, "rgba(10, 10, 12, 0.95)"]}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
         style={styles.header}
@@ -59,9 +60,9 @@ export const TimelineDetailsScreen = ({ route, navigation }) => {
           style={styles.backButton}
           onPress={() => navigation.goBack()}
         >
-          <Ionicons name="arrow-back" size={24} color="#fff" />
+          <Ionicons name="arrow-back" size={24} color={Colors.textPrimary} />
         </TouchableOpacity>
-        <Ionicons name="analytics-outline" size={40} color="#fff" />
+        <Ionicons name="analytics-outline" size={40} color={Colors.emerald} />
         <Text style={styles.headerTitle}>
           {formatText(timeline.approach_name)}
         </Text>
@@ -161,13 +162,13 @@ export const TimelineDetailsScreen = ({ route, navigation }) => {
       <View style={styles.bottomBar}>
         <TouchableOpacity style={styles.startButton} onPress={handleStartPlan}>
           <LinearGradient
-            colors={["#3b82f6", "#8b5cf6"]}
+            colors={[Colors.emerald, "#10B981"]}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 0 }}
             style={styles.startButtonGradient}
           >
             <Text style={styles.startButtonText}>Start This Plan</Text>
-            <Ionicons name="arrow-forward" size={20} color="#fff" />
+            <Ionicons name="arrow-forward" size={20} color={Colors.bgPrimary} />
           </LinearGradient>
         </TouchableOpacity>
       </View>
@@ -176,35 +177,32 @@ export const TimelineDetailsScreen = ({ route, navigation }) => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#f8fafc" },
+  container: { flex: 1, backgroundColor: Colors.bgPrimary },
   scrollContent: { paddingBottom: verticalScale(60) },
   bottomBar: {
-   position: 'absolute',
+    position: 'absolute',
     bottom: 0,
     left: 0,
     right: 0,
     flexDirection: 'row',
-    backgroundColor: '#fff',
+    backgroundColor: Colors.bgCard,
     paddingHorizontal: 20,
     paddingVertical: 8,
     paddingBottom: Platform.OS === 'ios' ? 34 : 100,
-
-
     borderTopWidth: 1,
-    borderTopColor: '#e2e8f0',
+    borderTopColor: Colors.borderDark,
     gap: 12,
     ...Platform.select({
       ios: {
-        shadowColor: '#000',
+        shadowColor: Colors.emerald,
         shadowOffset: { width: 0, height: -4 },
-        shadowOpacity: 0.1,
+        shadowOpacity: 0.15,
         shadowRadius: 8,
       },
       android: {
         elevation: 8,
       },
     }),
-
   },
   header: {
     paddingHorizontal: 24,
@@ -213,9 +211,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderBottomLeftRadius: 24,
     borderBottomRightRadius: 24,
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.borderDark,
     ...Platform.select({
       ios: {
-        shadowColor: "#000",
+        shadowColor: Colors.emerald,
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.15,
         shadowRadius: 8,
@@ -228,25 +228,32 @@ const styles = StyleSheet.create({
     top: Platform.OS === "ios" ? 60 : 40,
     left: 20,
     zIndex: 10,
+    backgroundColor: Colors.bgCard,
+    padding: 8,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: Colors.borderDark,
   },
   headerTitle: {
     fontSize: 26,
     fontWeight: "800",
-    color: "#fff",
+    color: Colors.textPrimary,
     marginTop: 12,
   },
-  headerSubtitle: { fontSize: 16, color: "#e0e7ff", marginTop: 4 },
+  headerSubtitle: { fontSize: 16, color: Colors.emerald, marginTop: 4 },
   section: {
-    backgroundColor: "#fff",
+    backgroundColor: Colors.bgCard,
     marginHorizontal: 20,
     marginTop: 20,
     padding: 20,
     borderRadius: 16,
+    borderWidth: 1,
+    borderColor: Colors.borderDark,
     ...Platform.select({
       ios: {
-        shadowColor: "#000",
+        shadowColor: Colors.emerald,
         shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.08,
+        shadowOpacity: 0.1,
         shadowRadius: 6,
       },
       android: { elevation: 2 },
@@ -255,7 +262,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
     fontWeight: "700",
-    color: "#1e293b",
+    color: Colors.textPrimary,
     marginBottom: 16,
   },
   statItem: {
@@ -264,30 +271,31 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     gap: 10,
   },
-  statText: { fontSize: 15, color: "#334155", fontWeight: "500" },
+  statText: { fontSize: 15, color: Colors.textSecondary, fontWeight: "500" },
   tag: {
-    backgroundColor: "#eff6ff",
+    backgroundColor: "rgba(52, 211, 153, 0.15)",
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 8,
     alignSelf: "flex-start",
     marginBottom: 8,
+    borderWidth: 1,
+    borderColor: "rgba(52, 211, 153, 0.3)",
   },
-  tagText: { fontSize: 13, color: "#1e40af", fontWeight: "600" },
-  outcomeTag: { backgroundColor: "#dcfce7" },
-  outcomeText: { color: "#166534" },
+  tagText: { fontSize: 13, color: Colors.emerald, fontWeight: "600" },
+  outcomeTag: { backgroundColor: "rgba(16, 185, 129, 0.15)", borderColor: "rgba(16, 185, 129, 0.3)" },
+  outcomeText: { color: "#10B981" },
   focusRow: {
     flexDirection: "row",
     alignItems: "center",
     marginBottom: 10,
     gap: 10,
   },
-  focusText: { fontSize: 15, color: "#334155", fontWeight: "500" },
+  focusText: { fontSize: 15, color: Colors.textSecondary, fontWeight: "500" },
   startButton: {
-    flex:2,
-    borderTopWidth: 1,
-    borderTopColor: "#e2e8f0",
-    backgroundColor: "#fff",
+    flex: 2,
+    borderTopWidth: 0,
+    backgroundColor: "transparent",
   },
   startButtonGradient: {
     flexDirection: "row",
@@ -297,5 +305,5 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     gap: 8,
   },
-  startButtonText: { fontSize: 16, color: "#fff", fontWeight: "700" },
+  startButtonText: { fontSize: 16, color: Colors.bgPrimary, fontWeight: "700" },
 });

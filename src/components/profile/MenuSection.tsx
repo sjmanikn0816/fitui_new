@@ -35,19 +35,19 @@ const MenuSection: React.FC<MenuSectionProps> = ({ title, items }) => {
             activeOpacity={0.7}
           >
             <View style={styles.itemLeft}>
-              <MaterialIcons 
-                name={item.icon} 
-                size={20} 
-                color={Colors.textLight} 
+              <MaterialIcons
+                name={item.icon}
+                size={20}
+                color={Colors.textSecondary}
                 style={styles.icon}
               />
               <Text style={styles.itemTitle}>{item.title}</Text>
             </View>
             {item.hasArrow && (
-              <MaterialIcons 
-                name="chevron-right" 
-                size={20} 
-                color={Colors.textLight} 
+              <MaterialIcons
+                name="chevron-right"
+                size={20}
+                color={Colors.textMuted}
               />
             )}
           </TouchableOpacity>
@@ -59,29 +59,29 @@ const MenuSection: React.FC<MenuSectionProps> = ({ title, items }) => {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: Colors.white,
+    backgroundColor: Colors.bgCard,
     marginHorizontal: 16,
     marginTop: 16,
     borderRadius: 12,
-          shadowColor: '#000',
+    borderWidth: 1,
+    borderColor: Colors.borderDark,
+    shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.12,
+    shadowOpacity: 0.3,
     shadowRadius: 8,
-    // Box shadow for Android
     elevation: 6,
-   
   },
   header: {
     paddingHorizontal: 20,
     paddingTop: 16,
     paddingBottom: 8,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.gray100,
+    borderBottomColor: Colors.borderDark,
   },
   title: {
     fontSize: 18,
     fontWeight: '600',
-    color: Colors.text,
+    color: Colors.textPrimary,
   },
   content: {
     paddingBottom: 4,
@@ -95,7 +95,7 @@ const styles = StyleSheet.create({
   },
   itemBorder: {
     borderBottomWidth: 1,
-    borderBottomColor: Colors.gray100,
+    borderBottomColor: Colors.borderDark,
   },
   itemLeft: {
     flexDirection: 'row',
@@ -108,7 +108,7 @@ const styles = StyleSheet.create({
   itemTitle: {
     fontSize: 16,
     fontWeight: '500',
-    color: Colors.text,
+    color: Colors.textPrimary,
   },
 });
 

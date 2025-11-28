@@ -4,6 +4,7 @@ import Modal from "react-native-modal";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "src/redux/store";
 import { hideConfirmation } from "src/redux/slice/conformationSlice";
+import { Colors } from "@/constants/Colors";
 
 const ConfirmationModal: React.FC = () => {
   const dispatch = useDispatch();
@@ -68,20 +69,24 @@ const styles = StyleSheet.create({
   modalBox: {
     width: "100%",
     padding: 20,
-    borderRadius: 10,
-    backgroundColor: "white",
+    borderRadius: 16,
+    backgroundColor: Colors.bgCard,
     alignItems: "center",
-    justifyContent: "center"
+    justifyContent: "center",
+    borderWidth: 1,
+    borderColor: Colors.borderDark,
   },
   title: {
     fontSize: 18,
     fontWeight: "bold",
     marginBottom: 10,
+    color: Colors.textPrimary,
   },
   message: {
     fontSize: 16,
     textAlign: "center",
     marginBottom: 20,
+    color: Colors.textSecondary,
   },
   buttonRow: {
     flexDirection: "row",
@@ -92,17 +97,19 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingVertical: 10,
     marginHorizontal: 5,
-    borderRadius: 5,
+    borderRadius: 8,
     alignItems: "center",
   },
   cancelButton: {
-    backgroundColor: "#ccc",
+    backgroundColor: Colors.bgCardHover,
+    borderWidth: 1,
+    borderColor: Colors.borderDark,
   },
   confirmButton: {
-    backgroundColor: "#007bff",
+    backgroundColor: Colors.emerald,
   },
   buttonText: {
-    color: "#fff",
+    color: Colors.textPrimary,
     fontSize: 16,
   },
   icon: {

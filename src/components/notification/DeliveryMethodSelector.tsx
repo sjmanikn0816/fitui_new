@@ -56,7 +56,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 16,
     fontWeight: '500',
-    color: Colors.text,
+    color: Colors.textPrimary,
     marginBottom: 12,
   },
   methodsContainer: {
@@ -70,19 +70,19 @@ const styles = StyleSheet.create({
     borderWidth: 1,
   },
   selectedMethod: {
-    backgroundColor: Colors.primary,
-    borderColor: Colors.primary,
+    backgroundColor: Colors.emerald,
+    borderColor: Colors.emerald,
   },
   unselectedMethod: {
-    backgroundColor: Colors.white,
-    borderColor: Colors.gray300,
+    backgroundColor: Colors.bgCard,
+    borderColor: Colors.borderDark,
   },
   methodText: {
     fontSize: 14,
     fontWeight: '500',
   },
   selectedMethodText: {
-    color: Colors.white,
+    color: Colors.bgPrimary,
   },
   unselectedMethodText: {
     color: Colors.textSecondary,

@@ -164,8 +164,8 @@ const SettingsScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#ffff',
-        paddingBottom:120,
+    backgroundColor: Colors.bgPrimary,
+    paddingBottom: 120,
   },
   header: {
     paddingTop: 20,
@@ -176,17 +176,17 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   backText: {
-    color: 'white',
+    color: Colors.textPrimary,
     fontSize: 16,
   },
   headerTitle: {
-    color: 'white',
+    color: Colors.textPrimary,
     fontSize: 24,
     fontWeight: '600',
     marginBottom: 8,
   },
   headerSubtitle: {
-    color: 'white',
+    color: Colors.textSecondary,
     fontSize: 14,
     opacity: 0.9,
     lineHeight: 20,
@@ -194,7 +194,6 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
     padding: 20,
-
   },
   section: {
     marginBottom: 24,
@@ -211,21 +210,23 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#333',
+    color: Colors.textPrimary,
   },
   card: {
-    backgroundColor: 'white',
+    backgroundColor: Colors.bgCard,
     borderRadius: 12,
-    shadowColor: '#000',
+    borderWidth: 1,
+    borderColor: Colors.borderDark,
+    shadowColor: Colors.emerald,
     shadowOffset: {
       width: 0,
       height: 2,
     },
-    shadowOpacity: 0.08,
+    shadowOpacity: 0.1,
     shadowRadius: 8,
     elevation: 4,
   },
-  
+
   // Theme Section
   themeContainer: {
     flexDirection: 'row',
@@ -237,19 +238,22 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     paddingHorizontal: 16,
     borderRadius: 8,
-    backgroundColor: '#f3f4f6',
+    backgroundColor: Colors.bgCardHover,
     alignItems: 'center',
+    borderWidth: 1,
+    borderColor: Colors.borderDark,
   },
   themeOptionActive: {
-    backgroundColor: '#10b981',
+    backgroundColor: Colors.emerald,
+    borderColor: Colors.emerald,
   },
   themeText: {
     fontSize: 14,
     fontWeight: '500',
-    color: '#6b7280',
+    color: Colors.textSecondary,
   },
   themeTextActive: {
-    color: 'white',
+    color: Colors.bgPrimary,
   },
 
   // Language Section
@@ -260,11 +264,11 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   languageOptionActive: {
-    backgroundColor: '#10b981',
+    backgroundColor: Colors.emerald,
   },
   languageOptionBorder: {
     borderBottomWidth: 1,
-    borderBottomColor: '#f3f4f6',
+    borderBottomColor: Colors.borderDark,
   },
   languageInfo: {
     flexDirection: 'row',
@@ -277,13 +281,13 @@ const styles = StyleSheet.create({
   languageName: {
     fontSize: 14,
     fontWeight: '500',
-    color: '#333',
+    color: Colors.textPrimary,
   },
   languageNameActive: {
-    color: 'white',
+    color: Colors.bgPrimary,
   },
   checkIcon: {
-    color: 'white',
+    color: Colors.bgPrimary,
     fontSize: 16,
     fontWeight: 'bold',
   },
@@ -297,7 +301,7 @@ const styles = StyleSheet.create({
   },
   syncItemBorder: {
     borderBottomWidth: 1,
-    borderBottomColor: '#f3f4f6',
+    borderBottomColor: Colors.borderDark,
   },
   syncInfo: {
     flex: 1,
@@ -305,12 +309,12 @@ const styles = StyleSheet.create({
   syncTitle: {
     fontSize: 14,
     fontWeight: '500',
-    color: '#333',
+    color: Colors.textPrimary,
     marginBottom: 4,
   },
   syncSubtitle: {
     fontSize: 12,
-    color: '#6b7280',
+    color: Colors.textSecondary,
   },
 
   // Toggle Switch
@@ -324,8 +328,8 @@ const styles = StyleSheet.create({
     width: 20,
     height: 20,
     borderRadius: 10,
-    backgroundColor: 'white',
-    shadowColor: '#000',
+    backgroundColor: Colors.textPrimary,
+    shadowColor: Colors.emerald,
     shadowOffset: {
       width: 0,
       height: 1,
@@ -347,18 +351,20 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   usageButtonPrimary: {
-    backgroundColor: '#8b5cf6',
+    backgroundColor: Colors.emerald,
   },
   usageButtonSecondary: {
-    backgroundColor: '#f3f4f6',
+    backgroundColor: Colors.bgCardHover,
+    borderWidth: 1,
+    borderColor: Colors.borderDark,
   },
   usageButtonPrimaryText: {
-    color: 'white',
+    color: Colors.bgPrimary,
     fontSize: 14,
     fontWeight: '500',
   },
   usageButtonSecondaryText: {
-    color: '#6b7280',
+    color: Colors.textSecondary,
     fontSize: 14,
     fontWeight: '500',
   },

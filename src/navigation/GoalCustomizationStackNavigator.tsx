@@ -15,8 +15,8 @@ const Stack = createStackNavigator();
 const defaultHeaderOptions = (title: string, subtitle?: string) => ({
   headerShown: true,
   headerTitle: () => <HeaderWithSubtitle subtitle={subtitle} title={title} />,
-  headerStyle: { backgroundColor: Colors.white },
-  headerTintColor: Colors.black,
+  headerStyle: { backgroundColor: Colors.bgPrimary },
+  headerTintColor: Colors.textPrimary,
   headerBackTitle: "",
 });
 const GoalCustomizationStackNavigator = () => {

@@ -84,14 +84,14 @@ const ProfileScreen: FC<ProfileScreenProps> = ({ navigation }) => {
           compact={true}
           showTabs={false}
           customHeaderConfig={{
-            backgroundColor: Colors.white,
+            backgroundColor: Colors.bgPrimary,
             title: "Profile",
             subtitle: "Manage your account",
             description: "Update info, settings & preferences",
-            titleColor: Colors.text,
+            titleColor: Colors.textPrimary,
             subtitleColor: Colors.textSecondary,
-            descriptionColor: Colors.textSecondary,
-            backIconColor: Colors.text,
+            descriptionColor: Colors.textMuted,
+            backIconColor: Colors.textPrimary,
           }}
         />
 

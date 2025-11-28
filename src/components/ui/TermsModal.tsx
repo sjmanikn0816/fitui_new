@@ -80,7 +80,7 @@ const TermsModal: React.FC<TermsModalProps> = ({ visible, onAccept, onClose }) =
           <View style={styles.header}>
             {onClose && (
               <TouchableOpacity onPress={onClose} style={styles.backButton}>
-                <Ionicons name="arrow-back" size={24} color={Colors.black} />
+                <Ionicons name="arrow-back" size={24} color={Colors.textPrimary} />
               </TouchableOpacity>
             )}
             <View style={styles.headerTextContainer}>
@@ -91,7 +91,7 @@ const TermsModal: React.FC<TermsModalProps> = ({ visible, onAccept, onClose }) =
 
           {loading ? (
             <View style={styles.loaderContainer}>
-              <ActivityIndicator size="large" color={Colors.black} />
+              <ActivityIndicator size="large" color={Colors.emerald} />
               <Text style={styles.loaderText}>Loading Terms...</Text>
             </View>
           ) : (
@@ -108,7 +108,7 @@ const TermsModal: React.FC<TermsModalProps> = ({ visible, onAccept, onClose }) =
 
           {!isScrolledToBottom && (
             <Animated.View style={[styles.scrollIndicator, { transform: [{ scale: pulseAnim }] }]}>
-              <Ionicons name="chevron-down" size={24} color={Colors.black} />
+              <Ionicons name="chevron-down" size={24} color={Colors.textPrimary} />
               <Text style={styles.scrollText}>Scroll to continue</Text>
             </Animated.View>
           )}
@@ -136,8 +136,8 @@ const TermsModal: React.FC<TermsModalProps> = ({ visible, onAccept, onClose }) =
             <LinearGradient
               colors={
                 accepted && isScrolledToBottom
-                  ? [Colors.black, Colors.black]
-                  : ["#cbd5e1", "#94a3b8"]
+                  ? [Colors.emerald, "#059669"]
+                  : [Colors.bgCardHover, Colors.bgCardHover]
               }
               style={styles.gradientButton}
             >

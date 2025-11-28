@@ -10,7 +10,7 @@ import {
 
 export const styles = StyleSheet.create({
   button: {
-    borderRadius: responsiveHeight(1.2), 
+    borderRadius: responsiveHeight(1.8),
     alignItems: "center",
     justifyContent: "center",
     flexDirection: "row",
@@ -25,27 +25,29 @@ export const styles = StyleSheet.create({
 
   // Variants
   primary: {
-    backgroundColor: Colors.primary,
+    backgroundColor: Colors.emerald,
   },
   secondary: {
-    backgroundColor: Colors.gray200,
+    backgroundColor: Colors.bgCardHover,
+    borderWidth: 1,
+    borderColor: Colors.borderDark,
   },
   outline: {
     backgroundColor: "transparent",
-    borderWidth: 2,
-    borderColor: Colors.primary,
+    borderWidth: 1.5,
+    borderColor: Colors.borderDark,
   },
   disabled: {
-    opacity: 0.6,
+    opacity: 0.5,
   },
 
-
+  // Sizes
   small: {
     paddingVertical: responsiveHeight(1.2),
     paddingHorizontal: responsiveWidth(4),
   },
   medium: {
-    paddingVertical: responsiveHeight(1),
+    paddingVertical: responsiveHeight(1.8),
     paddingHorizontal: responsiveWidth(5),
   },
   large: {
@@ -53,18 +55,19 @@ export const styles = StyleSheet.create({
     paddingHorizontal: responsiveWidth(6.5),
   },
 
-
+  // Text styles
   text: {
     ...Typography.bodyMedium,
-    fontSize: responsiveFontSize(2), 
+    fontSize: responsiveFontSize(2),
+    fontWeight: "600",
   },
   primaryText: {
-    color: Colors.white,
+    color: Colors.bgPrimary,
   },
   secondaryText: {
-    color: Colors.text,
+    color: Colors.textPrimary,
   },
   outlineText: {
-    color: Colors.primary,
+    color: Colors.textSecondary,
   },
 });

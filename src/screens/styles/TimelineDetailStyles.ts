@@ -1,10 +1,11 @@
+import { Colors } from "@/constants/Colors";
 import { StyleSheet, Platform } from "react-native";
 import { scale, verticalScale, moderateScale } from "@/utils/responsive";
 
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f8fafc",
+    backgroundColor: Colors.bgPrimary,
   },
 
   scrollContent: {
@@ -20,10 +21,10 @@ export const styles = StyleSheet.create({
     borderBottomRightRadius: scale(24),
     ...Platform.select({
       ios: {
-        shadowColor: "#000",
+        shadowColor: Colors.emerald,
         shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.15,
-        shadowRadius: 8,
+        shadowOpacity: 0.2,
+        shadowRadius: 12,
       },
       android: {
         elevation: 6,
@@ -41,29 +42,31 @@ export const styles = StyleSheet.create({
   headerTitle: {
     fontSize: moderateScale(26),
     fontWeight: "800",
-    color: "#fff",
+    color: Colors.textPrimary,
     marginTop: verticalScale(12),
     textAlign: "center",
   },
 
   headerSubtitle: {
     fontSize: moderateScale(15),
-    color: "#e0e7ff",
+    color: Colors.textSecondary,
     marginTop: verticalScale(4),
     textAlign: "center",
   },
 
   section: {
-    backgroundColor: "#fff",
+    backgroundColor: Colors.bgCard,
     marginHorizontal: scale(20),
     marginTop: verticalScale(20),
     padding: scale(20),
     borderRadius: scale(16),
+    borderWidth: 1,
+    borderColor: Colors.borderDark,
     ...Platform.select({
       ios: {
         shadowColor: "#000",
         shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.08,
+        shadowOpacity: 0.15,
         shadowRadius: 6,
       },
       android: {
@@ -75,7 +78,7 @@ export const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: moderateScale(18),
     fontWeight: "700",
-    color: "#1e293b",
+    color: Colors.textPrimary,
     marginBottom: verticalScale(16),
   },
 
@@ -88,12 +91,12 @@ export const styles = StyleSheet.create({
 
   statText: {
     fontSize: moderateScale(15),
-    color: "#334155",
+    color: Colors.textSecondary,
     fontWeight: "500",
   },
 
   tag: {
-    backgroundColor: "#eff6ff",
+    backgroundColor: "rgba(96, 165, 250, 0.15)",
     paddingHorizontal: scale(12),
     paddingVertical: verticalScale(6),
     borderRadius: scale(8),
@@ -103,16 +106,16 @@ export const styles = StyleSheet.create({
 
   tagText: {
     fontSize: moderateScale(13),
-    color: "#1e40af",
+    color: Colors.blue,
     fontWeight: "600",
   },
 
   outcomeTag: {
-    backgroundColor: "#dcfce7",
+    backgroundColor: "rgba(52, 211, 153, 0.15)",
   },
 
   outcomeText: {
-    color: "#166534",
+    color: Colors.emerald,
   },
 
   focusRow: {
@@ -124,7 +127,7 @@ export const styles = StyleSheet.create({
 
   focusText: {
     fontSize: moderateScale(15),
-    color: "#334155",
+    color: Colors.textSecondary,
     fontWeight: "500",
   },
 
@@ -133,19 +136,19 @@ export const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    backgroundColor: "#fff",
+    backgroundColor: Colors.bgSecondary,
     flexDirection: "row",
     paddingHorizontal: scale(20),
     paddingVertical: Platform.OS === "ios" ? verticalScale(18) : verticalScale(16),
     paddingBottom: Platform.OS === "ios" ? verticalScale(34) : verticalScale(20),
     borderTopWidth: 1,
-    borderTopColor: "#e2e8f0",
+    borderTopColor: Colors.borderDark,
     gap: scale(12),
     ...Platform.select({
       ios: {
         shadowColor: "#000",
         shadowOffset: { width: 0, height: -4 },
-        shadowOpacity: 0.08,
+        shadowOpacity: 0.15,
         shadowRadius: 8,
       },
       android: {
@@ -171,7 +174,7 @@ export const styles = StyleSheet.create({
 
   startButtonText: {
     fontSize: moderateScale(16),
-    color: "#fff",
+    color: Colors.bgPrimary,
     fontWeight: "700",
   },
 });

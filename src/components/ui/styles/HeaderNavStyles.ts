@@ -8,8 +8,8 @@ export const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     paddingVertical: 18,
-    borderBottomColor: Colors.background,
-    backgroundColor: Colors.white,
+    borderBottomColor: Colors.borderDark,
+    backgroundColor: Colors.bgPrimary,
     position: "relative",
   },
   backButton: {
@@ -21,7 +21,7 @@ export const styles = StyleSheet.create({
   },
   title: {
     ...Typography.h3,
-    color: Colors.black,
+    color: Colors.textPrimary,
     fontWeight: "600",
     textAlign: "center",
   },

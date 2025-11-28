@@ -7,15 +7,15 @@ interface HeaderProps {
   title: string;
   subtitle?: string;
   onBackPress?: () => void;
-  showBackButton?: boolean; // NEW → control back button
-  onSkipPress?: () => void; // NEW → skip button handler
+  showBackButton?: boolean;
+  onSkipPress?: () => void;
 }
 
 const MainHeader: React.FC<HeaderProps> = ({
   title,
   subtitle,
   onBackPress,
-  showBackButton = false, // default false
+  showBackButton = false,
   onSkipPress,
 }) => {
   return (
@@ -24,7 +24,9 @@ const MainHeader: React.FC<HeaderProps> = ({
         {/* Back Button (optional) */}
         {showBackButton && (
           <TouchableOpacity onPress={onBackPress} style={styles.backButton}>
-            <MaterialIcons name="arrow-back" size={24} color={Colors.textSecondary} />
+            <View style={styles.backButtonInner}>
+              <MaterialIcons name="arrow-back" size={20} color={Colors.textPrimary} />
+            </View>
           </TouchableOpacity>
         )}
 
@@ -47,21 +49,30 @@ const MainHeader: React.FC<HeaderProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: Colors.white,
+    backgroundColor: Colors.bgPrimary,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border,
-    paddingTop: 40,
+    borderBottomColor: Colors.borderDark,
+    paddingTop: 50,
   },
   content: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between', 
-    paddingHorizontal: 16,
+    justifyContent: 'space-between',
+    paddingHorizontal: 20,
     paddingVertical: 12,
   },
   backButton: {
-    marginRight: 8,
-    padding: 4,
+    marginRight: 12,
+  },
+  backButtonInner: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: Colors.bgCard,
+    borderWidth: 1,
+    borderColor: Colors.borderDark,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   titleContainer: {
     flex: 1,
@@ -69,7 +80,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 18,
     fontWeight: '600',
-    color: Colors.text,
+    color: Colors.textPrimary,
   },
   subtitle: {
     fontSize: 14,
@@ -77,13 +88,17 @@ const styles = StyleSheet.create({
     marginTop: 2,
   },
   skipButton: {
-    padding: 4,
-    marginLeft: 8,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    backgroundColor: Colors.bgCard,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: Colors.borderDark,
   },
   skipText: {
-    fontSize: 16,
-    fontWeight: '500',
-    color: Colors.primary, 
+    fontSize: 14,
+    fontWeight: '600',
+    color: Colors.emerald,
   },
 });
 

@@ -17,6 +17,7 @@ import * as Print from 'expo-print';
 import * as Sharing from 'expo-sharing';
 import * as MailComposer from 'expo-mail-composer';
 import { SafeAreaView } from 'react-native';
+import { Colors } from '@/constants/Colors';
 
 interface MealPlanEmailScreenProps {
   mealPlan: any;
@@ -369,7 +370,7 @@ const MealPlanEmailScreen: React.FC<MealPlanEmailScreenProps> = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: Colors.bgPrimary,
   },
   header: {
     flexDirection: 'row',
@@ -378,7 +379,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 16,
     borderBottomWidth: 1,
-    borderBottomColor: '#e5e7eb',
+    borderBottomColor: Colors.borderDark,
+    backgroundColor: Colors.bgCard,
   },
   closeButton: {
     padding: 4,
@@ -386,7 +388,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 20,
     fontWeight: '700',
-    color: '#111827',
+    color: Colors.textPrimary,
   },
   content: {
     flex: 1,
@@ -399,7 +401,7 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#374151',
+    color: Colors.textSecondary,
     marginBottom: 8,
   },
   required: {
@@ -407,13 +409,13 @@ const styles = StyleSheet.create({
   },
   input: {
     borderWidth: 1,
-    borderColor: '#d1d5db',
+    borderColor: Colors.borderDark,
     borderRadius: 12,
     paddingHorizontal: 16,
     paddingVertical: 14,
     fontSize: 16,
-    color: '#111827',
-    backgroundColor: '#f9fafb',
+    color: Colors.textPrimary,
+    backgroundColor: Colors.bgCard,
   },
   textArea: {
     height: 100,
@@ -425,21 +427,21 @@ const styles = StyleSheet.create({
   previewTitle: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#374151',
+    color: Colors.textSecondary,
     marginBottom: 12,
   },
   previewBox: {
-    backgroundColor: '#f0fdf4',
+    backgroundColor: 'rgba(52, 211, 153, 0.1)',
     borderRadius: 12,
     padding: 20,
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: '#86efac',
+    borderColor: 'rgba(52, 211, 153, 0.3)',
   },
   previewText: {
     marginTop: 12,
     fontSize: 14,
-    color: '#166534',
+    color: Colors.emerald,
     textAlign: 'center',
   },
   buttonContainer: {
@@ -458,13 +460,13 @@ const styles = StyleSheet.create({
     backgroundColor: '#3b82f6',
   },
   emailButton: {
-    backgroundColor: '#10b981',
+    backgroundColor: Colors.emerald,
   },
   buttonDisabled: {
     opacity: 0.6,
   },
   buttonText: {
-    color: '#fff',
+    color: Colors.bgPrimary,
     fontSize: 16,
     fontWeight: '700',
   },

@@ -16,7 +16,7 @@ const SignOutButton: React.FC<SignOutButtonProps> = ({ onPress }) => {
         style={styles.button}
         activeOpacity={0.7}
       >
-        <MaterialIcons name="logout" size={20} color={Colors.error} />
+        <MaterialIcons name="logout" size={20} color="#F87171" />
         <Text style={styles.text}>Sign Out</Text>
       </TouchableOpacity>
     </View>
@@ -30,24 +30,24 @@ const styles = StyleSheet.create({
     marginBottom: 32,
   },
   button: {
-    backgroundColor: Colors.white,
+    backgroundColor: Colors.bgCard,
     borderWidth: 1,
-    borderColor: Colors.border,
+    borderColor: "rgba(239, 68, 68, 0.3)",
     borderRadius: 12,
     paddingVertical: 16,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: Colors.shadow,
+    shadowColor: "#EF4444",
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
+    shadowOpacity: 0.15,
     shadowRadius: 3,
     elevation: 3,
   },
   text: {
     fontSize: 16,
     fontWeight: '500',
-    color: Colors.error,
+    color: "#F87171",
     marginLeft: 8,
   },
 });

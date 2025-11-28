@@ -2,6 +2,7 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { Colors } from "@/constants/Colors";
 
 const FoodItemCard = ({ food }) => {
   return (
@@ -64,22 +65,22 @@ const FoodItemCard = ({ food }) => {
 };
 
 const styles = StyleSheet.create({
-  foodCard: { backgroundColor: "#FFF", borderRadius: 12, padding: 16, marginBottom: 12 },
+  foodCard: { backgroundColor: Colors.bgCard, borderRadius: 12, padding: 16, marginBottom: 12, borderWidth: 1, borderColor: Colors.borderDark },
   foodHeader: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 12 },
   foodTitleContainer: { flexDirection: "row", alignItems: "center", flex: 1 },
-  foodName: { fontSize: 16, fontWeight: "700", color: "#333", marginLeft: 8 },
-  confidenceBadge: { backgroundColor: "#E8F5E9", paddingHorizontal: 10, paddingVertical: 4, borderRadius: 12 },
-  confidenceText: { fontSize: 12, fontWeight: "700", color: "#4CAF50" },
+  foodName: { fontSize: 16, fontWeight: "700", color: Colors.textPrimary, marginLeft: 8 },
+  confidenceBadge: { backgroundColor: "rgba(52, 211, 153, 0.15)", paddingHorizontal: 10, paddingVertical: 4, borderRadius: 12 },
+  confidenceText: { fontSize: 12, fontWeight: "700", color: Colors.emerald },
   foodDetails: { flexDirection: "row", gap: 16, marginBottom: 12 },
   detailRow: { flexDirection: "row", alignItems: "center" },
-  detailText: { fontSize: 14, color: "#666", marginLeft: 4 },
-  miniMacros: { flexDirection: "row", justifyContent: "space-around", paddingVertical: 12, backgroundColor: "#F8F9FA", borderRadius: 8, marginBottom: 12 },
+  detailText: { fontSize: 14, color: Colors.textSecondary, marginLeft: 4 },
+  miniMacros: { flexDirection: "row", justifyContent: "space-around", paddingVertical: 12, backgroundColor: Colors.bgCardHover, borderRadius: 8, marginBottom: 12 },
   miniMacroItem: { alignItems: "center" },
-  miniMacroValue: { fontSize: 16, fontWeight: "700", color: "#333" },
-  miniMacroLabel: { fontSize: 11, color: "#666", marginTop: 2 },
+  miniMacroValue: { fontSize: 16, fontWeight: "700", color: Colors.textPrimary },
+  miniMacroLabel: { fontSize: 11, color: Colors.textSecondary, marginTop: 2 },
   healthNotes: { flexDirection: "row", flexWrap: "wrap", gap: 8 },
-  healthNoteBadge: { backgroundColor: "#E3F2FD", paddingHorizontal: 10, paddingVertical: 4, borderRadius: 12 },
-  healthNoteText: { fontSize: 11, fontWeight: "600", color: "#2196F3" },
+  healthNoteBadge: { backgroundColor: "rgba(59, 130, 246, 0.15)", paddingHorizontal: 10, paddingVertical: 4, borderRadius: 12 },
+  healthNoteText: { fontSize: 11, fontWeight: "600", color: "#3B82F6" },
 });
 
 export default FoodItemCard;

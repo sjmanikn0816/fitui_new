@@ -12,6 +12,7 @@ import { HealthStackNavigator } from "./HealthTrackNavigotor";
 import NutritionStackNavigator from "./NutritionStackNavigator";
 import GoalCustomizationStackNavigator from "./GoalCustomizationStackNavigator";
 import { AllScreenStackNavigator } from "./AllScreenMenuNavigaor";
+import CustomTabBar from "@/components/ui/CustomTabBar";
 
 import { SecureStorage } from "@/services/secureStorage";
 
@@ -81,35 +82,22 @@ const MainNavigator: React.FC = () => {
 
   return (
     <SafeAreaView
-      style={{ flex: 1, backgroundColor: "transparent" }}
-      edges={["top", "bottom"]}
+      style={{ flex: 1, backgroundColor: Colors.bgPrimary }}
+      edges={["top"]}
     >
-      <StatusBar translucent backgroundColor="transparent" barStyle="dark-content" />
+      <StatusBar translucent backgroundColor="transparent" barStyle="light-content" />
 
-      <View style={{ flex: 1 }}>
+      <View style={{ flex: 1, backgroundColor: Colors.bgPrimary }}>
         <Tab.Navigator
           initialRouteName={initialTab} // ⭐ Dynamic initial route
+          tabBar={(props) => <CustomTabBar {...props} />}
+          sceneContainerStyle={{ backgroundColor: Colors.bgPrimary }}
           screenOptions={{
             headerShown: false,
             tabBarShowLabel: false,
-            tabBarHideOnKeyboard: false,
-            tabBarActiveTintColor: Colors.primary,
-            tabBarInactiveTintColor: Colors.black,
-
-            tabBarStyle: {
-              position: "absolute",
-              backgroundColor: Colors.white,
-              borderTopWidth: 0,
-              height: Platform.OS === "ios" ? 80 : 70,
-              paddingBottom: Platform.OS === "ios" ? 20 : 10,
-              paddingTop: 5,
-              elevation: 10,
-              shadowColor: "#000",
-              shadowOpacity: 0.05,
-              shadowOffset: { width: 0, height: 1 },
-              shadowRadius: 3,
-              marginTop: 10,
-            },
+            tabBarHideOnKeyboard: true,
+            tabBarActiveTintColor: Colors.emerald,
+            tabBarInactiveTintColor: Colors.textMuted,
           }}
         >
 
@@ -147,52 +135,7 @@ const MainNavigator: React.FC = () => {
           <Tab.Screen
             name="Landing"
             component={LandingStackNavigator}
-            options={{
-              tabBarIcon: ({ focused, size }) => {
-                const scaleAnim = new Animated.Value(focused ? 1.1 : 1);
-
-                Animated.spring(scaleAnim, {
-                  toValue: focused ? 1.1 : 1,
-                  useNativeDriver: true,
-                  speed: 12,
-                  bounciness: 8,
-                }).start();
-
-                return (
-                  <Animated.View
-                    style={{
-                      transform: [{ scale: scaleAnim }],
-                      justifyContent: "center",
-                      alignItems: "center",
-                      marginTop: 20,
-                    }}
-                  >
-                    <Image
-                      source={
-                        focused
-                          ? require("assets/Ai_inactive.png")
-                          : require("assets/Ai_active.png")
-                      }
-                      style={{
-                        width: size * 1.2,
-                        height: size * 1.2,
-                        resizeMode: "contain",
-                      }}
-                    />
-                  </Animated.View>
-                );
-              },
-
-              tabBarStyle: {
-                position: "absolute",
-                backgroundColor: "rgba(255,255,255,0.2)",
-                borderTopWidth: 0,
-                elevation: 0,
-                height: Platform.OS === "ios" ? 80 : 70,
-                paddingBottom: Platform.OS === "ios" ? 20 : 10,
-                paddingTop: 5,
-              },
-            }}
+            options={{}}
           />
 
           {/* GOAL CUSTOMIZATION */}

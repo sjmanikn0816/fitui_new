@@ -12,12 +12,14 @@ export const styles = StyleSheet.create({
     paddingHorizontal: 15,
     marginVertical: 5,
     borderLeftWidth: 4,
-    backgroundColor: Colors.gray100,
+    backgroundColor: Colors.bgCardHover,
     borderRadius: 8,
   },
   clinicalCardMain: {
-    backgroundColor: Colors.white,
+    backgroundColor: Colors.bgCard,
     marginBottom: 10,
+    borderWidth: 1,
+    borderColor: Colors.borderDark,
   },
   clinicalTitle: {
     fontSize: width > 400 ? 12 : 11,
@@ -27,7 +29,7 @@ export const styles = StyleSheet.create({
   clinicalTitleMain: {
     fontSize: width > 400 ? 14 : 13,
     fontWeight: '600',
-    color: Colors.text,
+    color: Colors.textPrimary,
   },
   clinicalValueContainer: {
     flexDirection: 'row',

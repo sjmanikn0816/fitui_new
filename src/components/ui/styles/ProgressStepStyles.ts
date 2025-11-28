@@ -14,31 +14,31 @@ export const styles = StyleSheet.create({
     width: 32,
     height: 32,
     borderRadius: 16,
-    backgroundColor: Colors.gray200,
+    backgroundColor: Colors.bgCardHover,
     alignItems: 'center',
     justifyContent: 'center',
   },
   completedStep: {
-    backgroundColor: Colors.black,
+    backgroundColor: Colors.emerald,
   },
   currentStep: {
-    backgroundColor: Colors.black,
+    backgroundColor: Colors.emerald,
   },
   stepText: {
     ...Typography.caption,
-    color: Colors.gray500,
+    color: Colors.textMuted,
     fontWeight: '600',
   },
   currentStepText: {
-    color: Colors.white,
+    color: Colors.bgPrimary,
   },
   connector: {
     width: 40,
     height: 2,
-    backgroundColor: Colors.gray200,
+    backgroundColor: Colors.borderDark,
     marginHorizontal: Spacing.xs,
   },
   completedConnector: {
-    backgroundColor: Colors.gray100,
+    backgroundColor: Colors.emerald,
   },
 });

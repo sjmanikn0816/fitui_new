@@ -3,14 +3,16 @@ import { Dimensions, StyleSheet } from "react-native";
 const { width } = Dimensions.get('window');
 export const styles = StyleSheet.create({
   mealItem: {
-    backgroundColor: Colors.white,
+    backgroundColor: Colors.bgCard,
     borderRadius: 15,
     padding: 15,
     marginBottom: 10,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    shadowColor: Colors.shadow,
+    borderWidth: 1,
+    borderColor: Colors.borderDark,
+    shadowColor: Colors.emerald,
     shadowOffset: {
       width: 0,
       height: 2,
@@ -37,7 +39,7 @@ export const styles = StyleSheet.create({
   mealTitle: {
     fontSize: width > 400 ? 16 : 14,
     fontWeight: 'bold',
-    color: Colors.text,
+    color: Colors.textPrimary,
     marginBottom: 5,
   },
   mealSubtitle: {
@@ -47,7 +49,7 @@ export const styles = StyleSheet.create({
   },
   mealTime: {
     fontSize: width > 400 ? 12 : 10,
-    color: Colors.primary,
+    color: Colors.emerald,
   },
   mealCalories: {
     alignItems: 'center',
@@ -55,7 +57,7 @@ export const styles = StyleSheet.create({
   caloriesText: {
     fontSize: width > 400 ? 18 : 16,
     fontWeight: 'bold',
-    color: Colors.text,
+    color: Colors.textPrimary,
   },
   caloriesLabel: {
     fontSize: width > 400 ? 12 : 10,

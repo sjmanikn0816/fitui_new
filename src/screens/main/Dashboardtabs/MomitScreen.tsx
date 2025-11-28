@@ -33,10 +33,10 @@ const MomItScreen: React.FC<MomItScreensprops> = ({ navTab }) => {
         styles.consultationTypeCard,
         {
           borderColor:
-            selectedConsultationType === type.id ? Colors.primary : "#E0E0E0",
+            selectedConsultationType === type.id ? Colors.emerald : Colors.borderDark,
           borderWidth: 2,
           backgroundColor:
-            selectedConsultationType === type.id ? "#E0F7FA" : "#FFFFFF",
+            selectedConsultationType === type.id ? "rgba(52, 211, 153, 0.15)" : Colors.bgCard,
         },
       ]}
       onPress={() => setSelectedConsultationType(type.id)}
@@ -81,7 +81,7 @@ const MomItScreen: React.FC<MomItScreensprops> = ({ navTab }) => {
                   name="star"
                   size={12}
                   color={
-                    star <= Math.floor(doctor.rating) ? "#FFD700" : "#E0E0E0"
+                    star <= Math.floor(doctor.rating) ? "#FFD700" : Colors.borderDark
                   }
                 />
               ))}
@@ -123,8 +123,8 @@ const MomItScreen: React.FC<MomItScreensprops> = ({ navTab }) => {
         styles.timeSlotButton,
         {
           backgroundColor:
-            selectedTimeSlot === time ? Colors.primary : Colors.gray100,
-          borderColor: selectedTimeSlot === time ? Colors.primary : "#E0E0E0",
+            selectedTimeSlot === time ? Colors.emerald : Colors.bgCard,
+          borderColor: selectedTimeSlot === time ? Colors.emerald : Colors.borderDark,
           flexDirection: "row",
           alignItems: "center",
           justifyContent: "center",
@@ -135,13 +135,13 @@ const MomItScreen: React.FC<MomItScreensprops> = ({ navTab }) => {
       <Icon
         name="access-time"
         size={14}
-        color={selectedTimeSlot === time ? "#FFFFFF" : "#333333"}
+        color={selectedTimeSlot === time ? Colors.bgPrimary : Colors.textSecondary}
         style={{ marginRight: 4 }}
       />
       <Text
         style={[
           styles.timeSlotText,
-          { color: selectedTimeSlot === time ? "#FFFFFF" : "#333333" },
+          { color: selectedTimeSlot === time ? Colors.bgPrimary : Colors.textPrimary },
         ]}
       >
         {time}
@@ -227,8 +227,8 @@ const MomItScreen: React.FC<MomItScreensprops> = ({ navTab }) => {
 
       {/* 🌫️ BLUR OVERLAY + CENTERED COMING SOON */}
       <BlurView
-        intensity={60}
-        tint="light"
+        intensity={80}
+        tint="dark"
         style={{
           position: "absolute",
           top: 0,
@@ -240,7 +240,7 @@ const MomItScreen: React.FC<MomItScreensprops> = ({ navTab }) => {
         }}
       >
         <LinearGradient
-          colors={["rgba(255,255,255,0.3)", "rgba(0,0,0,0.3)"]}
+          colors={["rgba(10, 10, 12, 0.7)", "rgba(10, 10, 12, 0.9)"]}
           style={StyleSheet.absoluteFillObject}
         />
 
@@ -260,27 +260,30 @@ const localStyles = StyleSheet.create({
   centerBox: {
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "rgba(255,255,255,0.85)",
-    paddingVertical: 24,
-    paddingHorizontal: 40,
-    borderRadius: 20,
-        bottom:150,
-    shadowColor: "#000",
-    shadowOpacity: 0.25,
-    shadowRadius: 8,
-    elevation: 4,
+    backgroundColor: Colors.bgCard,
+    paddingVertical: 32,
+    paddingHorizontal: 48,
+    borderRadius: 24,
+    bottom: 150,
+    borderWidth: 1,
+    borderColor: Colors.borderDark,
+    shadowColor: Colors.emerald,
+    shadowOpacity: 0.3,
+    shadowRadius: 20,
+    shadowOffset: { width: 0, height: 8 },
+    elevation: 8,
   },
   comingSoonText: {
-    fontSize: 30,
+    fontSize: 32,
     fontWeight: "700",
-    color: Colors.primary,
+    color: Colors.emerald,
     textAlign: "center",
   },
   subText: {
     fontSize: 16,
-    color: "#333",
+    color: Colors.textSecondary,
     textAlign: "center",
-    marginTop: 8,
+    marginTop: 12,
   },
 });
 

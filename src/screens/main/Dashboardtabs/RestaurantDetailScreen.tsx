@@ -19,6 +19,7 @@ import {
   Navigation,
   Globe,
 } from "lucide-react-native";
+import { Colors } from "@/constants/Colors";
 import { useAppDispatch, useAppSelector } from "@/redux/store/hooks";
 import {
   fetchRestaurantDetails,
@@ -68,17 +69,17 @@ const RestaurantDetailScreen = ({ route }: any) => {
 
   if (loading) {
     return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <ActivityIndicator size="large" color="#4CAF50" />
-        <Text>Fetching restaurant details...</Text>
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: Colors.bgPrimary }}>
+        <ActivityIndicator size="large" color={Colors.emerald} />
+        <Text style={{ color: Colors.textSecondary, marginTop: 12 }}>Fetching restaurant details...</Text>
       </View>
     );
   }
 
   if (error) {
     return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <Text style={{ color: "red" }}>⚠️ {error}</Text>
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: Colors.bgPrimary }}>
+        <Text style={{ color: Colors.red }}>⚠️ {error}</Text>
       </View>
     );
   }
@@ -206,7 +207,7 @@ const RestaurantDetailScreen = ({ route }: any) => {
         {/* Location */}
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
-            <MapPin size={24} color="#4CAF50" />
+            <MapPin size={24} color={Colors.emerald} />
             <Text style={styles.sectionTitle}>Location</Text>
           </View>
           <Text style={styles.address}>{mergedRestaurant.address}</Text>
@@ -224,7 +225,7 @@ const RestaurantDetailScreen = ({ route }: any) => {
               onPress={openInMaps}
               activeOpacity={0.7}
             >
-              <MapPin size={20} color="#4CAF50" />
+              <MapPin size={20} color={Colors.emerald} />
               <Text style={styles.secondaryButtonText}>View Map</Text>
             </TouchableOpacity>
           </View>
@@ -234,7 +235,7 @@ const RestaurantDetailScreen = ({ route }: any) => {
         {mergedRestaurant.phone && (
           <View style={styles.section}>
             <View style={styles.sectionHeader}>
-              <Phone size={24} color="#4CAF50" />
+              <Phone size={24} color={Colors.emerald} />
               <Text style={styles.sectionTitle}>Contact</Text>
             </View>
             <TouchableOpacity onPress={callRestaurant} activeOpacity={0.7}>
@@ -247,7 +248,7 @@ const RestaurantDetailScreen = ({ route }: any) => {
         {mergedRestaurant.website && (
           <View style={styles.section}>
             <View style={styles.sectionHeader}>
-              <Globe size={24} color="#4CAF50" />
+              <Globe size={24} color={Colors.emerald} />
               <Text style={styles.sectionTitle}>Website</Text>
             </View>
             <TouchableOpacity onPress={openWebsite} activeOpacity={0.7}>
@@ -262,7 +263,7 @@ const RestaurantDetailScreen = ({ route }: any) => {
         {mergedRestaurant.hours && (
           <View style={styles.section}>
             <View style={styles.sectionHeader}>
-              <Clock size={24} color="#4CAF50" />
+              <Clock size={24} color={Colors.emerald} />
               <Text style={styles.sectionTitle}>Hours</Text>
             </View>
             <Text style={styles.hours}>{mergedRestaurant.hours}</Text>
@@ -316,13 +317,13 @@ const RestaurantDetailScreen = ({ route }: any) => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#FFF" },
+  container: { flex: 1, backgroundColor: Colors.bgPrimary },
   heroImage: { width: "100%", height: 250 },
   content: { padding: 20 },
   name: {
     fontSize: 28,
     fontWeight: "bold",
-    color: "#2C3E50",
+    color: Colors.textPrimary,
     marginBottom: 10,
   },
   tagsRow: { flexDirection: "row", flexWrap: "wrap", gap: 8, marginBottom: 15 },
@@ -330,25 +331,25 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 16,
-    backgroundColor: "#ECF0F1",
+    backgroundColor: Colors.bgCardHover,
   },
-  vegTag: { backgroundColor: "#D4EDDA" },
-  nonVegTag: { backgroundColor: "#F8D7DA" },
-  openTag: { backgroundColor: "#D4EDDA" },
-  closedTag: { backgroundColor: "#F8D7DA" },
-  tagText: { fontSize: 12, fontWeight: "600", color: "#2C3E50" },
+  vegTag: { backgroundColor: "rgba(52, 211, 153, 0.15)" },
+  nonVegTag: { backgroundColor: "rgba(248, 113, 113, 0.15)" },
+  openTag: { backgroundColor: "rgba(52, 211, 153, 0.15)" },
+  closedTag: { backgroundColor: "rgba(248, 113, 113, 0.15)" },
+  tagText: { fontSize: 12, fontWeight: "600", color: Colors.textPrimary },
   ratingContainer: {
     flexDirection: "row",
     alignItems: "center",
     marginBottom: 20,
   },
-  rating: { fontSize: 18, fontWeight: "600", marginLeft: 5, color: "#2C3E50" },
-  reviewCount: { fontSize: 14, color: "#7F8C8D", marginLeft: 5 },
+  rating: { fontSize: 18, fontWeight: "600", marginLeft: 5, color: Colors.textPrimary },
+  reviewCount: { fontSize: 14, color: Colors.textMuted, marginLeft: 5 },
   section: {
     marginBottom: 25,
     paddingBottom: 20,
     borderBottomWidth: 1,
-    borderBottomColor: "#ECF0F1",
+    borderBottomColor: Colors.borderDark,
   },
   sectionHeader: {
     flexDirection: "row",
@@ -358,10 +359,10 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 20,
     fontWeight: "600",
-    color: "#2C3E50",
+    color: Colors.textPrimary,
     marginLeft: 10,
   },
-  address: { fontSize: 16, color: "#7F8C8D", lineHeight: 24, marginBottom: 15 },
+  address: { fontSize: 16, color: Colors.textSecondary, lineHeight: 24, marginBottom: 15 },
   actionButtons: { flexDirection: "row", gap: 10 },
   button: {
     flex: 1,
@@ -369,29 +370,31 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     padding: 15,
-    borderRadius: 10,
+    borderRadius: 12,
     gap: 8,
   },
-  primaryButton: { backgroundColor: "#4CAF50" },
+  primaryButton: { backgroundColor: Colors.emerald },
   secondaryButton: {
-    backgroundColor: "#FFF",
-    borderWidth: 2,
-    borderColor: "#4CAF50",
+    backgroundColor: Colors.bgCard,
+    borderWidth: 1,
+    borderColor: Colors.emerald,
   },
-  primaryButtonText: { color: "#FFF", fontSize: 16, fontWeight: "600" },
-  secondaryButtonText: { color: "#4CAF50", fontSize: 16, fontWeight: "600" },
-  phoneNumber: { fontSize: 18, color: "#4CAF50", fontWeight: "600" },
+  primaryButtonText: { color: Colors.bgPrimary, fontSize: 16, fontWeight: "600" },
+  secondaryButtonText: { color: Colors.emerald, fontSize: 16, fontWeight: "600" },
+  phoneNumber: { fontSize: 18, color: Colors.emerald, fontWeight: "600" },
   websiteLink: {
     fontSize: 16,
-    color: "#4CAF50",
+    color: Colors.emerald,
     textDecorationLine: "underline",
   },
-  hours: { fontSize: 16, color: "#2C3E50", lineHeight: 24 },
+  hours: { fontSize: 16, color: Colors.textSecondary, lineHeight: 24 },
   reviewCard: {
-    backgroundColor: "#F8F9FA",
+    backgroundColor: Colors.bgCard,
     padding: 15,
-    borderRadius: 10,
+    borderRadius: 12,
     marginBottom: 10,
+    borderWidth: 1,
+    borderColor: Colors.borderDark,
   },
   reviewHeader: {
     flexDirection: "row",
@@ -406,11 +409,11 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   authorPhoto: { width: 40, height: 40, borderRadius: 20 },
-  reviewAuthor: { fontSize: 16, fontWeight: "600", color: "#2C3E50" },
-  reviewTime: { fontSize: 12, color: "#95A5A6", marginTop: 2 },
+  reviewAuthor: { fontSize: 16, fontWeight: "600", color: Colors.textPrimary },
+  reviewTime: { fontSize: 12, color: Colors.textMuted, marginTop: 2 },
   reviewRating: { flexDirection: "row", alignItems: "center", gap: 4 },
-  reviewRatingText: { fontSize: 14, fontWeight: "600", color: "#2C3E50" },
-  reviewText: { fontSize: 14, color: "#7F8C8D", lineHeight: 20 },
+  reviewRatingText: { fontSize: 14, fontWeight: "600", color: Colors.textPrimary },
+  reviewText: { fontSize: 14, color: Colors.textSecondary, lineHeight: 20 },
 });
 
 export default RestaurantDetailScreen;

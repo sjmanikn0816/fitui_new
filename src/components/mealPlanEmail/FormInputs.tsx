@@ -1,6 +1,7 @@
 // components/FormInputs.tsx
 import React from 'react';
 import { View, Text, TextInput, StyleSheet } from 'react-native';
+import { Colors } from '@/constants/Colors';
 
 interface FormInputsProps {
   customerName: string;
@@ -76,7 +77,7 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#374151',
+    color: Colors.textSecondary,
     marginBottom: 8,
   },
   required: {
@@ -84,13 +85,13 @@ const styles = StyleSheet.create({
   },
   input: {
     borderWidth: 1,
-    borderColor: '#d1d5db',
+    borderColor: Colors.borderDark,
     borderRadius: 12,
     paddingHorizontal: 16,
     paddingVertical: 14,
     fontSize: 16,
-    color: '#111827',
-    backgroundColor: '#f9fafb',
+    color: Colors.textPrimary,
+    backgroundColor: Colors.bgCard,
   },
   textArea: {
     height: 100,

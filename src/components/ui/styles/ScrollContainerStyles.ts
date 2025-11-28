@@ -5,10 +5,10 @@ import { verticalScale } from "@/utils/responsive";
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.white,
+    backgroundColor: Colors.bgPrimary,
   },
   scrollContent: {
     flexGrow: 1,
-    paddingBottom: verticalScale(60), // responsive bottom spacing
+    paddingBottom: verticalScale(60),
   },
 });

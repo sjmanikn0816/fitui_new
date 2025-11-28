@@ -1,4 +1,4 @@
-// HomeScreen.tsx - Redesigned with smart meal suggestions and fixed alignment
+// HomeScreen.tsx - Redesigned with premium dark theme UI (functionality preserved)
 import React, { useEffect, useRef, useMemo } from "react";
 import {
   View,
@@ -36,55 +36,54 @@ interface HomeScreenProps {
   onTabChange?: (tab: TabId) => void;
 }
 
-// Action Hub Tabs Configuration
+// Action Hub Tabs Configuration (PRESERVED)
 const TABS: { id: TabId; label: string; icon: string; colors: string[]; textColor: string; isOutlined?: boolean }[] = [
-  { id: "make-it", label: "Make it", icon: "pencil", colors: ["#FFFFFF", "#FFFFFF"], textColor: "#059669", isOutlined: true },
-  { id: "go-shop", label: "Go Shop", icon: "cart-outline", colors: ["#10B981", "#059669"], textColor: "#FFFFFF" },
+  { id: "make-it", label: "Make it", icon: "pencil", colors: ["#FFFFFF", "#FFFFFF"], textColor: "#00D9A5", isOutlined: true },
+  { id: "go-shop", label: "Go Shop", icon: "cart-outline", colors: ["#00D9A5", "#00B88D"], textColor: "#FFFFFF" },
   { id: "dine-in", label: "Dine-In", icon: "restaurant-outline", colors: ["#8B5CF6", "#7C3AED"], textColor: "#FFFFFF" },
   { id: "mom-it", label: "Mom It", icon: "home-outline", colors: ["#F97316", "#EA580C"], textColor: "#FFFFFF" },
 ];
 
-// Grafana-inspired color palette
-const GRAFANA_COLORS = {
-  teal: "#00D4AA",
-  cyan: "#00A3CC",
-  purple: "#7C4DFF",
-  lightPurple: "#B388FF",
-  orange: "#FF9830",
-  green: "#73BF69",
+// Premium dark theme palette (matching sample image)
+const THEME = {
+  bg: "#0D0F14",
+  cardBg: "#151921",
+  cardBgElevated: "#1A2332",
+  cardBorder: "#1E2430",
+  accent: "#00D9A5",
+  accentGlow: "rgba(0, 217, 165, 0.15)",
+  accentSecondary: "#00F5B8",
+  purple: "#8B5CF6",
+  orange: "#F97316",
+  textPrimary: "#FFFFFF",
+  textSecondary: "#9CA3AF",
+  textMuted: "#6B7280",
 };
 
-// Circular Progress Component with Grafana gradient
+// Circular Progress Component - ENHANCED VISUALS
 const CircularProgress = ({
   current,
   total,
-  size = 180,
-  strokeWidth = 14,
+  size = 200,
+  strokeWidth = 12,
 }: {
   current: number;
   total: number;
   size?: number;
   strokeWidth?: number;
 }) => {
-  const radius = (size - strokeWidth) / 2;
+  const radius = (size - strokeWidth) / 2 - 8;
   const circumference = radius * 2 * Math.PI;
   const progress = Math.min(current / total, 1);
   const strokeDashoffset = circumference * (1 - progress);
-
-  // Calculate position for the indicator dot
-  const angle = (progress * 360 - 90) * (Math.PI / 180);
-  const dotX = size / 2 + radius * Math.cos(angle);
-  const dotY = size / 2 + radius * Math.sin(angle);
 
   return (
     <View style={{ width: size, height: size, justifyContent: "center", alignItems: "center" }}>
       <Svg width={size} height={size}>
         <Defs>
-          <SvgGradient id="grafanaGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-            <Stop offset="0%" stopColor={GRAFANA_COLORS.teal} />
-            <Stop offset="33%" stopColor={GRAFANA_COLORS.cyan} />
-            <Stop offset="66%" stopColor={GRAFANA_COLORS.purple} />
-            <Stop offset="100%" stopColor={GRAFANA_COLORS.lightPurple} />
+          <SvgGradient id="progressGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+            <Stop offset="0%" stopColor={THEME.accent} />
+            <Stop offset="100%" stopColor={THEME.accentSecondary} />
           </SvgGradient>
         </Defs>
 
@@ -93,7 +92,7 @@ const CircularProgress = ({
           cx={size / 2}
           cy={size / 2}
           r={radius}
-          stroke="#E5E7EB"
+          stroke={THEME.cardBorder}
           strokeWidth={strokeWidth}
           fill="transparent"
         />
@@ -103,7 +102,7 @@ const CircularProgress = ({
           cx={size / 2}
           cy={size / 2}
           r={radius}
-          stroke="url(#grafanaGradient)"
+          stroke="url(#progressGradient)"
           strokeWidth={strokeWidth}
           fill="transparent"
           strokeDasharray={circumference}
@@ -111,19 +110,9 @@ const CircularProgress = ({
           strokeLinecap="round"
           transform={`rotate(-90 ${size / 2} ${size / 2})`}
         />
-
-        {/* Indicator dot */}
-        <Circle
-          cx={dotX}
-          cy={dotY}
-          r={7}
-          fill={GRAFANA_COLORS.cyan}
-          stroke="#FFFFFF"
-          strokeWidth={2}
-        />
       </Svg>
 
-      {/* Center Text */}
+      {/* Center Text - ENHANCED */}
       <View style={styles.progressCenterText}>
         <Text style={styles.caloriesValue}>{current}</Text>
         <Text style={styles.caloriesTotal}>/ {total} kcal</Text>
@@ -132,7 +121,7 @@ const CircularProgress = ({
   );
 };
 
-// Macro Progress Bar Component
+// Macro Progress Bar Component - ENHANCED VISUALS
 const MacroProgressBar = ({
   label,
   current,
@@ -148,21 +137,20 @@ const MacroProgressBar = ({
 
   return (
     <View style={styles.macroContainer}>
-      <Text style={styles.macroLabel}>{label}</Text>
-      <View style={styles.macroBarBackground}>
-        <LinearGradient
-          colors={[color, color]}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 0 }}
-          style={[styles.macroBarFill, { width: `${progress * 100}%` }]}
-        />
+      <View style={styles.macroHeader}>
+        <Text style={styles.macroLabel}>{label}</Text>
+        <Text style={styles.macroValue}>
+          {current}<Text style={styles.macroUnit}>g</Text>
+        </Text>
       </View>
-      <Text style={styles.macroValue}>{current} kal</Text>
+      <View style={styles.macroBarBackground}>
+        <View style={[styles.macroBarFill, { width: `${progress * 100}%`, backgroundColor: color }]} />
+      </View>
     </View>
   );
 };
 
-// Meal Card Component
+// Meal Card Component - ENHANCED VISUALS (FUNCTIONALITY PRESERVED)
 const MealCard = ({
   meal,
   mealType,
@@ -193,6 +181,7 @@ const MealCard = ({
         <Image source={{ uri: getMealImage() }} style={styles.mealImage} />
         {isLogged && (
           <View style={styles.loggedBadge}>
+            <Ionicons name="checkmark" size={10} color="#FFFFFF" />
             <Text style={styles.loggedBadgeText}>Logged</Text>
           </View>
         )}
@@ -205,7 +194,7 @@ const MealCard = ({
         <Text style={styles.mealCalories}>{meal.nutrition?.calories || 0} kcal</Text>
         {onEdit && (
           <TouchableOpacity onPress={onEdit} style={styles.editButton}>
-            <Feather name="edit-2" size={14} color="#9CA3AF" />
+            <Feather name="edit-2" size={12} color={THEME.textSecondary} />
           </TouchableOpacity>
         )}
       </View>
@@ -213,13 +202,12 @@ const MealCard = ({
   );
 };
 
-// Smart Next Meal Helper
+// Smart Next Meal Helper (PRESERVED)
 const getNextMealSuggestion = (
   loggedMeals: { breakfast: boolean; lunch: boolean; dinner: boolean }
 ): { mealType: MealType; message: string } => {
   const hour = new Date().getHours();
 
-  // Morning (6am - 11am)
   if (hour >= 6 && hour < 11) {
     if (!loggedMeals.breakfast) {
       return { mealType: "Breakfast", message: "What's for Breakfast?" };
@@ -229,7 +217,6 @@ const getNextMealSuggestion = (
     }
   }
 
-  // Midday (11am - 3pm)
   if (hour >= 11 && hour < 15) {
     if (!loggedMeals.lunch) {
       return { mealType: "Lunch", message: "What's for Lunch?" };
@@ -239,7 +226,6 @@ const getNextMealSuggestion = (
     }
   }
 
-  // Afternoon/Evening (3pm - 9pm)
   if (hour >= 15 && hour < 21) {
     if (!loggedMeals.dinner) {
       return { mealType: "Dinner", message: "What's for Dinner?" };
@@ -249,12 +235,10 @@ const getNextMealSuggestion = (
     }
   }
 
-  // Night (9pm - 6am)
   if (!loggedMeals.dinner) {
     return { mealType: "Dinner", message: "Log your Dinner" };
   }
 
-  // All meals logged - suggest snack
   return { mealType: "Snack", message: "Add a Snack" };
 };
 
@@ -269,7 +253,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
   const plan = mealPlan ? (mealPlan[`${planType}_plan`] as any) : null;
   const navigation = useNavigation<any>();
 
-  // Animation values
+  // Animation values (PRESERVED)
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(20)).current;
 
@@ -277,19 +261,19 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
     Animated.parallel([
       Animated.timing(fadeAnim, {
         toValue: 1,
-        duration: 500,
+        duration: 600,
         useNativeDriver: true,
       }),
       Animated.timing(slideAnim, {
         toValue: 0,
-        duration: 500,
-        easing: Easing.out(Easing.cubic),
+        duration: 600,
+        easing: Easing.out(Easing.back(1.1)),
         useNativeDriver: true,
       }),
     ]).start();
   }, []);
 
-  // Navigation handlers
+  // Navigation handlers (PRESERVED)
   const handleRefresh = () => {
     console.log("Refresh pressed");
   };
@@ -302,7 +286,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
     navigation.navigate("MealPlanEmail", { mealPlan });
   };
 
-  // Calculate nutrition from meal plan data
+  // Calculate nutrition from meal plan data (PRESERVED)
   const calculateTotalNutrition = () => {
     const activePlan = suggestionData || plan;
     const meals = [
@@ -321,7 +305,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
 
   const totalNutrition = calculateTotalNutrition();
 
-  // Daily goals
+  // Daily goals (PRESERVED)
   const dailyGoals = plan?.daily_nutrition_target || {
     calories: 1800,
     protein: 150,
@@ -331,14 +315,14 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
 
   const activePlan = suggestionData || plan;
 
-  // Get current date formatted
+  // Get current date formatted (PRESERVED)
   const getCurrentDate = () => {
     const now = new Date();
     const options: Intl.DateTimeFormatOptions = { weekday: "long", month: "short", day: "numeric" };
     return now.toLocaleDateString("en-US", options);
   };
 
-  // Get AI suggestion based on nutrition progress
+  // Get AI suggestion based on nutrition progress (PRESERVED)
   const getAISuggestion = () => {
     const proteinPercent = (totalNutrition.protein / dailyGoals.protein) * 100;
     if (proteinPercent >= 60) {
@@ -347,25 +331,25 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
     return "Keep going! You're making great progress today.";
   };
 
-  // Get meals - simulating logged status based on available data
+  // Get meals (PRESERVED)
   const breakfastMeal = activePlan?.breakfast_options?.[0] || null;
   const lunchMeal = activePlan?.lunch_options?.[0] || null;
   const dinnerMeal = activePlan?.dinner_options?.[0] || null;
 
-  // Determine logged status (in real app, this would come from user data)
+  // Determine logged status (PRESERVED)
   const loggedMeals = useMemo(() => ({
     breakfast: !!breakfastMeal,
-    lunch: false, // Simulating lunch not logged yet
-    dinner: false, // Simulating dinner not logged yet
+    lunch: false,
+    dinner: false,
   }), [breakfastMeal]);
 
-  // Get smart next meal suggestion
+  // Get smart next meal suggestion (PRESERVED)
   const nextMealSuggestion = useMemo(() =>
     getNextMealSuggestion(loggedMeals),
     [loggedMeals]
   );
 
-  // Get the meal to suggest for logging
+  // Get the meal to suggest for logging (PRESERVED)
   const getNextMealToLog = (): Meal | null => {
     switch (nextMealSuggestion.mealType) {
       case "Breakfast":
@@ -381,16 +365,19 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
 
   const nextMealToLog = getNextMealToLog();
 
+  // Calculate calorie progress percentage
+  const calorieProgress = Math.round(((totalNutrition.calories || 1250) / (dailyGoals.calories || 1800)) * 100);
+
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
+      <StatusBar barStyle="light-content" backgroundColor={THEME.bg} />
 
       <ScrollView
         style={styles.scrollView}
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        {/* Header with Share Icons */}
+        {/* Header - ENHANCED */}
         <Animated.View
           style={[
             styles.header,
@@ -398,66 +385,88 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
           ]}
         >
           <View style={styles.headerTop}>
-            <Text style={styles.headerTitle}>Daily Fuel Overview</Text>
+            <View>
+              <Text style={styles.headerTitle}>Daily Fuel</Text>
+              <Text style={styles.headerSubtitle}>{getCurrentDate()}</Text>
+            </View>
             <View style={styles.headerActions}>
               <TouchableOpacity style={styles.headerIconBtn} onPress={handleRefresh}>
-                <Ionicons name="refresh" size={20} color="#6B7280" />
+                <Ionicons name="refresh" size={20} color={THEME.textSecondary} />
               </TouchableOpacity>
               <TouchableOpacity style={styles.headerIconBtn} onPress={handleSharePress}>
-                <Ionicons name="share-outline" size={20} color="#6B7280" />
+                <Ionicons name="share-outline" size={20} color={THEME.textSecondary} />
               </TouchableOpacity>
               <TouchableOpacity style={styles.headerIconBtn} onPress={handleMenuPress}>
-                <Ionicons name="ellipsis-horizontal" size={20} color="#6B7280" />
+                <Ionicons name="ellipsis-horizontal" size={20} color={THEME.textSecondary} />
               </TouchableOpacity>
             </View>
           </View>
-
-          <View style={styles.dateBadge}>
-            <Text style={styles.dateBadgeText}>{getCurrentDate()}</Text>
-          </View>
         </Animated.View>
 
-        {/* Circular Progress */}
-        <View style={styles.progressSection}>
-          <CircularProgress
-            current={totalNutrition.calories || 1250}
-            total={dailyGoals.calories || 1800}
-            size={180}
-            strokeWidth={14}
-          />
+        {/* Calorie Progress Card - NEW LAYOUT */}
+        <View style={styles.calorieCard}>
+          <LinearGradient
+            colors={[THEME.cardBgElevated, THEME.cardBg]}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={styles.calorieCardGradient}
+          >
+            <View style={styles.calorieCardHeader}>
+              <Text style={styles.calorieCardLabel}>CALORIE INTAKE</Text>
+              <View style={styles.progressBadge}>
+                <Text style={styles.progressBadgeText}>{calorieProgress}%</Text>
+              </View>
+            </View>
+
+            <View style={styles.calorieContent}>
+              <CircularProgress
+                current={totalNutrition.calories || 1250}
+                total={dailyGoals.calories || 1800}
+                size={180}
+                strokeWidth={12}
+              />
+            </View>
+          </LinearGradient>
         </View>
 
-        {/* Macro Progress Bars */}
-        <View style={styles.macrosRow}>
-          <MacroProgressBar
-            label="Protein"
-            current={totalNutrition.protein || 120}
-            total={dailyGoals.protein || 150}
-            color={GRAFANA_COLORS.teal}
-          />
-          <MacroProgressBar
-            label="Carbs"
-            current={totalNutrition.carbs || 330}
-            total={dailyGoals.carbs || 300}
-            color={GRAFANA_COLORS.purple}
-          />
-          <MacroProgressBar
-            label="Fats"
-            current={totalNutrition.fat || 230}
-            total={dailyGoals.fat || 90}
-            color={GRAFANA_COLORS.orange}
-          />
+        {/* Macros Card - NEW LAYOUT */}
+        <View style={styles.macrosCard}>
+          <Text style={styles.sectionLabel}>MACRONUTRIENTS</Text>
+          <View style={styles.macrosGrid}>
+            <MacroProgressBar
+              label="Protein"
+              current={totalNutrition.protein || 120}
+              total={dailyGoals.protein || 150}
+              color={THEME.accent}
+            />
+            <MacroProgressBar
+              label="Carbs"
+              current={totalNutrition.carbs || 180}
+              total={dailyGoals.carbs || 300}
+              color={THEME.purple}
+            />
+            <MacroProgressBar
+              label="Fats"
+              current={totalNutrition.fat || 55}
+              total={dailyGoals.fat || 90}
+              color={THEME.orange}
+            />
+          </View>
         </View>
 
-        {/* AI Suggestion Banner */}
+        {/* AI Suggestion Banner - ENHANCED */}
         <View style={styles.suggestionBanner}>
           <View style={styles.suggestionIcon}>
-            <MaterialCommunityIcons name="robot-happy-outline" size={20} color={GRAFANA_COLORS.teal} />
+            <MaterialCommunityIcons name="lightbulb-outline" size={18} color={THEME.accent} />
           </View>
-          <Text style={styles.suggestionText}>{getAISuggestion()}</Text>
+          <View style={styles.suggestionContent}>
+            <Text style={styles.suggestionTitle}>Daily Insight</Text>
+            <Text style={styles.suggestionText}>{getAISuggestion()}</Text>
+          </View>
+          <Ionicons name="chevron-forward" size={18} color={THEME.textMuted} />
         </View>
 
-        {/* Action Hub */}
+        {/* Action Hub - ENHANCED (FUNCTIONALITY PRESERVED) */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Action Hub</Text>
           <View style={styles.actionHubRow}>
@@ -473,7 +482,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
                 >
                   {isOutlined ? (
                     <View style={styles.actionButtonOutlined}>
-                      <Feather name={tab.icon as any} size={12} color="#059669" />
+                      <Feather name={tab.icon as any} size={14} color={THEME.accent} />
                       <Text style={styles.actionButtonTextOutlined}>{tab.label}</Text>
                     </View>
                   ) : (
@@ -483,7 +492,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
                       end={{ x: 1, y: 0 }}
                       style={styles.actionButtonGradient}
                     >
-                      <Ionicons name={tab.icon as any} size={12} color={tab.textColor} />
+                      <Ionicons name={tab.icon as any} size={14} color={tab.textColor} />
                       <Text style={[styles.actionButtonText, { color: tab.textColor }]}>
                         {tab.label}
                       </Text>
@@ -495,7 +504,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
           </View>
         </View>
 
-        {/* Meal Timeline */}
+        {/* Meal Timeline - ENHANCED (FUNCTIONALITY PRESERVED) */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Meal Timeline</Text>
 
@@ -528,22 +537,25 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
               />
             ) : null}
 
-            {/* Smart Next Meal Section */}
+            {/* Smart Next Meal Section - ENHANCED */}
             <View style={styles.nextMealSection}>
-              <Text style={styles.nextMealTitle}>{nextMealSuggestion.message}</Text>
-              <Text style={styles.nextMealSubtitle}>(planned)</Text>
+              <View style={styles.nextMealHeader}>
+                <Text style={styles.nextMealTitle}>{nextMealSuggestion.message}</Text>
+                <Text style={styles.nextMealSubtitle}>planned</Text>
+              </View>
 
               <TouchableOpacity
                 style={styles.logMealButton}
                 onPress={() => nextMealToLog && onSelectMeal(nextMealSuggestion.mealType, nextMealToLog)}
               >
                 <LinearGradient
-                  colors={[GRAFANA_COLORS.teal, "#059669"]}
+                  colors={[THEME.accent, "#00B88D"]}
                   start={{ x: 0, y: 0 }}
                   end={{ x: 1, y: 0 }}
                   style={styles.logMealGradient}
                 >
-                  <Text style={styles.logMealButtonText}>Log{"\n"}Meal</Text>
+                  <Ionicons name="add" size={16} color="#FFFFFF" />
+                  <Text style={styles.logMealButtonText}>Log Meal</Text>
                 </LinearGradient>
               </TouchableOpacity>
 
@@ -551,29 +563,33 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
                 style={styles.viewRecipeButton}
                 onPress={() => nextMealToLog && onSelectMeal(nextMealSuggestion.mealType, nextMealToLog)}
               >
-                <Text style={styles.viewRecipeButtonText}>View{"\n"}Recipe</Text>
+                <Feather name="book-open" size={14} color={THEME.textSecondary} />
+                <Text style={styles.viewRecipeButtonText}>View Recipe</Text>
               </TouchableOpacity>
             </View>
           </View>
 
-          {/* Add Snack / Quick Log */}
+          {/* Add Snack / Quick Log - ENHANCED */}
           <TouchableOpacity
             style={styles.addSnackRow}
             onPress={() => navigation.navigate("FoodAnalysis")}
           >
-            <Ionicons name="add" size={18} color="#6B7280" />
+            <View style={styles.addSnackIcon}>
+              <Ionicons name="add" size={16} color={THEME.accent} />
+            </View>
             <Text style={styles.addSnackText}>Add Snack / Quick Log</Text>
+            <Ionicons name="chevron-forward" size={16} color={THEME.textMuted} />
           </TouchableOpacity>
         </View>
 
-        {/* Nutrition Targets (if available) */}
+        {/* Nutrition Targets (PRESERVED) */}
         {activePlan?.daily_nutrition_target && (
           <View style={styles.nutritionTargetContainer}>
             <NutritionTargets nutritionTargets={activePlan.daily_nutrition_target} />
           </View>
         )}
 
-        {/* Medical/AI Banner */}
+        {/* Medical/AI Banner (PRESERVED) */}
         <View style={styles.bannerContainer}>
           <MedicalBanner />
         </View>
@@ -587,7 +603,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: THEME.bg,
   },
   scrollView: {
     flex: 1,
@@ -596,21 +612,27 @@ const styles = StyleSheet.create({
     paddingBottom: 20,
   },
 
-  // Header
+  // Header - ENHANCED
   header: {
     paddingTop: Platform.OS === "ios" ? 60 : (StatusBar.currentHeight || 0) + 16,
     paddingHorizontal: 20,
-    paddingBottom: 8,
+    paddingBottom: 20,
   },
   headerTop: {
     flexDirection: "row",
     justifyContent: "space-between",
-    alignItems: "center",
+    alignItems: "flex-start",
   },
   headerTitle: {
-    fontSize: 22,
+    fontSize: 28,
     fontWeight: "700",
-    color: "#1F2937",
+    color: THEME.textPrimary,
+    letterSpacing: -0.5,
+  },
+  headerSubtitle: {
+    fontSize: 14,
+    color: THEME.textSecondary,
+    marginTop: 4,
   },
   headerActions: {
     flexDirection: "row",
@@ -618,126 +640,185 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   headerIconBtn: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: THEME.cardBg,
     justifyContent: "center",
     alignItems: "center",
-  },
-  dateBadge: {
-    alignSelf: "center",
-    backgroundColor: "#F3F4F6",
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 20,
-    marginTop: 12,
-  },
-  dateBadgeText: {
-    fontSize: 13,
-    color: "#6B7280",
-    fontWeight: "500",
+    borderWidth: 1,
+    borderColor: THEME.cardBorder,
   },
 
-  // Progress Section
-  progressSection: {
-    alignItems: "center",
-    paddingVertical: 20,
+  // Calorie Card - NEW
+  calorieCard: {
+    marginHorizontal: 20,
+    borderRadius: 24,
+    overflow: "hidden",
+    marginBottom: 16,
   },
+  calorieCardGradient: {
+    padding: 20,
+    borderWidth: 1,
+    borderColor: THEME.cardBorder,
+    borderRadius: 24,
+  },
+  calorieCardHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 8,
+  },
+  calorieCardLabel: {
+    fontSize: 11,
+    fontWeight: "600",
+    color: THEME.textMuted,
+    letterSpacing: 1.2,
+  },
+  progressBadge: {
+    backgroundColor: THEME.accentGlow,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 12,
+  },
+  progressBadgeText: {
+    fontSize: 12,
+    fontWeight: "700",
+    color: THEME.accent,
+  },
+  calorieContent: {
+    alignItems: "center",
+    paddingVertical: 10,
+  },
+
+  // Progress Center
   progressCenterText: {
     position: "absolute",
     alignItems: "center",
     justifyContent: "center",
   },
   caloriesValue: {
-    fontSize: 42,
-    fontWeight: "700",
-    color: "#1F2937",
+    fontSize: 48,
+    fontWeight: "300",
+    color: THEME.textPrimary,
+    letterSpacing: -2,
   },
   caloriesTotal: {
     fontSize: 14,
-    color: "#9CA3AF",
+    color: THEME.textMuted,
     marginTop: -4,
   },
 
-  // Macros Row
-  macrosRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    paddingHorizontal: 24,
-    marginBottom: 24,
+  // Macros Card - NEW
+  macrosCard: {
+    marginHorizontal: 20,
+    backgroundColor: THEME.cardBg,
+    borderRadius: 20,
+    padding: 20,
+    marginBottom: 16,
+    borderWidth: 1,
+    borderColor: THEME.cardBorder,
+  },
+  sectionLabel: {
+    fontSize: 11,
+    fontWeight: "600",
+    color: THEME.textMuted,
+    letterSpacing: 1.2,
+    marginBottom: 16,
+  },
+  macrosGrid: {
+    gap: 14,
   },
   macroContainer: {
-    flex: 1,
+    width: "100%",
+  },
+  macroHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
     alignItems: "center",
-    paddingHorizontal: 8,
+    marginBottom: 8,
   },
   macroLabel: {
-    fontSize: 13,
-    color: "#374151",
+    fontSize: 14,
+    color: THEME.textPrimary,
+    fontWeight: "500",
+  },
+  macroValue: {
+    fontSize: 14,
     fontWeight: "600",
-    marginBottom: 8,
+    color: THEME.textPrimary,
+  },
+  macroUnit: {
+    fontSize: 12,
+    fontWeight: "400",
+    color: THEME.textMuted,
   },
   macroBarBackground: {
     width: "100%",
-    height: 10,
-    backgroundColor: "#E5E7EB",
-    borderRadius: 5,
+    height: 8,
+    backgroundColor: THEME.cardBorder,
+    borderRadius: 4,
     overflow: "hidden",
   },
   macroBarFill: {
     height: "100%",
-    borderRadius: 5,
-  },
-  macroValue: {
-    fontSize: 11,
-    color: "#9CA3AF",
-    marginTop: 6,
+    borderRadius: 4,
   },
 
-  // Suggestion Banner
+  // Suggestion Banner - ENHANCED
   suggestionBanner: {
     marginHorizontal: 20,
-    marginBottom: 28,
-    backgroundColor: "#F9FAFB",
-    borderRadius: 14,
-    padding: 14,
+    marginBottom: 24,
+    backgroundColor: THEME.cardBg,
+    borderRadius: 16,
+    padding: 16,
     flexDirection: "row",
     alignItems: "center",
     borderWidth: 1,
-    borderColor: "#E5E7EB",
+    borderColor: THEME.cardBorder,
   },
   suggestionIcon: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    backgroundColor: "#D1FAE5",
+    width: 40,
+    height: 40,
+    borderRadius: 12,
+    backgroundColor: THEME.accentGlow,
     justifyContent: "center",
     alignItems: "center",
     marginRight: 12,
   },
-  suggestionText: {
+  suggestionContent: {
     flex: 1,
-    fontSize: 14,
-    color: "#374151",
-    lineHeight: 20,
+  },
+  suggestionTitle: {
+    fontSize: 13,
+    fontWeight: "600",
+    color: THEME.textPrimary,
+    marginBottom: 2,
+  },
+  suggestionText: {
+    fontSize: 13,
+    color: THEME.textSecondary,
+    lineHeight: 18,
   },
 
   // Section
   section: {
-    marginBottom: 28,
+    marginBottom: 24,
   },
   sectionTitle: {
-    fontSize: 18,
-    fontWeight: "700",
-    color: "#1F2937",
+    fontSize: 11,
+    fontWeight: "600",
+    color: THEME.textMuted,
+    letterSpacing: 1.2,
     marginBottom: 14,
     paddingHorizontal: 20,
+    textTransform: "uppercase",
   },
 
-  // Action Hub - Flex Row
+  // Action Hub - ENHANCED
   actionHubRow: {
     flexDirection: "row",
-    paddingHorizontal: 16,
+    paddingHorizontal: 20,
     gap: 8,
   },
   actionButton: {
@@ -748,88 +829,86 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    paddingVertical: 10,
-    borderRadius: 22,
-    borderWidth: 2,
-    borderColor: "#10B981",
-    backgroundColor: "#FFFFFF",
-    gap: 4,
+    paddingVertical: 12,
+    borderRadius: 14,
+    borderWidth: 1.5,
+    borderColor: THEME.accent,
+    backgroundColor: "transparent",
+    gap: 6,
   },
   actionButtonGradient: {
     flex: 1,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    paddingVertical: 10,
-    borderRadius: 22,
-    gap: 4,
+    paddingVertical: 12,
+    borderRadius: 14,
+    gap: 6,
   },
   actionButtonText: {
-    fontSize: 11,
+    fontSize: 12,
     fontWeight: "600",
   },
   actionButtonTextOutlined: {
-    fontSize: 11,
+    fontSize: 12,
     fontWeight: "600",
-    color: "#059669",
+    color: THEME.accent,
   },
 
-  // Meal Timeline
+  // Meal Timeline - ENHANCED
   mealTimelineRow: {
     flexDirection: "row",
     paddingHorizontal: 20,
-    gap: 12,
+    gap: 10,
   },
   mealCard: {
     flex: 1,
-    backgroundColor: "#FFFFFF",
-    borderRadius: 16,
-    padding: 12,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.08,
-    shadowRadius: 8,
-    elevation: 3,
+    backgroundColor: THEME.cardBg,
+    borderRadius: 20,
+    padding: 14,
     borderWidth: 1,
-    borderColor: "#F3F4F6",
+    borderColor: THEME.cardBorder,
   },
   mealImageContainer: {
     position: "relative",
     alignItems: "center",
-    marginBottom: 10,
+    marginBottom: 12,
   },
   mealImage: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
+    width: 72,
+    height: 72,
+    borderRadius: 36,
     borderWidth: 3,
-    borderColor: "#F3F4F6",
+    borderColor: THEME.cardBorder,
   },
   loggedBadge: {
     position: "absolute",
-    top: 0,
-    left: 0,
-    backgroundColor: "#10B981",
-    paddingHorizontal: 10,
+    top: -4,
+    left: -4,
+    backgroundColor: THEME.accent,
+    paddingHorizontal: 8,
     paddingVertical: 4,
-    borderRadius: 12,
+    borderRadius: 10,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 3,
   },
   loggedBadgeText: {
-    fontSize: 10,
+    fontSize: 9,
     fontWeight: "700",
     color: "#FFFFFF",
   },
   mealType: {
-    fontSize: 15,
+    fontSize: 14,
     fontWeight: "700",
-    color: "#1F2937",
+    color: THEME.textPrimary,
     marginBottom: 2,
   },
   mealName: {
-    fontSize: 12,
-    color: "#6B7280",
-    marginBottom: 8,
-    lineHeight: 16,
+    fontSize: 11,
+    color: THEME.textSecondary,
+    marginBottom: 10,
+    lineHeight: 15,
   },
   mealFooter: {
     flexDirection: "row",
@@ -838,89 +917,113 @@ const styles = StyleSheet.create({
   },
   mealCalories: {
     fontSize: 12,
-    color: "#9CA3AF",
-    fontWeight: "500",
+    color: THEME.textMuted,
+    fontWeight: "600",
   },
   editButton: {
-    width: 26,
-    height: 26,
-    borderRadius: 13,
-    backgroundColor: "#F3F4F6",
+    width: 28,
+    height: 28,
+    borderRadius: 8,
+    backgroundColor: THEME.cardBorder,
     justifyContent: "center",
     alignItems: "center",
   },
 
-  // Next Meal Section (Smart Suggestion)
+  // Next Meal Section - ENHANCED
   nextMealSection: {
     flex: 1,
     alignItems: "center",
     justifyContent: "flex-start",
-    paddingTop: 4,
+    paddingTop: 8,
+  },
+  nextMealHeader: {
+    alignItems: "center",
+    marginBottom: 14,
   },
   nextMealTitle: {
     fontSize: 13,
     fontWeight: "600",
-    color: "#1F2937",
+    color: THEME.textPrimary,
     textAlign: "center",
-    marginBottom: 2,
   },
   nextMealSubtitle: {
     fontSize: 11,
-    color: "#9CA3AF",
-    marginBottom: 12,
+    color: THEME.textMuted,
+    marginTop: 2,
   },
   logMealButton: {
-    borderRadius: 16,
+    borderRadius: 12,
     overflow: "hidden",
-    marginBottom: 8,
+    marginBottom: 10,
+    width: "100%",
   },
   logMealGradient: {
-    paddingHorizontal: 20,
-    paddingVertical: 10,
+    flexDirection: "row",
     alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 12,
+    gap: 6,
   },
   logMealButtonText: {
     fontSize: 13,
     fontWeight: "600",
     color: "#FFFFFF",
-    textAlign: "center",
-    lineHeight: 16,
   },
   viewRecipeButton: {
-    borderWidth: 1,
-    borderColor: "#E5E7EB",
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 14,
-  },
-  viewRecipeButtonText: {
-    fontSize: 11,
-    color: "#6B7280",
-    fontWeight: "500",
-    textAlign: "center",
-    lineHeight: 14,
-  },
-  addSnackRow: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
     gap: 6,
-    marginTop: 16,
-    paddingVertical: 8,
+    borderWidth: 1,
+    borderColor: THEME.cardBorder,
+    paddingVertical: 10,
+    paddingHorizontal: 14,
+    borderRadius: 12,
+    backgroundColor: THEME.cardBg,
+    width: "100%",
   },
-  addSnackText: {
-    fontSize: 13,
-    color: "#6B7280",
+  viewRecipeButtonText: {
+    fontSize: 12,
+    color: THEME.textSecondary,
     fontWeight: "500",
   },
 
-  // Nutrition Targets
+  // Add Snack Row - ENHANCED
+  addSnackRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginHorizontal: 20,
+    marginTop: 14,
+    paddingVertical: 14,
+    paddingHorizontal: 16,
+    backgroundColor: THEME.cardBg,
+    borderRadius: 14,
+    borderWidth: 1,
+    borderColor: THEME.cardBorder,
+  },
+  addSnackIcon: {
+    width: 32,
+    height: 32,
+    borderRadius: 10,
+    backgroundColor: THEME.accentGlow,
+    justifyContent: "center",
+    alignItems: "center",
+    marginRight: 12,
+  },
+  addSnackText: {
+    flex: 1,
+    fontSize: 14,
+    color: THEME.textPrimary,
+    fontWeight: "500",
+  },
+
+  // Nutrition Targets (PRESERVED)
   nutritionTargetContainer: {
     paddingHorizontal: 20,
     marginBottom: 16,
   },
 
-  // Banner
+  // Banner (PRESERVED)
   bannerContainer: {
     paddingHorizontal: 20,
     marginTop: 8,

@@ -1,9 +1,14 @@
 export const Colors = {
-  primary: "#4ECDC4",
-  primaryDark: "#45B7AF",
-  primaryLight: "#7DD8D3",
+  // Primary brand colors
+  primary: "#34D399",
+  primaryDark: "#059669",
+  primaryLight: "#6EE7B7",
+
+  // Base colors
   white: "#FFFFFF",
   black: "#000000",
+
+  // Gray scale
   gray: "#EEEEEE",
   gray100: "#F7F7F7",
   gray200: "#E5E5E5",
@@ -14,29 +19,65 @@ export const Colors = {
   gray700: "#374151",
   gray800: "#1F2937",
   gray900: "#111827",
-  pink:"#EF5A6F",
+
+  // Accent colors
+  pink: "#F472B6",
   success: "#10B981",
   warning: "#F59E0B",
   error: "#EF4444",
   info: "#3B82F6",
-  background: "#F9FAFB",
-  card: "#FFFFFF",
-  text: "#1F2937",
-  textSecondary: "#6B7280",
-  textLight: "#9CA3AF",
-  border: "#E5E7EB",
-  shadow: "rgba(0, 0, 0, 0.1)",
-
   violet: "#8B5CF6",
   successLight: "#90a2ddff",
 
+  // ============================================
+  // PREMIUM DARK THEME
+  // ============================================
 
+  // Backgrounds
+  bgPrimary: "#0A0A0C",
+  bgSecondary: "#0F0F12",
+  bgCard: "rgba(255, 255, 255, 0.04)",
+  bgCardHover: "rgba(255, 255, 255, 0.08)",
+  bgCardAccent: "rgba(255, 255, 255, 0.06)",
+  bgInput: "rgba(255, 255, 255, 0.06)",
 
-  secondary: "#4ECDC4",
-  cardBackground: "#FFFFFF",
-  lightGray: "#BDC3C7",
-  darkGray: "#34495E",
-  green: "#4ECDC4",
+  // Text colors for dark theme
+  textPrimary: "#FFFFFF",
+  textSecondary: "rgba(255, 255, 255, 0.75)",
+  textMuted: "rgba(255, 255, 255, 0.45)",
+  textLabel: "rgba(255, 255, 255, 0.55)",
 
+  // Borders for dark theme
+  borderDark: "rgba(255, 255, 255, 0.08)",
+  borderLight: "rgba(255, 255, 255, 0.04)",
 
+  // Premium accent colors
+  blue: "#60A5FA",
+  blueLight: "#93C5FD",
+  blueDark: "#2563EB",
+  emerald: "#34D399",
+  emeraldLight: "#6EE7B7",
+  emeraldDark: "#059669",
+  amber: "#FBBF24",
+  amberLight: "#FCD34D",
+  orange: "#FB923C",
+  red: "#F87171",
+  redLight: "#FCA5A5",
+  purple: "#A78BFA",
+  purpleLight: "#C4B5FD",
+  cyan: "#22D3EE",
+
+  // Legacy support (using dark theme values)
+  background: "#0A0A0C",
+  card: "rgba(255, 255, 255, 0.04)",
+  text: "#FFFFFF",
+  textDark: "#FFFFFF",
+  textLight: "rgba(255, 255, 255, 0.45)",
+  border: "rgba(255, 255, 255, 0.08)",
+  shadow: "rgba(0, 0, 0, 0.3)",
+  secondary: "#34D399",
+  cardBackground: "rgba(255, 255, 255, 0.04)",
+  lightGray: "rgba(255, 255, 255, 0.25)",
+  darkGray: "rgba(255, 255, 255, 0.55)",
+  green: "#34D399",
 };

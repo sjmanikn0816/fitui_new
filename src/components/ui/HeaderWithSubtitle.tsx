@@ -26,20 +26,20 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: "column",
     justifyContent: "center",
-    paddingVertical: Platform.OS === "ios" ? 2 : 0, // reduced vertical padding
+    paddingVertical: Platform.OS === "ios" ? 2 : 0,
   },
   subtitle: {
     fontSize: width > 400 ? 13 : 11,
-    color: Colors.primary,
+    color: Colors.emerald,
     fontWeight: "600",
-    lineHeight: 15, // tighter spacing
+    lineHeight: 15,
     marginBottom: 1,
   },
   title: {
     fontSize: width > 400 ? 18 : 16,
-    color: Colors.black,
+    color: Colors.textPrimary,
     fontWeight: "800",
-    lineHeight: 20, // reduced line height
+    lineHeight: 20,
   },
 });
 
