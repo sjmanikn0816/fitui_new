@@ -20,33 +20,21 @@ const CustomTabBar: React.FC<BottomTabBarProps> = ({
 }) => {
   const insets = useSafeAreaInsets();
 
-  // Animation values for each tab
+  // Single animation value for scale (native driver compatible)
   const scaleAnims = useRef(
     state.routes.map(() => new Animated.Value(1))
   ).current;
 
-  const glowAnims = useRef(
-    state.routes.map(() => new Animated.Value(0))
-  ).current;
-
-  // Animate active tab
+  // Animate active tab scale only
   useEffect(() => {
     state.routes.forEach((_, index) => {
       const isActive = state.index === index;
 
-      // Scale animation
       Animated.spring(scaleAnims[index], {
-        toValue: isActive ? 1.1 : 1,
-        friction: 5,
-        tension: 100,
+        toValue: isActive ? 1.08 : 1,
+        friction: 6,
+        tension: 120,
         useNativeDriver: true,
-      }).start();
-
-      // Glow animation
-      Animated.timing(glowAnims[index], {
-        toValue: isActive ? 1 : 0,
-        duration: 200,
-        useNativeDriver: false,
       }).start();
     });
   }, [state.index]);
@@ -59,7 +47,7 @@ const CustomTabBar: React.FC<BottomTabBarProps> = ({
       tintColor: focused ? Colors.emerald : Colors.textMuted,
     };
 
-    // Animated glow wrapper for regular icons
+    // Icon wrapper with scale animation and static glow
     const AnimatedIconWrapper = ({ children }: { children: React.ReactNode }) => (
       <Animated.View
         style={[
@@ -67,10 +55,6 @@ const CustomTabBar: React.FC<BottomTabBarProps> = ({
           focused && styles.iconWrapperActive,
           {
             transform: [{ scale: scaleAnims[index] }],
-            shadowOpacity: glowAnims[index].interpolate({
-              inputRange: [0, 1],
-              outputRange: [0, 0.6],
-            }),
           },
         ]}
       >
@@ -190,7 +174,7 @@ const CustomTabBar: React.FC<BottomTabBarProps> = ({
 
         {/* Tab bar content */}
         <View style={styles.tabBarContainer}>
-          {visibleRoutes.map((route, visibleIndex) => {
+          {visibleRoutes.map((route) => {
             const routeIndex = state.routes.findIndex((r) => r.key === route.key);
             const { options } = descriptors[route.key];
             const isFocused = state.index === routeIndex;
@@ -234,7 +218,7 @@ const CustomTabBar: React.FC<BottomTabBarProps> = ({
               >
                 {/* Active indicator background */}
                 {isFocused && !isCenter && (
-                  <Animated.View style={styles.activeIndicator} />
+                  <View style={styles.activeIndicator} />
                 )}
                 {icon}
               </TouchableOpacity>
@@ -334,14 +318,14 @@ const styles = StyleSheet.create({
     borderRadius: 14,
     alignItems: 'center',
     justifyContent: 'center',
-    // Shadow for glow effect
-    shadowColor: Colors.emerald,
-    shadowOffset: { width: 0, height: 0 },
-    shadowRadius: 8,
-    elevation: 4,
   },
   iconWrapperActive: {
-    backgroundColor: 'transparent',
+    // Static glow when active (no animation conflict)
+    shadowColor: Colors.emerald,
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.6,
+    shadowRadius: 10,
+    elevation: 8,
   },
   centerButton: {
     width: 52,
