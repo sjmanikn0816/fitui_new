@@ -50,12 +50,14 @@ const QuickMessageCard: React.FC<QuickMessageCardProps> = ({ onSendMessage }) =>
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: Colors.white,
+    backgroundColor: Colors.bgCard,
     marginHorizontal: 16,
     marginTop: 16,
     padding: 20,
     borderRadius: 12,
-    shadowColor: Colors.shadow,
+    borderWidth: 1,
+    borderColor: Colors.borderDark,
+    shadowColor: Colors.emerald,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 3,
@@ -69,7 +71,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 16,
     fontWeight: '600',
-    color: Colors.text,
+    color: Colors.textPrimary,
     marginLeft: 8,
   },
   subtitle: {
@@ -79,11 +81,12 @@ const styles = StyleSheet.create({
   },
   input: {
     borderWidth: 1,
-    borderColor: Colors.border,
+    borderColor: Colors.borderDark,
     borderRadius: 8,
     padding: 12,
     fontSize: 16,
-    color: Colors.text,
+    color: Colors.textPrimary,
+    backgroundColor: Colors.bgCardHover,
     minHeight: 80,
     marginBottom: 16,
   },

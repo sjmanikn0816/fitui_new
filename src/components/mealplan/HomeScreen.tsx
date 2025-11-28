@@ -93,7 +93,7 @@ const CircularProgress = ({
           cx={size / 2}
           cy={size / 2}
           r={radius}
-          stroke="#E5E7EB"
+          stroke="rgba(255, 255, 255, 0.1)"
           strokeWidth={strokeWidth}
           fill="transparent"
         />
@@ -205,7 +205,7 @@ const MealCard = ({
         <Text style={styles.mealCalories}>{meal.nutrition?.calories || 0} kcal</Text>
         {onEdit && (
           <TouchableOpacity onPress={onEdit} style={styles.editButton}>
-            <Feather name="edit-2" size={14} color="#9CA3AF" />
+            <Feather name="edit-2" size={14} color={Colors.textMuted} />
           </TouchableOpacity>
         )}
       </View>
@@ -383,7 +383,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
 
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
+      <StatusBar barStyle="light-content" backgroundColor={Colors.bgPrimary} />
 
       <ScrollView
         style={styles.scrollView}
@@ -401,13 +401,13 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
             <Text style={styles.headerTitle}>Daily Fuel Overview</Text>
             <View style={styles.headerActions}>
               <TouchableOpacity style={styles.headerIconBtn} onPress={handleRefresh}>
-                <Ionicons name="refresh" size={20} color="#6B7280" />
+                <Ionicons name="refresh" size={20} color={Colors.textSecondary} />
               </TouchableOpacity>
               <TouchableOpacity style={styles.headerIconBtn} onPress={handleSharePress}>
-                <Ionicons name="share-outline" size={20} color="#6B7280" />
+                <Ionicons name="share-outline" size={20} color={Colors.textSecondary} />
               </TouchableOpacity>
               <TouchableOpacity style={styles.headerIconBtn} onPress={handleMenuPress}>
-                <Ionicons name="ellipsis-horizontal" size={20} color="#6B7280" />
+                <Ionicons name="ellipsis-horizontal" size={20} color={Colors.textSecondary} />
               </TouchableOpacity>
             </View>
           </View>
@@ -561,7 +561,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
             style={styles.addSnackRow}
             onPress={() => navigation.navigate("FoodAnalysis")}
           >
-            <Ionicons name="add" size={18} color="#6B7280" />
+            <Ionicons name="add" size={18} color={Colors.textSecondary} />
             <Text style={styles.addSnackText}>Add Snack / Quick Log</Text>
           </TouchableOpacity>
         </View>
@@ -587,7 +587,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: Colors.bgPrimary,
   },
   scrollView: {
     flex: 1,
@@ -610,7 +610,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 22,
     fontWeight: "700",
-    color: "#1F2937",
+    color: Colors.textPrimary,
   },
   headerActions: {
     flexDirection: "row",
@@ -626,15 +626,17 @@ const styles = StyleSheet.create({
   },
   dateBadge: {
     alignSelf: "center",
-    backgroundColor: "#F3F4F6",
+    backgroundColor: Colors.bgCard,
     paddingHorizontal: 16,
     paddingVertical: 8,
     borderRadius: 20,
     marginTop: 12,
+    borderWidth: 1,
+    borderColor: Colors.borderDark,
   },
   dateBadgeText: {
     fontSize: 13,
-    color: "#6B7280",
+    color: Colors.textSecondary,
     fontWeight: "500",
   },
 
@@ -651,11 +653,11 @@ const styles = StyleSheet.create({
   caloriesValue: {
     fontSize: 42,
     fontWeight: "700",
-    color: "#1F2937",
+    color: Colors.textPrimary,
   },
   caloriesTotal: {
     fontSize: 14,
-    color: "#9CA3AF",
+    color: Colors.textMuted,
     marginTop: -4,
   },
 
@@ -673,14 +675,14 @@ const styles = StyleSheet.create({
   },
   macroLabel: {
     fontSize: 13,
-    color: "#374151",
+    color: Colors.textPrimary,
     fontWeight: "600",
     marginBottom: 8,
   },
   macroBarBackground: {
     width: "100%",
     height: 10,
-    backgroundColor: "#E5E7EB",
+    backgroundColor: Colors.bgCardHover,
     borderRadius: 5,
     overflow: "hidden",
   },
@@ -690,7 +692,7 @@ const styles = StyleSheet.create({
   },
   macroValue: {
     fontSize: 11,
-    color: "#9CA3AF",
+    color: Colors.textMuted,
     marginTop: 6,
   },
 
@@ -698,19 +700,19 @@ const styles = StyleSheet.create({
   suggestionBanner: {
     marginHorizontal: 20,
     marginBottom: 28,
-    backgroundColor: "#F9FAFB",
+    backgroundColor: Colors.bgCard,
     borderRadius: 14,
     padding: 14,
     flexDirection: "row",
     alignItems: "center",
     borderWidth: 1,
-    borderColor: "#E5E7EB",
+    borderColor: Colors.borderDark,
   },
   suggestionIcon: {
     width: 36,
     height: 36,
     borderRadius: 18,
-    backgroundColor: "#D1FAE5",
+    backgroundColor: "rgba(52, 211, 153, 0.15)",
     justifyContent: "center",
     alignItems: "center",
     marginRight: 12,
@@ -718,7 +720,7 @@ const styles = StyleSheet.create({
   suggestionText: {
     flex: 1,
     fontSize: 14,
-    color: "#374151",
+    color: Colors.textSecondary,
     lineHeight: 20,
   },
 
@@ -729,7 +731,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
     fontWeight: "700",
-    color: "#1F2937",
+    color: Colors.textPrimary,
     marginBottom: 14,
     paddingHorizontal: 20,
   },
@@ -751,8 +753,8 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     borderRadius: 22,
     borderWidth: 2,
-    borderColor: "#10B981",
-    backgroundColor: "#FFFFFF",
+    borderColor: Colors.emerald,
+    backgroundColor: Colors.bgCard,
     gap: 4,
   },
   actionButtonGradient: {
@@ -782,16 +784,16 @@ const styles = StyleSheet.create({
   },
   mealCard: {
     flex: 1,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: Colors.bgCard,
     borderRadius: 16,
     padding: 12,
-    shadowColor: "#000",
+    shadowColor: Colors.emerald,
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.08,
+    shadowOpacity: 0.1,
     shadowRadius: 8,
     elevation: 3,
     borderWidth: 1,
-    borderColor: "#F3F4F6",
+    borderColor: Colors.borderDark,
   },
   mealImageContainer: {
     position: "relative",
@@ -803,7 +805,7 @@ const styles = StyleSheet.create({
     height: 80,
     borderRadius: 40,
     borderWidth: 3,
-    borderColor: "#F3F4F6",
+    borderColor: Colors.borderDark,
   },
   loggedBadge: {
     position: "absolute",
@@ -822,12 +824,12 @@ const styles = StyleSheet.create({
   mealType: {
     fontSize: 15,
     fontWeight: "700",
-    color: "#1F2937",
+    color: Colors.textPrimary,
     marginBottom: 2,
   },
   mealName: {
     fontSize: 12,
-    color: "#6B7280",
+    color: Colors.textSecondary,
     marginBottom: 8,
     lineHeight: 16,
   },
@@ -838,14 +840,14 @@ const styles = StyleSheet.create({
   },
   mealCalories: {
     fontSize: 12,
-    color: "#9CA3AF",
+    color: Colors.textMuted,
     fontWeight: "500",
   },
   editButton: {
     width: 26,
     height: 26,
     borderRadius: 13,
-    backgroundColor: "#F3F4F6",
+    backgroundColor: Colors.bgCardHover,
     justifyContent: "center",
     alignItems: "center",
   },
@@ -860,13 +862,13 @@ const styles = StyleSheet.create({
   nextMealTitle: {
     fontSize: 13,
     fontWeight: "600",
-    color: "#1F2937",
+    color: Colors.textPrimary,
     textAlign: "center",
     marginBottom: 2,
   },
   nextMealSubtitle: {
     fontSize: 11,
-    color: "#9CA3AF",
+    color: Colors.textMuted,
     marginBottom: 12,
   },
   logMealButton: {
@@ -888,14 +890,15 @@ const styles = StyleSheet.create({
   },
   viewRecipeButton: {
     borderWidth: 1,
-    borderColor: "#E5E7EB",
+    borderColor: Colors.borderDark,
     paddingHorizontal: 16,
     paddingVertical: 8,
     borderRadius: 14,
+    backgroundColor: Colors.bgCard,
   },
   viewRecipeButtonText: {
     fontSize: 11,
-    color: "#6B7280",
+    color: Colors.textSecondary,
     fontWeight: "500",
     textAlign: "center",
     lineHeight: 14,
@@ -910,7 +913,7 @@ const styles = StyleSheet.create({
   },
   addSnackText: {
     fontSize: 13,
-    color: "#6B7280",
+    color: Colors.textSecondary,
     fontWeight: "500",
   },
 
