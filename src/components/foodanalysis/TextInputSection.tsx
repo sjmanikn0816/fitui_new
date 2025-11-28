@@ -23,7 +23,7 @@ const TextInputSection: React.FC<TextInputSectionProps> = ({ query, setQuery, di
       <TextInput
         style={styles.textInput}
         placeholder="E.g., Two scrambled eggs, one slice whole wheat toast, glass of orange juice"
-        placeholderTextColor="#999"
+        placeholderTextColor={Colors.textMuted}
         value={query}
         onChangeText={setQuery}
         multiline
@@ -56,30 +56,30 @@ const TextInputSection: React.FC<TextInputSectionProps> = ({ query, setQuery, di
 
 const styles = StyleSheet.create({
   section: { paddingHorizontal: 20, marginTop: 24 },
-  sectionTitle: { fontSize: 18, fontWeight: '600', color: '#333', marginBottom: 12 },
+  sectionTitle: { fontSize: 18, fontWeight: '600', color: Colors.textPrimary, marginBottom: 12 },
   textInput: {
-    backgroundColor: '#FFF',
+    backgroundColor: Colors.bgCard,
     borderRadius: 12,
     padding: 16,
     fontSize: 16,
-    color: '#333',
+    color: Colors.textPrimary,
     minHeight: 120,
     borderWidth: 1,
-    borderColor: '#E8E8E8',
+    borderColor: Colors.borderDark,
   },
-  hint: { marginTop: 8, fontSize: 12, color: '#999', fontStyle: 'italic' },
+  hint: { marginTop: 8, fontSize: 12, color: Colors.textMuted, fontStyle: 'italic' },
   examplesContainer: { marginTop: 16 },
   exampleChips: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
   exampleChip: {
-    backgroundColor: '#FFF',
+    backgroundColor: Colors.bgCard,
     paddingHorizontal: 16,
     paddingVertical: 10,
     borderRadius: 20,
     marginRight: 8,
     borderWidth: 1,
-    borderColor: '#E8E8E8',
+    borderColor: Colors.borderDark,
     fontSize: 14,
-    color: '#666',
+    color: Colors.textSecondary,
   },
   disabledChip: { opacity: 0.5 },
 });

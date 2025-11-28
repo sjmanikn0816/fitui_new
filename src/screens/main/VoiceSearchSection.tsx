@@ -113,76 +113,76 @@ const VoiceSearchSection: React.FC<VoiceSearchSectionProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: Colors.white,
+    backgroundColor: Colors.bgCard,
     borderRadius: 16,
     padding: 16,
     marginBottom: 16,
-    shadowColor: "#000",
-    shadowOpacity: 0.05,
-    shadowRadius: 4,
+    borderWidth: 1,
+    borderColor: Colors.borderDark,
+    shadowColor: Colors.emerald,
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
     shadowOffset: { width: 0, height: 2 },
     elevation: 2,
   },
   title: {
     fontSize: 18,
     fontWeight: "700",
-    color: "#1F2937",
+    color: Colors.textPrimary,
     marginBottom: 4,
   },
   micButton: {
-
     width: 80,
     height: 80,
     borderRadius: 40,
-    backgroundColor: Colors.white,
+    backgroundColor: Colors.bgCardHover,
     alignSelf: "center",
     justifyContent: "center",
     alignItems: "center",
     borderWidth: 2,
-    borderColor: "#FF6B35",
+    borderColor: Colors.emerald,
     elevation: 3,
-    shadowColor: "#000",
+    shadowColor: Colors.emerald,
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
+    shadowOpacity: 0.2,
     shadowRadius: 4,
-  
   },
-    micButtonActive: {
-    backgroundColor: "#FF6B35",
-    borderColor: "#FF6B35",
+  micButtonActive: {
+    backgroundColor: Colors.emerald,
+    borderColor: Colors.emerald,
   },
-    micButtonDisabled: {
-    backgroundColor: "#f5f5f5",
-    borderColor: "#ddd",
+  micButtonDisabled: {
+    backgroundColor: Colors.bgCard,
+    borderColor: Colors.borderDark,
   },
-    micIconContainer: {
+  micIconContainer: {
     justifyContent: "center",
     alignItems: "center",
   },
-    recordingIndicator: {
+  recordingIndicator: {
     justifyContent: "center",
     alignItems: "center",
     position: "relative",
   },
-    pulseRing: {
+  pulseRing: {
     position: "absolute",
     width: 60,
     height: 60,
     borderRadius: 30,
     borderWidth: 2,
-    borderColor: Colors.white,
+    borderColor: Colors.emerald,
     opacity: 0.3,
   },
   waveContainer: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent:"center",
+    justifyContent: "center",
     marginTop: 10,
     gap: 6,
   },
   listening: {
     fontSize: 14,
-    color: "red",
+    color: Colors.emerald,
     fontWeight: "500",
   },
 });

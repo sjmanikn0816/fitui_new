@@ -11,6 +11,7 @@ import { useAppDispatch, useAppSelector } from '@/redux/store/hooks';
 import { generateMealPlanHTML } from '@/utils/htmlGenerator';
 import { sendMealPlanEmail, resetEmailState } from '@/redux/slice/mealPlanSlice';
 import { verticalScale } from '@/utils/responsive';
+import { Colors } from '@/constants/Colors';
 
 interface RouteParams { mealPlan: any; }
 
@@ -134,7 +135,7 @@ const handleDownloadPDF = async () => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#fff' ,paddingBottom:verticalScale(60)},
+  container: { flex: 1, backgroundColor: Colors.bgPrimary, paddingBottom: verticalScale(60) },
   content: { flex: 1, paddingHorizontal: 20, paddingTop: 20 },
 });
 

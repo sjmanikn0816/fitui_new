@@ -1,6 +1,7 @@
 // components/FoodAnalysisResults/MacroCard.tsx
 import React from "react";
 import { View, Text, StyleSheet, ScrollView } from "react-native";
+import { Colors } from "@/constants/Colors";
 
 const MacroCard = ({ totalNutrition }) => {
   const macros = [
@@ -25,12 +26,12 @@ const MacroCard = ({ totalNutrition }) => {
 
 const styles = StyleSheet.create({
   container: { paddingHorizontal: 20, paddingTop: 24, gap: 12 },
-  box: { width: 110, backgroundColor: "#FFF", borderRadius: 16, padding: 16, alignItems: "center", shadowColor: "#000", shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.08, shadowRadius: 8, elevation: 1 },
+  box: { width: 110, backgroundColor: Colors.bgCard, borderRadius: 16, padding: 16, alignItems: "center", borderWidth: 1, borderColor: Colors.borderDark, shadowColor: Colors.emerald, shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.1, shadowRadius: 8, elevation: 1 },
   bar: { position: "absolute", top: 0, left: 0, right: 0, height: 4, borderTopLeftRadius: 16, borderTopRightRadius: 16 },
   icon: { fontSize: 28, marginTop: 4, marginBottom: 6 },
-  label: { fontSize: 11, fontWeight: "600", color: "#888", textTransform: "uppercase", marginBottom: 6 },
-  value: { fontSize: 26, fontWeight: "800", color: "#333" },
-  unit: { fontSize: 12, fontWeight: "600", color: "#999", marginTop: 2 },
+  label: { fontSize: 11, fontWeight: "600", color: Colors.textMuted, textTransform: "uppercase", marginBottom: 6 },
+  value: { fontSize: 26, fontWeight: "800", color: Colors.textPrimary },
+  unit: { fontSize: 12, fontWeight: "600", color: Colors.textMuted, marginTop: 2 },
 });
 
 export default MacroCard;

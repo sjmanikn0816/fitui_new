@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useDispatch, useSelector } from 'react-redux';
+import { Colors } from '@/constants/Colors';
 import { changePassword, resetPasswordState } from '../../../redux/slice/changePasswordSlice';
 import type { RootState, AppDispatch } from '../../../redux/store';
 
@@ -53,13 +54,13 @@ const PasswordInput: React.FC<PasswordInputProps> = ({
         onChangeText={onChange}
         placeholder={placeholder}
         secureTextEntry={!show}
-        placeholderTextColor="#999"
+        placeholderTextColor={Colors.textMuted}
       />
       <TouchableOpacity onPress={toggleShow} style={styles.eyeButton}>
         <Ionicons
           name={show ? 'eye-off-outline' : 'eye-outline'}
           size={20}
-          color="#666"
+          color={Colors.textSecondary}
         />
       </TouchableOpacity>
     </View>
@@ -237,33 +238,30 @@ const ChangePasswordScreen: React.FC<ChangePasswordScreenProps> = ({ navigation 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#ffff',
+    backgroundColor: Colors.bgPrimary,
   },
   header: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: Colors.bgCard,
     paddingTop: 16,
     paddingBottom: 16,
     paddingHorizontal: 16,
     flexDirection: 'row',
     alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 2,
-    elevation: 2,
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.borderDark,
   },
   backButton: {
     marginRight: 16,
   },
   backText: {
-    color: '#06B6D4',
+    color: Colors.emerald,
     fontSize: 12,
     fontWeight: '500',
   },
   headerTitle: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#111827',
+    color: Colors.textPrimary,
   },
   scrollView: {
     flex: 1,
@@ -274,24 +272,26 @@ const styles = StyleSheet.create({
   iconContainer: {
     width: 64,
     height: 64,
-    backgroundColor: '#FEF3C7',
+    backgroundColor: 'rgba(52, 211, 153, 0.15)',
     borderRadius: 32,
     justifyContent: 'center',
     alignItems: 'center',
     alignSelf: 'center',
     marginBottom: 24,
     marginTop: 8,
+    borderWidth: 1,
+    borderColor: Colors.borderDark,
   },
   title: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#111827',
+    color: Colors.textPrimary,
     textAlign: 'center',
     marginBottom: 8,
   },
   subtitle: {
     fontSize: 14,
-    color: '#6B7280',
+    color: Colors.textSecondary,
     textAlign: 'center',
     marginBottom: 32,
     lineHeight: 20,
@@ -302,15 +302,15 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 14,
     fontWeight: '500',
-    color: '#374151',
+    color: Colors.textSecondary,
     marginBottom: 8,
   },
   inputWrapper: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#FFFFFF',
+    backgroundColor: Colors.bgCard,
     borderWidth: 1,
-    borderColor: '#D1D5DB',
+    borderColor: Colors.borderDark,
     borderRadius: 8,
     paddingHorizontal: 12,
   },
@@ -321,7 +321,7 @@ const styles = StyleSheet.create({
     flex: 1,
     height: 48,
     fontSize: 14,
-    color: '#111827',
+    color: Colors.textPrimary,
   },
   eyeButton: {
     padding: 8,
@@ -332,38 +332,39 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   requirementsBox: {
-    backgroundColor: '#ECFEFF',
+    backgroundColor: 'rgba(52, 211, 153, 0.1)',
     borderWidth: 1,
-    borderColor: '#A5F3FC',
+    borderColor: 'rgba(52, 211, 153, 0.3)',
     borderRadius: 8,
     padding: 12,
     marginBottom: 24,
   },
   requirementsText: {
     fontSize: 12,
-    color: '#155E75',
+    color: Colors.textSecondary,
     lineHeight: 18,
   },
   requirementsBold: {
     fontWeight: 'bold',
+    color: Colors.emerald,
   },
   submitButton: {
-    backgroundColor: '#06B6D4',
+    backgroundColor: Colors.emerald,
     paddingVertical: 14,
     borderRadius: 8,
     alignItems: 'center',
-    shadowColor: '#06B6D4',
+    shadowColor: Colors.emerald,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 8,
     elevation: 4,
   },
   submitButtonDisabled: {
-    backgroundColor: '#9CA3AF',
+    backgroundColor: Colors.textMuted,
     opacity: 0.7,
   },
   submitButtonText: {
-    color: '#FFFFFF',
+    color: Colors.bgPrimary,
     fontSize: 16,
     fontWeight: '600',
   },

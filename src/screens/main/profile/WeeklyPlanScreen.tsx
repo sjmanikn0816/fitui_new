@@ -14,6 +14,7 @@ import { Calendar, ChefHat, Clock, Flame, Activity, ChevronDown, Award, Apple } 
 import { moderateScale, scale, verticalScale } from '@/utils/responsive';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
+import { Colors } from '@/constants/Colors';
 
 const { width, height } = Dimensions.get('window');
 const isSmallDevice = width < 375;
@@ -123,18 +124,18 @@ const navigation=useNavigation()
   const MealCard = ({ meal, type, data }) => {
     const isExpanded = expandedMeal === type;
     const mealTypeColors = {
-      breakfast: { bg: '#FEF3C7', border: '#FDE68A' },
-      lunch: { bg: '#DBEAFE', border: '#BFDBFE' },
-      dinner: { bg: '#F3E8FF', border: '#E9D5FF' }
+      breakfast: { bg: 'rgba(251, 191, 36, 0.15)', border: 'rgba(251, 191, 36, 0.3)' },
+      lunch: { bg: 'rgba(59, 130, 246, 0.15)', border: 'rgba(59, 130, 246, 0.3)' },
+      dinner: { bg: 'rgba(168, 85, 247, 0.15)', border: 'rgba(168, 85, 247, 0.3)' }
     };
     const iconColors = {
-      breakfast: '#D97706',
-      lunch: '#2563EB',
-      dinner: '#9333EA'
+      breakfast: '#FBBF24',
+      lunch: '#3B82F6',
+      dinner: '#A855F7'
     };
 
     return (
-      <View style={[styles.mealCard, { backgroundColor: '#FFFFFF', borderColor: mealTypeColors[type].border }]}>
+      <View style={[styles.mealCard, { backgroundColor: Colors.bgCard, borderColor: mealTypeColors[type].border }]}>
         <TouchableOpacity
           style={styles.mealCardHeader}
           onPress={() => setExpandedMeal(isExpanded ? null : type)}
@@ -410,17 +411,19 @@ const navigation=useNavigation()
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F9FAFB',
-    paddingBottom:verticalScale(60)
+    backgroundColor: Colors.bgPrimary,
+    paddingBottom: verticalScale(60)
   },
   scrollView: {
     flex: 1,
   },
   header: {
-    backgroundColor: '#059669',
+    backgroundColor: Colors.bgPrimary,
     paddingHorizontal: moderateScale(20),
     paddingTop: verticalScale(20),
     paddingBottom: verticalScale(20),
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.borderDark,
   },
   headerTop: {
     flexDirection: 'row',
@@ -431,17 +434,19 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: moderateScale(24),
     fontWeight: 'bold',
-    color: '#FFFFFF',
+    color: Colors.textPrimary,
     marginBottom: verticalScale(4),
   },
   headerSubtitle: {
     fontSize: moderateScale(13),
-    color: '#D1FAE5',
+    color: Colors.emerald,
   },
   headerIcon: {
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    backgroundColor: Colors.bgCard,
     padding: moderateScale(12),
     borderRadius: moderateScale(12),
+    borderWidth: 1,
+    borderColor: Colors.borderDark,
   },
   weekScroll: {
     marginTop: verticalScale(10),
@@ -452,41 +457,44 @@ const styles = StyleSheet.create({
     borderRadius: moderateScale(12),
     marginRight: moderateScale(8),
     minWidth: scale(120),
+    borderWidth: 1,
+    borderColor: Colors.borderDark,
   },
   weekButtonActive: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: Colors.emerald,
+    borderColor: Colors.emerald,
   },
   weekButtonInactive: {
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    backgroundColor: Colors.bgCard,
   },
   weekButtonText: {
     fontSize: moderateScale(14),
     fontWeight: '600',
   },
   weekButtonTextActive: {
-    color: '#059669',
+    color: Colors.bgPrimary,
   },
   weekButtonTextInactive: {
-    color: '#FFFFFF',
+    color: Colors.textPrimary,
   },
   weekButtonDate: {
     fontSize: moderateScale(11),
     marginTop: verticalScale(4),
   },
   weekButtonDateActive: {
-    color: '#059669',
+    color: Colors.bgPrimary,
     opacity: 0.7,
   },
   weekButtonDateInactive: {
-    color: '#FFFFFF',
+    color: Colors.textSecondary,
     opacity: 0.7,
   },
   dateSelector: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: Colors.bgCard,
     paddingVertical: verticalScale(16),
     paddingHorizontal: moderateScale(16),
     borderBottomWidth: 1,
-    borderBottomColor: '#E5E7EB',
+    borderBottomColor: Colors.borderDark,
   },
   dateButton: {
     alignItems: 'center',
@@ -495,12 +503,15 @@ const styles = StyleSheet.create({
     borderRadius: moderateScale(12),
     marginRight: moderateScale(8),
     minWidth: scale(60),
+    borderWidth: 1,
+    borderColor: Colors.borderDark,
   },
   dateButtonActive: {
-    backgroundColor: '#059669',
+    backgroundColor: Colors.emerald,
+    borderColor: Colors.emerald,
   },
   dateButtonInactive: {
-    backgroundColor: '#F9FAFB',
+    backgroundColor: Colors.bgCardHover,
   },
   dateDay: {
     fontSize: moderateScale(11),
@@ -508,26 +519,26 @@ const styles = StyleSheet.create({
     marginBottom: verticalScale(4),
   },
   dateDayActive: {
-    color: '#FFFFFF',
+    color: Colors.bgPrimary,
   },
   dateDayInactive: {
-    color: '#6B7280',
+    color: Colors.textSecondary,
   },
   dateNum: {
     fontSize: moderateScale(18),
     fontWeight: 'bold',
   },
   dateNumActive: {
-    color: '#FFFFFF',
+    color: Colors.bgPrimary,
   },
   dateNumInactive: {
-    color: '#374151',
+    color: Colors.textPrimary,
   },
   tabContainer: {
     flexDirection: 'row',
-    backgroundColor: '#FFFFFF',
+    backgroundColor: Colors.bgCard,
     borderBottomWidth: 1,
-    borderBottomColor: '#E5E7EB',
+    borderBottomColor: Colors.borderDark,
     paddingHorizontal: moderateScale(16),
   },
   tabButton: {
@@ -540,10 +551,10 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   tabTextActive: {
-    color: '#059669',
+    color: Colors.emerald,
   },
   tabTextInactive: {
-    color: '#6B7280',
+    color: Colors.textSecondary,
   },
   tabIndicator: {
     position: 'absolute',
@@ -551,7 +562,7 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     height: 3,
-    backgroundColor: '#059669',
+    backgroundColor: Colors.emerald,
     borderTopLeftRadius: 3,
     borderTopRightRadius: 3,
   },
@@ -559,15 +570,15 @@ const styles = StyleSheet.create({
     padding: moderateScale(16),
   },
   summaryCard: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: Colors.bgCard,
     borderRadius: moderateScale(16),
     padding: moderateScale(20),
     marginBottom: verticalScale(16),
     borderWidth: 1,
-    borderColor: '#E5E7EB',
+    borderColor: Colors.borderDark,
     ...Platform.select({
       ios: {
-        shadowColor: '#000',
+        shadowColor: Colors.emerald,
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.1,
         shadowRadius: 8,
@@ -585,7 +596,7 @@ const styles = StyleSheet.create({
   summaryTitle: {
     fontSize: moderateScale(18),
     fontWeight: 'bold',
-    color: '#111827',
+    color: Colors.textPrimary,
     marginLeft: moderateScale(8),
   },
   progressSection: {
@@ -603,16 +614,16 @@ const styles = StyleSheet.create({
   progressLabel: {
     fontSize: moderateScale(14),
     fontWeight: '500',
-    color: '#374151',
+    color: Colors.textSecondary,
   },
   progressValue: {
     fontSize: moderateScale(13),
     fontWeight: 'bold',
-    color: '#111827',
+    color: Colors.textPrimary,
   },
   progressBar: {
     height: verticalScale(12),
-    backgroundColor: '#E5E7EB',
+    backgroundColor: Colors.bgCardHover,
     borderRadius: moderateScale(6),
     overflow: 'hidden',
   },
@@ -623,13 +634,13 @@ const styles = StyleSheet.create({
   mealCard: {
     borderRadius: moderateScale(16),
     marginBottom: verticalScale(16),
-    borderWidth: 2,
+    borderWidth: 1,
     overflow: 'hidden',
     ...Platform.select({
       ios: {
-        shadowColor: '#000',
+        shadowColor: Colors.emerald,
         shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.08,
+        shadowOpacity: 0.1,
         shadowRadius: 8,
       },
       android: {
@@ -662,14 +673,14 @@ const styles = StyleSheet.create({
   mealType: {
     fontSize: moderateScale(11),
     fontWeight: '600',
-    color: '#6B7280',
+    color: Colors.textSecondary,
     letterSpacing: 0.5,
     marginBottom: verticalScale(4),
   },
   mealName: {
     fontSize: moderateScale(16),
     fontWeight: 'bold',
-    color: '#111827',
+    color: Colors.textPrimary,
     flexWrap: 'wrap',
   },
   chevronContainer: {
@@ -681,7 +692,7 @@ const styles = StyleSheet.create({
   },
   mealDescription: {
     fontSize: moderateScale(13),
-    color: '#6B7280',
+    color: Colors.textSecondary,
     marginBottom: verticalScale(16),
     lineHeight: moderateScale(20),
   },
@@ -694,21 +705,21 @@ const styles = StyleSheet.create({
   macroItem: {
     flex: 1,
     alignItems: 'center',
-    backgroundColor: '#FFFFFF',
+    backgroundColor: Colors.bgCardHover,
     padding: moderateScale(12),
     borderRadius: moderateScale(12),
     borderWidth: 1,
-    borderColor: '#F3F4F6',
+    borderColor: Colors.borderDark,
   },
   macroValue: {
     fontSize: moderateScale(16),
     fontWeight: 'bold',
-    color: '#111827',
+    color: Colors.textPrimary,
     marginTop: verticalScale(4),
   },
   macroLabel: {
     fontSize: moderateScale(10),
-    color: '#6B7280',
+    color: Colors.textSecondary,
     marginTop: verticalScale(2),
   },
   mealMeta: {
@@ -716,7 +727,7 @@ const styles = StyleSheet.create({
     gap: moderateScale(16),
     paddingTop: verticalScale(16),
     borderTopWidth: 1,
-    borderTopColor: '#F3F4F6',
+    borderTopColor: Colors.borderDark,
   },
   metaItem: {
     flexDirection: 'row',
@@ -725,12 +736,12 @@ const styles = StyleSheet.create({
   },
   metaText: {
     fontSize: moderateScale(13),
-    color: '#6B7280',
+    color: Colors.textSecondary,
   },
   expandedContent: {
-    backgroundColor: '#F9FAFB',
+    backgroundColor: Colors.bgCardHover,
     borderTopWidth: 1,
-    borderTopColor: '#E5E7EB',
+    borderTopColor: Colors.borderDark,
     padding: moderateScale(20),
   },
   expandedSection: {
@@ -744,7 +755,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: moderateScale(16),
     fontWeight: 'bold',
-    color: '#111827',
+    color: Colors.textPrimary,
     marginLeft: moderateScale(8),
   },
   ingredientsGrid: {
@@ -755,22 +766,24 @@ const styles = StyleSheet.create({
   ingredientItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#FFFFFF',
+    backgroundColor: Colors.bgCard,
     paddingHorizontal: moderateScale(12),
     paddingVertical: verticalScale(10),
     borderRadius: moderateScale(8),
     width: isTablet ? '48%' : '100%',
+    borderWidth: 1,
+    borderColor: Colors.borderDark,
   },
   ingredientDot: {
     width: moderateScale(6),
     height: moderateScale(6),
     borderRadius: moderateScale(3),
-    backgroundColor: '#10B981',
+    backgroundColor: Colors.emerald,
     marginRight: moderateScale(8),
   },
   ingredientText: {
     fontSize: moderateScale(13),
-    color: '#374151',
+    color: Colors.textSecondary,
     flex: 1,
   },
   instructionsList: {
@@ -778,39 +791,41 @@ const styles = StyleSheet.create({
   },
   instructionItem: {
     flexDirection: 'row',
-    backgroundColor: '#FFFFFF',
+    backgroundColor: Colors.bgCard,
     padding: moderateScale(12),
     borderRadius: moderateScale(12),
     gap: moderateScale(12),
+    borderWidth: 1,
+    borderColor: Colors.borderDark,
   },
   instructionNumber: {
     width: moderateScale(28),
     height: moderateScale(28),
     borderRadius: moderateScale(14),
-    backgroundColor: '#10B981',
+    backgroundColor: Colors.emerald,
     alignItems: 'center',
     justifyContent: 'center',
   },
   instructionNumberText: {
     fontSize: moderateScale(13),
     fontWeight: 'bold',
-    color: '#FFFFFF',
+    color: Colors.bgPrimary,
   },
   instructionText: {
     flex: 1,
     fontSize: moderateScale(13),
-    color: '#374151',
+    color: Colors.textSecondary,
     lineHeight: moderateScale(20),
   },
   nutritionCard: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: Colors.bgCard,
     borderRadius: moderateScale(16),
     padding: moderateScale(20),
     borderWidth: 1,
-    borderColor: '#E5E7EB',
+    borderColor: Colors.borderDark,
     ...Platform.select({
       ios: {
-        shadowColor: '#000',
+        shadowColor: Colors.emerald,
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.1,
         shadowRadius: 8,
@@ -821,13 +836,13 @@ const styles = StyleSheet.create({
     }),
   },
   backButton: {
-  padding: moderateScale(6),
-  marginRight: moderateScale(10),
-},
+    padding: moderateScale(6),
+    marginRight: moderateScale(10),
+  },
   nutritionTitle: {
     fontSize: moderateScale(18),
     fontWeight: 'bold',
-    color: '#111827',
+    color: Colors.textPrimary,
     marginBottom: verticalScale(20),
   },
   nutritionGrid: {
@@ -836,32 +851,32 @@ const styles = StyleSheet.create({
     gap: moderateScale(12),
   },
   nutritionItem: {
-    backgroundColor: '#F9FAFB',
+    backgroundColor: Colors.bgCardHover,
     padding: moderateScale(16),
     borderRadius: moderateScale(12),
     borderWidth: 1,
-    borderColor: '#E5E7EB',
+    borderColor: Colors.borderDark,
     width: isTablet ? '48%' : '47%',
   },
   nutritionItemLabel: {
     fontSize: moderateScale(13),
-    color: '#6B7280',
+    color: Colors.textSecondary,
     marginBottom: verticalScale(4),
   },
   nutritionItemValue: {
     fontSize: moderateScale(24),
     fontWeight: 'bold',
-    color: '#111827',
+    color: Colors.textPrimary,
     marginBottom: verticalScale(4),
   },
   nutritionItemUnit: {
     fontSize: moderateScale(13),
-    color: '#6B7280',
+    color: Colors.textSecondary,
     fontWeight: 'normal',
   },
   nutritionItemTarget: {
     fontSize: moderateScale(11),
-    color: '#6B7280',
+    color: Colors.textMuted,
   },
 });
 

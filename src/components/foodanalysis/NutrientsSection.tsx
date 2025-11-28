@@ -2,6 +2,7 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { Colors } from "@/constants/Colors";
 
 const NutrientsSection = ({ totalNutrition }) => {
   return (
@@ -36,19 +37,21 @@ const NutrientsSection = ({ totalNutrition }) => {
 
 const styles = StyleSheet.create({
   section: { marginTop: 24, paddingHorizontal: 20 },
-  sectionTitle: { fontSize: 20, fontWeight: "700", color: "#333", marginBottom: 16 },
+  sectionTitle: { fontSize: 20, fontWeight: "700", color: Colors.textPrimary, marginBottom: 16 },
   nutrientGrid: { flexDirection: "row", justifyContent: "space-between" },
   nutrientItem: {
-    backgroundColor: "#FFF",
+    backgroundColor: Colors.bgCard,
     borderRadius: 12,
     padding: 16,
     alignItems: "center",
     flex: 1,
     marginHorizontal: 4,
     elevation: 2,
+    borderWidth: 1,
+    borderColor: Colors.borderDark,
   },
-  nutrientValue: { fontSize: 20, fontWeight: "700", color: "#333", marginTop: 8 },
-  nutrientLabel: { fontSize: 12, fontWeight: "500", color: "#666", marginTop: 4 },
+  nutrientValue: { fontSize: 20, fontWeight: "700", color: Colors.textPrimary, marginTop: 8 },
+  nutrientLabel: { fontSize: 12, fontWeight: "500", color: Colors.textSecondary, marginTop: 4 },
 });
 
 export default NutrientsSection;

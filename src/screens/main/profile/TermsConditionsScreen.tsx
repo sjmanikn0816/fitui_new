@@ -48,17 +48,17 @@ const TermsConditionsScreen = ({ navigation }: any) => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#fff" },
-  header: { padding: 16, borderBottomWidth: 1, borderColor: "#eee" },
-  title: { fontSize: 18, fontWeight: "600", color: "#111" },
+  container: { flex: 1, backgroundColor: Colors.bgPrimary },
+  header: { padding: 16, borderBottomWidth: 1, borderColor: Colors.borderDark },
+  title: { fontSize: 18, fontWeight: "600", color: Colors.textPrimary },
   webView: { flex: 1 },
   loader: {
     ...StyleSheet.absoluteFillObject,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "rgba(255,255,255,0.6)",
+    backgroundColor: "rgba(10, 10, 12, 0.8)",
   },
-  loaderText: { marginTop: 10, color: "#666" },
+  loaderText: { marginTop: 10, color: Colors.textSecondary },
 });
 
 export default TermsConditionsScreen;
