@@ -40,15 +40,16 @@ const UserProfileCard: React.FC<UserProfileCardProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: Colors.white,
+    backgroundColor: Colors.bgCard,
     marginHorizontal: 16,
     marginTop: 16,
     borderRadius: 20,
+    borderWidth: 1,
+    borderColor: Colors.borderDark,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.12,
+    shadowOpacity: 0.3,
     shadowRadius: 8,
-    // Box shadow for Android
     elevation: 6,
   },
   content: {
@@ -59,7 +60,7 @@ const styles = StyleSheet.create({
   avatar: {
     width: 64,
     height: 64,
-    backgroundColor: Colors.primary,
+    backgroundColor: Colors.emerald,
     borderRadius: 32,
     alignItems: 'center',
     justifyContent: 'center',
@@ -77,11 +78,11 @@ const styles = StyleSheet.create({
   name: {
     fontSize: 20,
     fontWeight: '600',
-    color: Colors.text,
+    color: Colors.textPrimary,
     marginRight: 8,
   },
   verifiedBadge: {
-    backgroundColor: Colors.primary,
+    backgroundColor: Colors.emerald,
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 8,
