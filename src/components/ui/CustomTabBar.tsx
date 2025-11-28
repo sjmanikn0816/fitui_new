@@ -31,7 +31,7 @@ const CustomTabBar: React.FC<BottomTabBarProps> = ({
       const isActive = state.index === index;
 
       Animated.spring(scaleAnims[index], {
-        toValue: isActive ? 1.08 : 1,
+        toValue: isActive ? 1.05 : 1,
         friction: 6,
         tension: 120,
         useNativeDriver: true,
@@ -47,12 +47,11 @@ const CustomTabBar: React.FC<BottomTabBarProps> = ({
       tintColor: focused ? Colors.emerald : Colors.textMuted,
     };
 
-    // Icon wrapper with scale animation and static glow
+    // Simple icon wrapper with scale animation
     const AnimatedIconWrapper = ({ children }: { children: React.ReactNode }) => (
       <Animated.View
         style={[
           styles.iconWrapper,
-          focused && styles.iconWrapperActive,
           {
             transform: [{ scale: scaleAnims[index] }],
           },
@@ -74,17 +73,18 @@ const CustomTabBar: React.FC<BottomTabBarProps> = ({
               }
             ]}
           >
-            {/* Outer glow ring */}
-            {focused && (
-              <View style={styles.centerGlowRing} />
-            )}
             <Image
               source={
                 focused
-                  ? require("assets/Ai_inactive.png")
-                  : require("assets/Ai_active.png")
+                  ? require("assets/Ai_active.png")
+                  : require("assets/Ai_inactive.png")
               }
-              style={{ width: 28, height: 28, resizeMode: "contain" }}
+              style={{
+                width: 28,
+                height: 28,
+                resizeMode: "contain",
+                tintColor: focused ? Colors.emerald : Colors.textMuted,
+              }}
             />
           </Animated.View>
         );
@@ -94,8 +94,8 @@ const CustomTabBar: React.FC<BottomTabBarProps> = ({
             <Image
               source={
                 focused
-                  ? require("assets/nutrition_inactive.png")
-                  : require("assets/nutrition_active.png")
+                  ? require("assets/nutrition_active.png")
+                  : require("assets/nutrition_inactive.png")
               }
               style={iconStyle}
             />
@@ -107,8 +107,8 @@ const CustomTabBar: React.FC<BottomTabBarProps> = ({
             <Image
               source={
                 focused
-                  ? require("assets/health_inactive.png")
-                  : require("assets/health_active.png")
+                  ? require("assets/health_active.png")
+                  : require("assets/health_inactive.png")
               }
               style={iconStyle}
             />
@@ -120,8 +120,8 @@ const CustomTabBar: React.FC<BottomTabBarProps> = ({
             <Image
               source={
                 focused
-                  ? require("assets/goal_inactive.png")
-                  : require("assets/goal_active.png")
+                  ? require("assets/goal_active.png")
+                  : require("assets/goal_inactive.png")
               }
               style={iconStyle}
             />
@@ -133,8 +133,8 @@ const CustomTabBar: React.FC<BottomTabBarProps> = ({
             <Image
               source={
                 focused
-                  ? require("assets/food_inactive.png")
-                  : require("assets/food_active.png")
+                  ? require("assets/food_active.png")
+                  : require("assets/food_inactive.png")
               }
               style={iconStyle}
             />
@@ -152,17 +152,7 @@ const CustomTabBar: React.FC<BottomTabBarProps> = ({
 
   return (
     <View style={[styles.container, { paddingBottom: insets.bottom > 0 ? insets.bottom : 16 }]}>
-      {/* Gradient glow behind tab bar */}
-      <View style={styles.glowContainer}>
-        <LinearGradient
-          colors={['transparent', Colors.tabBarGlow, 'transparent']}
-          start={{ x: 0, y: 0.5 }}
-          end={{ x: 1, y: 0.5 }}
-          style={styles.glowGradient}
-        />
-      </View>
-
-      {/* Main tab bar container with blur */}
+      {/* Main tab bar container */}
       <View style={styles.tabBarWrapper}>
         {Platform.OS === 'ios' ? (
           <BlurView intensity={40} tint="dark" style={styles.blurContainer}>
@@ -199,7 +189,7 @@ const CustomTabBar: React.FC<BottomTabBarProps> = ({
               });
             };
 
-            const icon = getIcon(route.name, isFocused, 26, routeIndex);
+            const icon = getIcon(route.name, isFocused, 24, routeIndex);
             if (!icon) return null;
 
             return (
@@ -216,10 +206,6 @@ const CustomTabBar: React.FC<BottomTabBarProps> = ({
                   isCenter && styles.centerTabButton,
                 ]}
               >
-                {/* Active indicator background */}
-                {isFocused && !isCenter && (
-                  <View style={styles.activeIndicator} />
-                )}
                 {icon}
               </TouchableOpacity>
             );
@@ -237,125 +223,66 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     alignItems: "center",
-    paddingHorizontal: 16,
+    paddingHorizontal: 20,
     backgroundColor: "transparent",
-  },
-  glowContainer: {
-    position: 'absolute',
-    bottom: 8,
-    left: 40,
-    right: 40,
-    height: 60,
-    opacity: 0.5,
-  },
-  glowGradient: {
-    flex: 1,
-    borderRadius: 30,
   },
   tabBarWrapper: {
     width: "100%",
-    maxWidth: 360,
-    borderRadius: 28,
+    maxWidth: 340,
+    borderRadius: 32,
     overflow: 'hidden',
-    // Outer shadow for depth
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.4,
-    shadowRadius: 16,
-    elevation: 24,
   },
   blurContainer: {
     ...StyleSheet.absoluteFillObject,
-    borderRadius: 28,
+    borderRadius: 32,
   },
   androidBackground: {
-    backgroundColor: Colors.tabBarBg,
+    backgroundColor: "rgba(18, 18, 22, 0.95)",
   },
   tabBarOverlay: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: Colors.tabBarBg,
-    borderRadius: 28,
+    backgroundColor: "rgba(18, 18, 22, 0.85)",
+    borderRadius: 32,
   },
   tabBarContainer: {
     flexDirection: "row",
-    borderRadius: 28,
-    paddingVertical: 14,
-    paddingHorizontal: 12,
+    borderRadius: 32,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
     alignItems: "center",
     justifyContent: "space-around",
     borderWidth: 1,
-    borderColor: Colors.tabBarBorder,
-    // Inner glow effect
-    shadowColor: Colors.emerald,
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.08,
-    shadowRadius: 20,
+    borderColor: "rgba(255, 255, 255, 0.08)",
   },
   tabButton: {
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    paddingVertical: 6,
-    minWidth: 52,
-    position: 'relative',
+    paddingVertical: 8,
+    minWidth: 48,
   },
   centerTabButton: {
-    flex: 1.3,
-  },
-  activeIndicator: {
-    position: 'absolute',
-    top: 0,
-    bottom: 0,
-    left: 4,
-    right: 4,
-    backgroundColor: Colors.activeTabBg,
-    borderRadius: 16,
-    borderWidth: 1,
-    borderColor: Colors.activeTabBorder,
+    flex: 1.2,
   },
   iconWrapper: {
-    padding: 8,
-    borderRadius: 14,
+    padding: 6,
+    borderRadius: 12,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  iconWrapperActive: {
-    // Static glow when active (no animation conflict)
-    shadowColor: Colors.emerald,
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.6,
-    shadowRadius: 10,
-    elevation: 8,
-  },
   centerButton: {
-    width: 52,
-    height: 52,
-    borderRadius: 26,
-    backgroundColor: "rgba(52, 211, 153, 0.12)",
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: "rgba(52, 211, 153, 0.1)",
     alignItems: "center",
     justifyContent: "center",
-    borderWidth: 1.5,
-    borderColor: "rgba(52, 211, 153, 0.25)",
-    position: 'relative',
+    borderWidth: 1,
+    borderColor: "rgba(52, 211, 153, 0.2)",
   },
   centerButtonActive: {
-    backgroundColor: "rgba(52, 211, 153, 0.2)",
-    borderColor: Colors.emerald,
-    // Glow effect
-    shadowColor: Colors.emerald,
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.5,
-    shadowRadius: 16,
-    elevation: 12,
-  },
-  centerGlowRing: {
-    position: 'absolute',
-    width: 64,
-    height: 64,
-    borderRadius: 32,
-    borderWidth: 1,
-    borderColor: 'rgba(52, 211, 153, 0.3)',
-    backgroundColor: 'transparent',
+    backgroundColor: "rgba(52, 211, 153, 0.18)",
+    borderColor: "rgba(52, 211, 153, 0.4)",
   },
 });
 
