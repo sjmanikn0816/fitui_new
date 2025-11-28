@@ -2,6 +2,7 @@
 import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView, SafeAreaView } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { Colors } from "@/constants/Colors";
 
 interface SafetyAlertProps {
   message: string;
@@ -129,7 +130,7 @@ const SafetyAlert: React.FC<SafetyAlertProps> = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f9fafb",
+    backgroundColor: Colors.bgPrimary,
   },
   scrollContent: {
     flexGrow: 1,
@@ -143,10 +144,13 @@ const styles = StyleSheet.create({
     padding: 24,
     borderRadius: 16,
     borderLeftWidth: 5,
-    borderLeftColor: "#dc2626",
-    shadowColor: "#000",
+    borderLeftColor: "#EF4444",
+    backgroundColor: Colors.bgCard,
+    borderWidth: 1,
+    borderColor: Colors.borderDark,
+    shadowColor: Colors.emerald,
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.1,
+    shadowOpacity: 0.15,
     shadowRadius: 12,
     elevation: 5,
   },
@@ -164,56 +168,58 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 20,
     fontWeight: "700",
+    color: Colors.textPrimary,
   },
   message: {
     fontSize: 16,
     lineHeight: 24,
     marginBottom: 20,
     fontWeight: "500",
+    color: Colors.textSecondary,
   },
   suggestionBox: {
-    backgroundColor: "#f0f9ff",
+    backgroundColor: "rgba(59, 130, 246, 0.1)",
     padding: 14,
     borderRadius: 10,
     marginBottom: 14,
     borderLeftWidth: 3,
-    borderLeftColor: "#0284c7",
+    borderLeftColor: "#3B82F6",
   },
   suggestionLabel: {
     fontSize: 15,
     fontWeight: "700",
-    color: "#0c4a6e",
+    color: "#3B82F6",
     marginBottom: 8,
   },
   suggestionText: {
     fontSize: 14,
-    color: "#075985",
+    color: Colors.textSecondary,
     lineHeight: 21,
   },
   alternativesBox: {
-    backgroundColor: "#f0fdf4",
+    backgroundColor: "rgba(52, 211, 153, 0.1)",
     padding: 14,
     borderRadius: 10,
     marginBottom: 14,
     borderLeftWidth: 3,
-    borderLeftColor: "#16a34a",
+    borderLeftColor: Colors.emerald,
   },
   alternativesLabel: {
     fontSize: 15,
     fontWeight: "700",
-    color: "#166534",
+    color: Colors.emerald,
     marginBottom: 10,
   },
   alternativeItem: {
     fontSize: 14,
-    color: "#15803d",
+    color: Colors.textSecondary,
     lineHeight: 22,
     marginBottom: 6,
   },
   actionBox: {
     flexDirection: "row",
     alignItems: "flex-start",
-    backgroundColor: "#eff6ff",
+    backgroundColor: "rgba(59, 130, 246, 0.1)",
     padding: 14,
     borderRadius: 10,
     marginBottom: 14,
@@ -222,14 +228,14 @@ const styles = StyleSheet.create({
   actionText: {
     flex: 1,
     fontSize: 14,
-    color: "#1e40af",
+    color: "#3B82F6",
     lineHeight: 20,
     fontWeight: "500",
   },
   disclaimerBox: {
     flexDirection: "row",
     alignItems: "flex-start",
-    backgroundColor: "#faf5ff",
+    backgroundColor: "rgba(168, 85, 247, 0.1)",
     padding: 12,
     borderRadius: 8,
     marginBottom: 20,
@@ -238,7 +244,7 @@ const styles = StyleSheet.create({
   disclaimerText: {
     flex: 1,
     fontSize: 12,
-    color: "#6b21a8",
+    color: "#A855F7",
     lineHeight: 18,
   },
   buttonContainer: {
@@ -251,18 +257,18 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#10b981",
+    backgroundColor: Colors.emerald,
     paddingVertical: 14,
     borderRadius: 12,
     gap: 8,
-    shadowColor: "#10b981",
+    shadowColor: Colors.emerald,
     shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.3,
     shadowRadius: 6,
     elevation: 4,
   },
   retryButtonText: {
-    color: "#fff",
+    color: Colors.bgPrimary,
     fontSize: 16,
     fontWeight: "700",
   },
@@ -270,14 +276,14 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#f3f4f6",
+    backgroundColor: Colors.bgCardHover,
     paddingVertical: 14,
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: "#d1d5db",
+    borderColor: Colors.borderDark,
   },
   secondaryButtonText: {
-    color: "#374151",
+    color: Colors.textSecondary,
     fontSize: 16,
     fontWeight: "600",
   },

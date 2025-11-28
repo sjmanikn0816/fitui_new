@@ -254,54 +254,58 @@ const MacroItem = ({ label, value, unit, color }: { label: string; value?: numbe
 );
 
 const styles = StyleSheet.create({
-  container: { 
-    flex: 1, 
-    backgroundColor: Colors.white,
+  container: {
+    flex: 1,
+    backgroundColor: Colors.bgPrimary,
   },
-  header: { 
-    padding: 24, 
-    backgroundColor: "#ffffff",
+  header: {
+    padding: 24,
+    backgroundColor: Colors.bgCard,
     borderBottomLeftRadius: 24,
     borderBottomRightRadius: 24,
-    shadowColor: "#000",
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.borderDark,
+    shadowColor: Colors.emerald,
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
+    shadowOpacity: 0.1,
     shadowRadius: 8,
     elevation: 3,
   },
   backButtonContainer: {
     marginBottom: 16,
   },
-  backButton: { 
-    fontSize: 15, 
-    color: "#3b82f6", 
-    fontWeight: "600" 
+  backButton: {
+    fontSize: 15,
+    color: Colors.emerald,
+    fontWeight: "600"
   },
   mealBadge: {
     alignSelf: "flex-start",
-    backgroundColor: "#eff6ff",
+    backgroundColor: "rgba(52, 211, 153, 0.15)",
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 8,
     marginBottom: 12,
+    borderWidth: 1,
+    borderColor: "rgba(52, 211, 153, 0.3)",
   },
-  mealType: { 
-    fontSize: 12, 
-    color: "#3b82f6", 
+  mealType: {
+    fontSize: 12,
+    color: Colors.emerald,
     fontWeight: "700",
     letterSpacing: 1,
   },
-  mealName: { 
-    fontSize: 26, 
-    fontWeight: "bold", 
+  mealName: {
+    fontSize: 26,
+    fontWeight: "bold",
     marginBottom: 8,
-    color: "#0f172a",
+    color: Colors.textPrimary,
     lineHeight: 32,
   },
-  mealDescription: { 
-    fontSize: 15, 
-    color: "#64748b", 
-    lineHeight: 22 
+  mealDescription: {
+    fontSize: 15,
+    color: Colors.textSecondary,
+    lineHeight: 22
   },
   statsContainer: {
     flexDirection: "row",
@@ -311,13 +315,15 @@ const styles = StyleSheet.create({
   },
   statCard: {
     flex: 1,
-    backgroundColor: "#ffffff",
+    backgroundColor: Colors.bgCard,
     borderRadius: 16,
     padding: 16,
     alignItems: "center",
-    shadowColor: "#000",
+    borderWidth: 1,
+    borderColor: Colors.borderDark,
+    shadowColor: Colors.emerald,
     shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
+    shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 2,
   },
@@ -327,24 +333,26 @@ const styles = StyleSheet.create({
   statValue: {
     fontSize: 18,
     fontWeight: "bold",
-    color: "#0f172a",
+    color: Colors.textPrimary,
     marginBottom: 2,
   },
   statLabel: {
     fontSize: 11,
-    color: "#94a3b8",
+    color: Colors.textMuted,
     textTransform: "uppercase",
     letterSpacing: 0.5,
   },
-  card: { 
-    backgroundColor: "#ffffff", 
-    borderRadius: 20, 
-    padding: 20, 
+  card: {
+    backgroundColor: Colors.bgCard,
+    borderRadius: 20,
+    padding: 20,
     marginHorizontal: 16,
     marginBottom: 16,
-    shadowColor: "#000",
+    borderWidth: 1,
+    borderColor: Colors.borderDark,
+    shadowColor: Colors.emerald,
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.06,
+    shadowOpacity: 0.1,
     shadowRadius: 8,
     elevation: 3,
   },
@@ -354,24 +362,24 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     paddingBottom: 16,
     borderBottomWidth: 1,
-    borderBottomColor: "#f1f5f9",
+    borderBottomColor: Colors.borderDark,
   },
   cardIconContainer: {
     width: 36,
     height: 36,
     borderRadius: 10,
-    backgroundColor: "#f8fafc",
+    backgroundColor: Colors.bgCardHover,
     alignItems: "center",
     justifyContent: "center",
     marginRight: 12,
   },
-  cardTitle: { 
-    fontSize: 17, 
-    fontWeight: "700", 
-    color: "#0f172a",
+  cardTitle: {
+    fontSize: 17,
+    fontWeight: "700",
+    color: Colors.textPrimary,
     letterSpacing: -0.3,
   },
- macroGrid: {
+  macroGrid: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginBottom: 16,
@@ -383,11 +391,11 @@ const styles = StyleSheet.create({
   macroValue: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#111827',
+    color: Colors.textPrimary,
   },
   macroLabel: {
     fontSize: 12,
-    color: '#6B7280',
+    color: Colors.textSecondary,
     marginTop: 4,
   },
   micronutrientList: {
@@ -400,91 +408,113 @@ const styles = StyleSheet.create({
   },
   micronutrientLabel: {
     fontSize: 14,
-    color: '#4b5563',
+    color: Colors.textSecondary,
   },
   micronutrientValue: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#111827',
+    color: Colors.textPrimary,
   },
   ingredientsContainer: {
     gap: 4,
   },
-  ingredientRow: { 
-    flexDirection: "row", 
+  ingredientRow: {
+    flexDirection: "row",
     paddingVertical: 10,
     paddingHorizontal: 4,
   },
-  checkCircle: { 
-    width: 24, 
-    height: 24, 
-    borderRadius: 12, 
-    backgroundColor: "#10b981", 
-    alignItems: "center", 
-    justifyContent: "center", 
+  checkCircle: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    backgroundColor: Colors.emerald,
+    alignItems: "center",
+    justifyContent: "center",
     marginRight: 12,
     marginTop: 2,
   },
-  ingredientContent: { 
-    flex: 1 
+  ingredientContent: {
+    flex: 1
   },
-  ingredientName: { 
-    fontSize: 15, 
-    fontWeight: "600", 
-    color: "#0f172a",
+  ingredientName: {
+    fontSize: 15,
+    fontWeight: "600",
+    color: Colors.textPrimary,
     marginBottom: 4,
   },
-  ingredientDetails: { 
-    fontSize: 13, 
-    color: "#64748b" 
+  ingredientDetails: {
+    fontSize: 13,
+    color: Colors.textSecondary
   },
   instructionsContainer: {
     gap: 4,
   },
-  instructionRow: { 
-    flexDirection: "row", 
+  instructionRow: {
+    flexDirection: "row",
     paddingVertical: 12,
     paddingHorizontal: 4,
   },
-  stepNumber: { 
-    width: 32, 
-    height: 32, 
-    borderRadius: 16, 
-    backgroundColor: "#dbeafe", 
-    alignItems: "center", 
-    justifyContent: "center", 
+  stepNumber: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: "rgba(52, 211, 153, 0.15)",
+    alignItems: "center",
+    justifyContent: "center",
     marginRight: 12,
     marginTop: 2,
   },
-  stepNumberText: { 
-    fontSize: 14, 
-    fontWeight: "700", 
-    color: "#2563eb" 
+  stepNumberText: {
+    fontSize: 14,
+    fontWeight: "700",
+    color: Colors.emerald
   },
   instructionContent: {
     flex: 1,
   },
-  instructionText: { 
-    fontSize: 15, 
-    color: "#334155",
+  instructionText: {
+    fontSize: 15,
+    color: Colors.textSecondary,
     lineHeight: 22,
   },
   healthBenefitsContainer: {
-    backgroundColor: "#f0fdf4",
+    backgroundColor: "rgba(52, 211, 153, 0.1)",
     borderRadius: 12,
     padding: 16,
     borderLeftWidth: 3,
-    borderLeftColor: "#10b981",
+    borderLeftColor: Colors.emerald,
   },
-  healthBenefitsText: { 
-    fontSize: 15, 
-    color: "#166534",
+  healthBenefitsText: {
+    fontSize: 15,
+    color: Colors.emerald,
     lineHeight: 22,
   },
   bottomSpacer: {
     height: 24,
   },
-
+  proteinText: {
+    color: Colors.emerald,
+  },
+  carbsText: {
+    color: "#FBBF24",
+  },
+  fatText: {
+    color: "#EF4444",
+  },
+  macroIndicator: {
+    width: 4,
+    height: 24,
+    borderRadius: 2,
+    marginRight: 8,
+  },
+  macroContent: {
+    flex: 1,
+  },
+  macroRow: {
+    flexDirection: "row",
+    gap: 12,
+    marginBottom: 12,
+  },
 });
 
 export default MealDetailScreen;
