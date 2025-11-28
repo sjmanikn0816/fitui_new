@@ -41,10 +41,10 @@ const ConditionSelector: React.FC<Props> = ({
       value={enabled}
       onValueChange={setEnabled}
       trackColor={{
-        false: Colors.gray300,
-        true: Colors.primaryLight,
+        false: Colors.bgCardHover,
+        true: Colors.emeraldDark,
       }}
-      thumbColor={enabled ? Colors.primary : Colors.gray400}
+      thumbColor={enabled ? Colors.emerald : Colors.textMuted}
     />
   </View>
 
@@ -62,7 +62,7 @@ const ConditionSelector: React.FC<Props> = ({
           <MaterialIcons
             name={c.selected ? "check-box" : "check-box-outline-blank"}
             size={22}
-            color={c.selected ? Colors.primary : Colors.gray500}
+            color={c.selected ? Colors.emerald : Colors.textMuted}
             style={{ marginRight: 10 }}
           />
           <Text
