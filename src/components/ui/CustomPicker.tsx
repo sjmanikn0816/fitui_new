@@ -56,7 +56,7 @@ const CustomPicker: React.FC<CustomPickerProps> = ({
         >
           {selectedValue || placeholder}
         </Text>
-        <Ionicons name="chevron-down" size={20} color={Colors.black} />
+        <Ionicons name="chevron-down" size={20} color={Colors.textPrimary} />
       </TouchableOpacity>
 
       {/* Modal dropdown */}
@@ -103,7 +103,7 @@ const styles = StyleSheet.create({
     fontSize: Typography.sm,
     fontWeight: "600",
     marginBottom: 4,
-    color: Colors.text,
+    color: Colors.textSecondary,
   },
   pickerContainer: {
     flexDirection: "row",
@@ -112,43 +112,45 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     height: 50,
     borderWidth: 1,
-    borderColor: Colors.border,
+    borderColor: Colors.borderDark,
     borderRadius: 12,
-    backgroundColor: Colors.white,
-    shadowColor: "#000",
-    shadowOpacity: 0.05,
+    backgroundColor: Colors.bgCard,
+    shadowColor: Colors.emerald,
+    shadowOpacity: 0.1,
     shadowRadius: 4,
     shadowOffset: { width: 0, height: 2 },
-    elevation: 2, // Android shadow
+    elevation: 2,
   },
   pickerText: {
     fontSize: Typography.base,
-    color: Colors.text,
+    color: Colors.textPrimary,
     flex: 1,
     textAlign: "center",
   },
   modalOverlay: {
     flex: 1,
-    backgroundColor: "rgba(0,0,0,0.3)",
+    backgroundColor: "rgba(0,0,0,0.6)",
     justifyContent: "center",
     paddingHorizontal: 20,
   },
   modalContent: {
-    backgroundColor: Colors.white,
+    backgroundColor: Colors.bgCard,
     borderRadius: 16,
     paddingVertical: 8,
     maxHeight: 300,
     width: width - 40,
     alignSelf: "center",
+    borderWidth: 1,
+    borderColor: Colors.borderDark,
   },
   modalItem: {
     paddingVertical: 14,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border,
+    borderBottomColor: Colors.borderDark,
   },
   modalItemText: {
     fontSize: Typography.base,
-    color: Colors.text,
+    color: Colors.textPrimary,
     textAlign: "center",
   },
 });
