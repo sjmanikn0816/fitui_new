@@ -67,6 +67,17 @@ export const Colors = {
   purpleLight: "#C4B5FD",
   cyan: "#22D3EE",
 
+  // Navigation specific colors
+  navBackground: "rgba(10, 10, 12, 0.85)",
+  navBackgroundSolid: "#0A0A0C",
+  navBorder: "rgba(255, 255, 255, 0.06)",
+  navShadow: "rgba(52, 211, 153, 0.15)",
+  tabBarBg: "rgba(15, 15, 18, 0.92)",
+  tabBarBorder: "rgba(255, 255, 255, 0.1)",
+  tabBarGlow: "rgba(52, 211, 153, 0.2)",
+  activeTabBg: "rgba(52, 211, 153, 0.12)",
+  activeTabBorder: "rgba(52, 211, 153, 0.25)",
+
   // Legacy support (using dark theme values)
   background: "#0A0A0C",
   card: "rgba(255, 255, 255, 0.04)",

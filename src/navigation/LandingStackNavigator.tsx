@@ -23,8 +23,14 @@ const LandingStack = createStackNavigator();
 const defaultHeaderOptions = (title: string, subtitle: string) => ({
   headerShown: true,
   headerTitle: () => <HeaderWithSubtitle subtitle={subtitle} title={title} />,
-  headerStyle: { backgroundColor: Colors.white },
-  headerTintColor: Colors.black,
+  headerStyle: {
+    backgroundColor: Colors.bgPrimary,
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.navBorder,
+    elevation: 0,
+    shadowOpacity: 0,
+  },
+  headerTintColor: Colors.textPrimary,
   headerBackTitle: "",
 });
 
