@@ -289,13 +289,13 @@ const DeviceManagementScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background,
+    backgroundColor: Colors.bgPrimary,
   },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: Colors.background,
+    backgroundColor: Colors.bgPrimary,
   },
   loadingText: {
     ...Typography.body,
@@ -304,13 +304,13 @@ const styles = StyleSheet.create({
   },
   header: {
     padding: Spacing.lg,
-    backgroundColor: Colors.white,
+    backgroundColor: Colors.bgCard,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border,
+    borderBottomColor: Colors.borderDark,
   },
   title: {
     ...Typography.h2,
-    color: Colors.text,
+    color: Colors.textPrimary,
     marginBottom: Spacing.xs,
   },
   subtitle: {
@@ -320,14 +320,16 @@ const styles = StyleSheet.create({
   infoCard: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    backgroundColor: Colors.primaryLight,
+    backgroundColor: 'rgba(52, 211, 153, 0.1)',
     margin: Spacing.lg,
     padding: Spacing.md,
     borderRadius: 12,
+    borderWidth: 1,
+    borderColor: 'rgba(52, 211, 153, 0.2)',
   },
   infoText: {
     ...Typography.caption,
-    color: Colors.text,
+    color: Colors.textSecondary,
     marginLeft: Spacing.sm,
     flex: 1,
     lineHeight: 18,
@@ -337,16 +339,16 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     ...Typography.h4,
-    color: Colors.text,
+    color: Colors.textPrimary,
     marginBottom: Spacing.md,
   },
   deviceCard: {
-    backgroundColor: Colors.white,
+    backgroundColor: Colors.bgCard,
     borderRadius: 12,
     padding: Spacing.lg,
     marginBottom: Spacing.md,
     borderWidth: 1,
-    borderColor: Colors.border,
+    borderColor: Colors.borderDark,
   },
   currentDeviceCard: {
     borderColor: Colors.primary,
@@ -366,7 +368,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: Colors.gray100,
+    backgroundColor: Colors.bgCardHover,
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: Spacing.md,
@@ -377,7 +379,7 @@ const styles = StyleSheet.create({
   deviceName: {
     ...Typography.bodyMedium,
     fontWeight: '600',
-    color: Colors.text,
+    color: Colors.textPrimary,
     marginBottom: Spacing.xs / 2,
   },
   currentDeviceText: {
@@ -431,7 +433,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   toggleButton: {
-    backgroundColor: Colors.gray100,
+    backgroundColor: Colors.bgCardHover,
   },
   unregisterButton: {
     backgroundColor: 'rgba(231, 76, 60, 0.1)',
@@ -450,7 +452,7 @@ const styles = StyleSheet.create({
   },
   emptyTitle: {
     ...Typography.h4,
-    color: Colors.text,
+    color: Colors.textPrimary,
     marginTop: Spacing.md,
     marginBottom: Spacing.xs,
   },

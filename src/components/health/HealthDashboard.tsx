@@ -360,13 +360,13 @@ const HealthDashboard: React.FC<HealthDashboardProps> = ({ userId }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background,
+    backgroundColor: Colors.bgPrimary,
   },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: Colors.background,
+    backgroundColor: Colors.bgPrimary,
   },
   loadingText: {
     ...Typography.body,
@@ -375,13 +375,13 @@ const styles = StyleSheet.create({
   },
   header: {
     padding: Spacing.lg,
-    backgroundColor: Colors.white,
+    backgroundColor: Colors.bgCard,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border,
+    borderBottomColor: Colors.borderDark,
   },
   title: {
     ...Typography.h1,
-    color: Colors.text,
+    color: Colors.textPrimary,
     marginBottom: Spacing.xs,
   },
   subtitle: {
@@ -427,7 +427,7 @@ const styles = StyleSheet.create({
   },
   permissionTitle: {
     ...Typography.bodyMedium,
-    color: Colors.text,
+    color: Colors.textPrimary,
     marginBottom: Spacing.xs,
   },
   permissionText: {
@@ -445,10 +445,12 @@ const styles = StyleSheet.create({
   metricCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.white,
+    backgroundColor: Colors.bgCard,
     padding: Spacing.lg,
     borderRadius: 12,
-    shadowColor: '#000',
+    borderWidth: 1,
+    borderColor: Colors.borderDark,
+    shadowColor: Colors.emerald,
     shadowOffset: {
       width: 0,
       height: 2,
@@ -475,7 +477,7 @@ const styles = StyleSheet.create({
   },
   metricValue: {
     ...Typography.h2,
-    color: Colors.text,
+    color: Colors.textPrimary,
   },
   metricUnit: {
     ...Typography.body,
@@ -487,7 +489,7 @@ const styles = StyleSheet.create({
   },
   noDataTitle: {
     ...Typography.h3,
-    color: Colors.text,
+    color: Colors.textPrimary,
     marginTop: Spacing.md,
     marginBottom: Spacing.sm,
   },
@@ -505,13 +507,15 @@ const styles = StyleSheet.create({
   },
   infoSection: {
     padding: Spacing.lg,
-    backgroundColor: Colors.gray100,
+    backgroundColor: Colors.bgCard,
     margin: Spacing.lg,
     borderRadius: 8,
+    borderWidth: 1,
+    borderColor: Colors.borderDark,
   },
   infoTitle: {
     ...Typography.bodyMedium,
-    color: Colors.text,
+    color: Colors.textPrimary,
     marginBottom: Spacing.sm,
   },
   infoText: {
