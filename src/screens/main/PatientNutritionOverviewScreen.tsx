@@ -1,14 +1,66 @@
 import React, { useState } from "react";
-import { View, Text, ScrollView, StyleSheet, TouchableOpacity, ImageBackground, Dimensions } from "react-native";
+import {
+  View,
+  Text,
+  ScrollView,
+  StyleSheet,
+  TouchableOpacity,
+  Dimensions,
+  Modal,
+  TextInput,
+  StatusBar,
+} from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
-import { Colors } from "@/constants/Colors";
 import { useNavigation } from "@react-navigation/native";
 import { verticalScale } from "@/utils/responsive";
+import Svg, { Circle, Defs, LinearGradient as SvgLinearGradient, Stop } from "react-native-svg";
 
-const { width: screenWidth } = Dimensions.get('window');
+const { width: screenWidth } = Dimensions.get("window");
 
-// Types based on provided JSON shape
+// ============================================
+// THEME CONFIGURATION - Premium Dark Theme
+// ============================================
+const Theme = {
+  // Backgrounds
+  bgPrimary: "#0D0D0F",
+  bgCard: "rgba(255, 255, 255, 0.05)",
+  bgCardHover: "rgba(255, 255, 255, 0.08)",
+  bgInput: "rgba(255, 255, 255, 0.08)",
+
+  // Text
+  textPrimary: "#FFFFFF",
+  textSecondary: "rgba(255, 255, 255, 0.7)",
+  textMuted: "rgba(255, 255, 255, 0.4)",
+  textLabel: "rgba(255, 255, 255, 0.5)",
+
+  // Accent Colors
+  emerald: "#10B981",
+  emeraldLight: "#34D399",
+  amber: "#F59E0B",
+  amberLight: "#FBBF24",
+  blue: "#3B82F6",
+  blueLight: "#60A5FA",
+  pink: "#EC4899",
+  pinkLight: "#F472B6",
+  purple: "#8B5CF6",
+  cyan: "#06B6D4",
+  orange: "#F97316",
+  red: "#EF4444",
+
+  // Borders
+  border: "rgba(255, 255, 255, 0.08)",
+  borderLight: "rgba(255, 255, 255, 0.05)",
+
+  // Gradients
+  cardGradient: ["rgba(255, 255, 255, 0.08)", "rgba(255, 255, 255, 0.02)"],
+  emeraldGradient: ["#10B981", "#059669"],
+  amberGradient: ["rgba(245, 158, 11, 0.2)", "rgba(234, 88, 12, 0.1)"],
+};
+
+// ============================================
+// TYPES (Same as original)
+// ============================================
 interface WeightGoalProgress {
   ExpectedWeightLoss_lbs: number;
   ActualWeightLoss_lbs: number;
@@ -103,7 +155,9 @@ interface Props {
   };
 }
 
-// Simple mock fallback so screen shows something even without params
+// ============================================
+// MOCK DATA (Same as original)
+// ============================================
 const MOCK_DATA: Patient[] = [
   {
     UserID: "U001",
@@ -191,977 +245,1864 @@ const MOCK_DATA: Patient[] = [
   },
 ];
 
+// ============================================
+// CIRCULAR PROGRESS COMPONENT
+// ============================================
+interface CircularProgressProps {
+  size: number;
+  strokeWidth: number;
+  progress: number;
+  max: number;
+  color: string;
+  bgColor?: string;
+  children?: React.ReactNode;
+}
+
+const CircularProgress: React.FC<CircularProgressProps> = ({
+  size,
+  strokeWidth,
+  progress,
+  max,
+  color,
+  bgColor = "rgba(255, 255, 255, 0.08)",
+  children,
+}) => {
+  const radius = (size - strokeWidth) / 2;
+  const circumference = 2 * Math.PI * radius;
+  const center = size / 2;
+  const percent = max > 0 ? Math.min(progress / max, 1) : 0;
+  const strokeDashoffset = circumference * (1 - percent);
+
+  return (
+    <View style={{ width: size, height: size }}>
+      <Svg width={size} height={size}>
+        <Circle
+          cx={center}
+          cy={center}
+          r={radius}
+          stroke={bgColor}
+          strokeWidth={strokeWidth}
+          fill="none"
+        />
+        <Circle
+          cx={center}
+          cy={center}
+          r={radius}
+          stroke={color}
+          strokeWidth={strokeWidth}
+          fill="none"
+          strokeDasharray={`${circumference}`}
+          strokeDashoffset={strokeDashoffset}
+          strokeLinecap="round"
+          transform={`rotate(-90 ${center} ${center})`}
+        />
+      </Svg>
+      <View style={[StyleSheet.absoluteFill, styles.circularCenter]}>
+        {children}
+      </View>
+    </View>
+  );
+};
+
+// ============================================
+// DONUT CHART COMPONENT
+// ============================================
+interface DonutSegment {
+  value: number;
+  color: string;
+  label: string;
+}
+
+interface DonutChartProps {
+  size: number;
+  strokeWidth: number;
+  segments: DonutSegment[];
+  total: number;
+  centerValue: string;
+  centerLabel: string;
+}
+
+const DonutChart: React.FC<DonutChartProps> = ({
+  size,
+  strokeWidth,
+  segments,
+  total,
+  centerValue,
+  centerLabel,
+}) => {
+  const radius = (size - strokeWidth) / 2;
+  const circumference = 2 * Math.PI * radius;
+  const center = size / 2;
+
+  let accumulatedOffset = 0;
+
+  return (
+    <View style={{ width: size, height: size }}>
+      <Svg width={size} height={size}>
+        <Circle
+          cx={center}
+          cy={center}
+          r={radius}
+          stroke="rgba(255, 255, 255, 0.08)"
+          strokeWidth={strokeWidth}
+          fill="none"
+        />
+        {segments.map((segment, index) => {
+          const percent = total > 0 ? segment.value / total : 0;
+          const strokeLength = circumference * percent;
+          const rotation = accumulatedOffset * 360 - 90;
+          accumulatedOffset += percent;
+
+          if (percent <= 0) return null;
+
+          return (
+            <Circle
+              key={index}
+              cx={center}
+              cy={center}
+              r={radius}
+              stroke={segment.color}
+              strokeWidth={strokeWidth}
+              fill="none"
+              strokeDasharray={`${strokeLength} ${circumference - strokeLength}`}
+              strokeLinecap="round"
+              transform={`rotate(${rotation} ${center} ${center})`}
+            />
+          );
+        })}
+      </Svg>
+      <View style={[StyleSheet.absoluteFill, styles.circularCenter]}>
+        <Text style={styles.chartCenterValue}>{centerValue}</Text>
+        <Text style={styles.chartCenterLabel}>{centerLabel}</Text>
+      </View>
+    </View>
+  );
+};
+
+// ============================================
+// MACRO BAR COMPONENT
+// ============================================
+interface MacroBarProps {
+  label: string;
+  current: number;
+  goal: number;
+  color: string;
+}
+
+const MacroBar: React.FC<MacroBarProps> = ({ label, current, goal, color }) => {
+  const percent = Math.min((current / goal) * 100, 100);
+
+  return (
+    <View style={styles.macroItem}>
+      <View style={styles.macroHeader}>
+        <Text style={styles.macroLabel}>{label}</Text>
+        <Text style={styles.macroValue}>
+          {current}<Text style={styles.macroGoal}>/{goal}g</Text>
+        </Text>
+      </View>
+      <View style={styles.macroTrack}>
+        <View style={[styles.macroFill, { width: `${percent}%`, backgroundColor: color }]} />
+      </View>
+    </View>
+  );
+};
+
+// ============================================
+// EDIT MODAL COMPONENT - Dark Theme
+// ============================================
+interface EditModalProps {
+  visible: boolean;
+  onClose: () => void;
+  onSave: (intake: any, burned: any) => void;
+  caloriesIntake: {
+    Breakfast: number;
+    Lunch: number;
+    Dinner: number;
+    Snacks: number;
+    Total: number;
+  };
+  caloriesBurned: {
+    BMR: number;
+    Exercise: number;
+    Total: number;
+  };
+}
+
+const EditCaloriesModal: React.FC<EditModalProps> = ({
+  visible,
+  onClose,
+  onSave,
+  caloriesIntake,
+  caloriesBurned,
+}) => {
+  const [intake, setIntake] = useState({
+    Breakfast: caloriesIntake.Breakfast.toString(),
+    Lunch: caloriesIntake.Lunch.toString(),
+    Dinner: caloriesIntake.Dinner.toString(),
+    Snacks: caloriesIntake.Snacks.toString(),
+  });
+
+  const [burned, setBurned] = useState({
+    BMR: caloriesBurned.BMR.toString(),
+    Exercise: caloriesBurned.Exercise.toString(),
+  });
+
+  React.useEffect(() => {
+    if (visible) {
+      setIntake({
+        Breakfast: caloriesIntake.Breakfast.toString(),
+        Lunch: caloriesIntake.Lunch.toString(),
+        Dinner: caloriesIntake.Dinner.toString(),
+        Snacks: caloriesIntake.Snacks.toString(),
+      });
+      setBurned({
+        BMR: caloriesBurned.BMR.toString(),
+        Exercise: caloriesBurned.Exercise.toString(),
+      });
+    }
+  }, [visible, caloriesIntake, caloriesBurned]);
+
+  const totalIntake =
+    (parseInt(intake.Breakfast) || 0) +
+    (parseInt(intake.Lunch) || 0) +
+    (parseInt(intake.Dinner) || 0) +
+    (parseInt(intake.Snacks) || 0);
+
+  const totalBurned =
+    (parseInt(burned.BMR) || 0) + (parseInt(burned.Exercise) || 0);
+
+  const handleSave = () => {
+    onSave(
+      {
+        Breakfast: parseInt(intake.Breakfast) || 0,
+        Lunch: parseInt(intake.Lunch) || 0,
+        Dinner: parseInt(intake.Dinner) || 0,
+        Snacks: parseInt(intake.Snacks) || 0,
+        Total: totalIntake,
+      },
+      {
+        BMR: parseInt(burned.BMR) || 0,
+        Exercise: parseInt(burned.Exercise) || 0,
+        Total: totalBurned,
+      }
+    );
+    onClose();
+  };
+
+  const intakeItems = [
+    { key: "Breakfast", icon: "sunny-outline", color: Theme.amber, emoji: "🌅" },
+    { key: "Lunch", icon: "sunny", color: Theme.orange, emoji: "☀️" },
+    { key: "Dinner", icon: "moon-outline", color: Theme.purple, emoji: "🌙" },
+    { key: "Snacks", icon: "sparkles", color: Theme.pink, emoji: "✨" },
+  ];
+
+  const burnedItems = [
+    { key: "Exercise", icon: "fitness", color: Theme.emerald, emoji: "💪" },
+    { key: "BMR", icon: "flame", color: Theme.orange, emoji: "🔥" },
+  ];
+
+  const renderInputRow = (
+    item: { key: string; icon: string; color: string; emoji: string },
+    value: string,
+    onChange: (text: string) => void
+  ) => (
+    <View key={item.key} style={styles.modalInputRow}>
+      <View style={[styles.modalIconBox, { backgroundColor: `${item.color}20` }]}>
+        <Text style={{ fontSize: 20 }}>{item.emoji}</Text>
+      </View>
+      <Text style={styles.modalInputLabel}>{item.key}</Text>
+      <View style={styles.modalInputContainer}>
+        <TextInput
+          style={styles.modalInput}
+          value={value}
+          onChangeText={(text) => onChange(text.replace(/[^0-9]/g, ""))}
+          keyboardType="numeric"
+          placeholder="0"
+          placeholderTextColor={Theme.textMuted}
+          selectTextOnFocus
+        />
+        <Text style={styles.modalInputUnit}>cal</Text>
+      </View>
+    </View>
+  );
+
+  return (
+    <Modal
+      visible={visible}
+      transparent
+      animationType="slide"
+      onRequestClose={onClose}
+    >
+      <View style={styles.modalOverlay}>
+        <View style={styles.modalContainer}>
+          <View style={styles.modalDragHandle} />
+
+          <View style={styles.modalHeader}>
+            <Text style={styles.modalTitle}>Edit Daily Calories</Text>
+            <TouchableOpacity onPress={onClose} style={styles.modalCloseBtn}>
+              <Ionicons name="close-circle" size={28} color={Theme.textMuted} />
+            </TouchableOpacity>
+          </View>
+
+          <ScrollView
+            style={styles.modalScrollView}
+            showsVerticalScrollIndicator={false}
+            bounces={false}
+          >
+            <View style={styles.modalSectionHeader}>
+              <Text style={{ fontSize: 16 }}>🍎</Text>
+              <Text style={styles.modalSectionTitle}>Calories Intake</Text>
+            </View>
+
+            {intakeItems.map((item) =>
+              renderInputRow(
+                item,
+                intake[item.key as keyof typeof intake],
+                (text) => setIntake({ ...intake, [item.key]: text })
+              )
+            )}
+
+            <View style={styles.modalTotalRow}>
+              <Text style={styles.modalTotalLabel}>Total Intake</Text>
+              <Text style={[styles.modalTotalValue, { color: Theme.blue }]}>
+                {totalIntake.toLocaleString()} cal
+              </Text>
+            </View>
+
+            <View style={styles.modalDivider} />
+
+            <View style={styles.modalSectionHeader}>
+              <Text style={{ fontSize: 16 }}>🔥</Text>
+              <Text style={styles.modalSectionTitle}>Calories Burned</Text>
+            </View>
+
+            {burnedItems.map((item) =>
+              renderInputRow(
+                item,
+                burned[item.key as keyof typeof burned],
+                (text) => setBurned({ ...burned, [item.key]: text })
+              )
+            )}
+
+            <View style={styles.modalTotalRow}>
+              <Text style={styles.modalTotalLabel}>Total Burned</Text>
+              <Text style={[styles.modalTotalValue, { color: Theme.orange }]}>
+                {totalBurned.toLocaleString()} cal
+              </Text>
+            </View>
+          </ScrollView>
+
+          <View style={styles.modalActions}>
+            <TouchableOpacity
+              style={styles.modalCancelBtn}
+              onPress={onClose}
+              activeOpacity={0.8}
+            >
+              <Text style={styles.modalCancelBtnText}>Cancel</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.modalSaveBtn}
+              onPress={handleSave}
+              activeOpacity={0.8}
+            >
+              <LinearGradient
+                colors={Theme.emeraldGradient}
+                style={styles.modalSaveBtnGradient}
+              >
+                <Text style={styles.modalSaveBtnText}>Save Changes</Text>
+              </LinearGradient>
+            </TouchableOpacity>
+          </View>
+
+          <Text style={styles.modalSyncText}>Last synced: 2 minutes ago</Text>
+        </View>
+      </View>
+    </Modal>
+  );
+};
+
+// ============================================
+// MAIN SCREEN COMPONENT
+// ============================================
 const PatientNutritionOverviewScreen: React.FC<Props> = ({ route }) => {
   const patients = route?.params?.patients ?? MOCK_DATA;
-  const patient = patients[0];
-
-  const latestDaily = patient.Tracking.Daily[0];
+  const [patient] = useState(patients[0]);
+  const [latestDaily, setLatestDaily] = useState(patient.Tracking.Daily[0]);
   const weekly = patient.Tracking.Weekly;
   const monthly = patient.Tracking.Monthly;
-const navigation=useNavigation()
+  const navigation = useNavigation();
   const [activeTab, setActiveTab] = useState<"today" | "weekly" | "monthly">("today");
-const handleMenuPress = () => {
+  const [editModalVisible, setEditModalVisible] = useState(false);
 
-  navigation.navigate("AllScreensMenu");
-};
+  const handleMenuPress = () => {
+    navigation.navigate("AllScreensMenu" as never);
+  };
+
+  const handleSaveCalories = (intake: any, burned: any) => {
+    const netCalories = intake.Total - burned.Total;
+    setLatestDaily({
+      ...latestDaily,
+      CaloriesIntake: intake,
+      CaloriesBurned: burned,
+      NetCalories: netCalories,
+    });
+  };
+
+  // Calculate progress
+  const startWeight = patient.Weight_lbs;
+  const currentWeight = latestDaily.Weight_lbs;
+  const targetWeight = patient.Goal.TargetWeight_lbs;
+  const weightLost = startWeight - currentWeight;
+  const totalToLose = startWeight - targetWeight;
+  const progressPercent = Math.round((weightLost / totalToLose) * 100);
+
+  // Intake segments for donut chart
+  const intakeSegments = [
+    { value: latestDaily.CaloriesIntake.Breakfast, color: Theme.amber, label: "Breakfast" },
+    { value: latestDaily.CaloriesIntake.Lunch, color: Theme.orange, label: "Lunch" },
+    { value: latestDaily.CaloriesIntake.Dinner, color: Theme.purple, label: "Dinner" },
+    { value: latestDaily.CaloriesIntake.Snacks, color: Theme.emerald, label: "Snacks" },
+  ];
+
+  // Meals data
+  const meals = [
+    { id: 1, name: "Breakfast", time: "7:30 AM", calories: latestDaily.CaloriesIntake.Breakfast, emoji: "🌅" },
+    { id: 2, name: "Lunch", time: "12:30 PM", calories: latestDaily.CaloriesIntake.Lunch, emoji: "☀️" },
+    { id: 3, name: "Dinner", time: "7:00 PM", calories: latestDaily.CaloriesIntake.Dinner, emoji: "🌙" },
+    { id: 4, name: "Snacks", time: "Throughout", calories: latestDaily.CaloriesIntake.Snacks, emoji: "✨" },
+  ];
+
+  // Activities data
+  const activities = [
+    { name: "Exercise", calories: latestDaily.CaloriesBurned.Exercise, duration: "45 min", emoji: "💪" },
+    { name: "BMR", calories: latestDaily.CaloriesBurned.BMR, duration: "24 hrs", emoji: "🔥" },
+  ];
+
+  const formatDate = (dateStr: string) => {
+    const date = new Date(dateStr);
+    return date.toLocaleDateString('en-US', { month: 'long', day: 'numeric' });
+  };
+
   return (
     <View style={styles.container}>
+      <StatusBar barStyle="light-content" backgroundColor={Theme.bgPrimary} />
+
+      {/* Light Ambient Background */}
+      <View style={styles.ambientBg}>
+        <LinearGradient
+          colors={["rgba(16, 185, 129, 0.05)", "transparent"]}
+          style={styles.ambientOrb1}
+        />
+        <LinearGradient
+          colors={["rgba(245, 158, 11, 0.04)", "transparent"]}
+          style={styles.ambientOrb2}
+        />
+        <LinearGradient
+          colors={["rgba(139, 92, 246, 0.03)", "transparent"]}
+          style={styles.ambientOrb3}
+        />
+      </View>
+
       <ScrollView
         style={styles.scrollArea}
         contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}
       >
         {/* Header */}
-        <View style={styles.headerCard}>
-          <ImageBackground
-            source={{ uri: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=600&q=80" }}
-            style={styles.headerImageBg}
-            imageStyle={styles.headerImageStyle}
-          >
-            <LinearGradient
-              colors={["rgba(37, 99, 235, 0.93)", "rgba(20, 184, 166, 0.90)"]}
-              style={styles.headerOverlay}
-            >
-              <View style={styles.headerTopRow}>
-                <View>
-                  <Text style={styles.titleWithBg}>Fitness Dashboard</Text>
-                  <Text style={styles.subtitleWithBg}>{patient.Description}</Text>
-                </View>
-                
-                <View style={styles.headerUserBox}>
-                  <Text style={styles.headerUserLabelWithBg}>User ID</Text>
-                  <Text style={styles.headerUserValueWithBg}>{patient.UserID}</Text>
-                </View>
-                          <TouchableOpacity
-                   onPress={handleMenuPress}
-                   style={{
-                     padding: 8,
-                     backgroundColor: "rgba(255, 255, 255, 0.18)",
-                     borderRadius: 50,
-                     borderWidth: 1,
-                     borderColor: "rgba(255,255,255,0.3)",
-                     backdropFilter: "blur(10px)", // works on web but RN ignores
-                   }}
-                 >
-                 <Ionicons name="ellipsis-horizontal" size={22} color="#fff" />
-                 </TouchableOpacity>
+        <View style={styles.header}>
+          <View style={styles.headerTop}>
+            <View style={styles.headerLeft}>
+              <Text style={styles.greeting}>GOOD MORNING</Text>
+              <Text style={styles.userName}>{patient.Description.split(',')[0]}</Text>
+            </View>
+            <View style={styles.headerRight}>
+              <TouchableOpacity style={styles.iconBtn} onPress={handleMenuPress}>
+                <Ionicons name="notifications-outline" size={20} color={Theme.textSecondary} />
+              </TouchableOpacity>
+              <View style={styles.avatar}>
+                <Text style={styles.avatarText}>{patient.UserID.charAt(0)}</Text>
               </View>
-
-              <View style={styles.headerInfoRow}>
-                <View style={styles.headerInfoItem}>
-                  <Text style={styles.headerInfoLabelWithBg}>Age</Text>
-                  <Text style={styles.headerInfoValueWithBg}>{patient.Age} yrs</Text>
-                </View>
-                <View style={styles.headerInfoItem}>
-                  <Text style={styles.headerInfoLabelWithBg}>Height</Text>
-                  <Text style={styles.headerInfoValueWithBg}>{patient.Height_cm} cm</Text>
-                </View>
-                <View style={styles.headerInfoItem}>
-                  <Text style={styles.headerInfoLabelWithBg}>Current Weight</Text>
-                  <Text style={styles.headerInfoValueWithBg}>{patient.Weight_lbs.toFixed(1)} lbs</Text>
-                </View>
-                <View style={styles.headerInfoItem}>
-                  <Text style={styles.headerInfoLabelWithBg}>Body Fat</Text>
-                  <Text style={styles.headerInfoValueWithBg}>{patient.BodyFatPercentage}</Text>
-                </View>
-              </View>
-            </LinearGradient>
-          </ImageBackground>
-        </View>
-
-        {/* Goal section */}
-        <LinearGradient
-          colors={["#E5E7EB", "#D1D5DB"]}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
-          style={styles.goalCard}
-        >
-          <View style={styles.goalHeaderRow}>
-            <MaterialCommunityIcons
-              name="target"
-              size={24}
-              color="#374151"
-              style={{ marginRight: 8 }}
-            />
-            <Text style={styles.goalTitle}>Weight Loss Goal</Text>
-          </View>
-          <View style={styles.goalGridRow}>
-            <View style={styles.goalItem}>
-              <Text style={styles.goalLabel}>Target Weight</Text>
-              <Text style={styles.goalValue}>{patient.Goal.TargetWeight_lbs} lbs</Text>
-            </View>
-            <View style={styles.goalItem}>
-              <Text style={styles.goalLabel}>Duration</Text>
-              <Text style={styles.goalValue}>{patient.Goal.TargetDuration_weeks} weeks</Text>
-            </View>
-            <View style={styles.goalItem}>
-              <Text style={styles.goalLabel}>Weekly Target</Text>
-              <Text style={styles.goalValue}>{patient.Goal.TargetWeeklyLoss_lbs} lbs/week</Text>
-            </View>
-            <View style={styles.goalItem}>
-              <Text style={styles.goalLabel}>Started</Text>
-              <Text style={styles.goalValue}>{patient.Goal.StartDate}</Text>
             </View>
           </View>
-        </LinearGradient>
 
-        {/* Tabs container with underline style */}
-        <View style={styles.tabsCard}>
-          <View style={styles.tabBarRow}>
-            <TouchableOpacity
-              onPress={() => setActiveTab("today")}
-              style={styles.tabBarButton}
-            >
-              <Text
-                style={[
-                  styles.tabBarLabel,
-                  activeTab === "today" && styles.tabBarLabelActive,
-                ]}
-              >
-                Daily Tracking
-              </Text>
-              {activeTab === "today" && <View style={styles.tabBarUnderline} />}
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              onPress={() => setActiveTab("weekly")}
-              style={styles.tabBarButton}
-            >
-              <Text
-                style={[
-                  styles.tabBarLabel,
-                  activeTab === "weekly" && styles.tabBarLabelActive,
-                ]}
-              >
-                Weekly Summary
-              </Text>
-              {activeTab === "weekly" && <View style={styles.tabBarUnderline} />}
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              onPress={() => setActiveTab("monthly")}
-              style={styles.tabBarButton}
-            >
-              <Text
-                style={[
-                  styles.tabBarLabel,
-                  activeTab === "monthly" && styles.tabBarLabelActive,
-                ]}
-              >
-                Monthly Overview
-              </Text>
-              {activeTab === "monthly" && <View style={styles.tabBarUnderline} />}
-            </TouchableOpacity>
+          {/* Streak Badge */}
+          <View style={styles.streakBadge}>
+            <Text style={styles.streakEmoji}>🔥</Text>
+            <Text style={styles.streakText}>12 Day Streak</Text>
           </View>
         </View>
 
-        {/* Daily tab */}
+        {/* Weight Journey Card */}
+        <View style={styles.glassCard}>
+          <View style={styles.glassCardGlow} />
+          <View style={styles.weightCardContent}>
+            <View style={styles.weightInfo}>
+              <Text style={styles.sectionLabel}>WEIGHT JOURNEY</Text>
+              <View style={styles.weightValueRow}>
+                <Text style={styles.weightNumber}>{currentWeight.toFixed(1)}</Text>
+                <Text style={styles.weightUnit}>lbs</Text>
+              </View>
+              <View style={styles.weightChange}>
+                <Text style={styles.changePositive}>↓ {weightLost.toFixed(1)} lbs</Text>
+                <Text style={styles.changeLabel}>from start</Text>
+              </View>
+            </View>
+
+            <CircularProgress
+              size={100}
+              strokeWidth={8}
+              progress={progressPercent}
+              max={100}
+              color={Theme.emerald}
+            >
+              <Text style={styles.progressPercent}>{progressPercent}%</Text>
+              <Text style={styles.progressLabel}>TO GOAL</Text>
+            </CircularProgress>
+          </View>
+
+          {/* Stats Row */}
+          <View style={styles.statsRow}>
+            <View style={styles.statItem}>
+              <Text style={styles.statLabel}>TARGET</Text>
+              <Text style={styles.statValue}>{targetWeight}<Text style={styles.statUnit}> lbs</Text></Text>
+            </View>
+            <View style={styles.statItem}>
+              <Text style={styles.statLabel}>WEEKLY</Text>
+              <Text style={styles.statValue}>-{patient.Goal.TargetWeeklyLoss_lbs}<Text style={styles.statUnit}> lbs</Text></Text>
+            </View>
+            <View style={styles.statItem}>
+              <Text style={styles.statLabel}>REMAINING</Text>
+              <Text style={styles.statValue}>{(currentWeight - targetWeight).toFixed(1)}<Text style={styles.statUnit}> lbs</Text></Text>
+            </View>
+          </View>
+        </View>
+
+        {/* Tabs */}
+        <View style={styles.tabsContainer}>
+          {[
+            { key: "today", label: "Today" },
+            { key: "weekly", label: "This Week" },
+            { key: "monthly", label: "Insights" },
+          ].map((tab) => (
+            <TouchableOpacity
+              key={tab.key}
+              style={[styles.tab, activeTab === tab.key && styles.tabActive]}
+              onPress={() => setActiveTab(tab.key as any)}
+              activeOpacity={0.7}
+            >
+              <Text style={[styles.tabText, activeTab === tab.key && styles.tabTextActive]}>
+                {tab.label}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+
+        {/* Today Tab */}
         {activeTab === "today" && (
-          <View style={styles.sectionSpace}>
-            <View style={styles.cardSection}>
-              <View style={styles.cardHeaderRow}>
-                <Text style={styles.sectionHeader}>Today</Text>
-                <Text style={styles.cardMeta}>{latestDaily.Date}</Text>
+          <View style={styles.tabContent}>
+            {/* Energy Balance Card */}
+            <View style={styles.glassCard}>
+              <View style={styles.energyHeader}>
+                <Text style={styles.sectionLabel}>ENERGY BALANCE</Text>
+                <Text style={styles.dateText}>{formatDate(latestDaily.Date)}</Text>
               </View>
-              <View style={styles.statGridRow}>
-                <View style={styles.statCard}>
-                  <ImageBackground
-                    source={{ uri: "https://images.unsplash.com/photo-1611672585731-fa10603fb9e0?w=400&q=80" }}
-                    style={styles.statImageBg}
-                    imageStyle={styles.statImageStyle}
-                  >
-                    <LinearGradient
-                      colors={["rgba(139, 92, 246, 0.65)", "rgba(99, 102, 241, 0.60)"]}
-                      style={styles.statOverlay}
+
+              <View style={styles.energyRingContainer}>
+                <CircularProgress
+                  size={160}
+                  strokeWidth={12}
+                  progress={Math.abs(latestDaily.NetCalories)}
+                  max={500}
+                  color={latestDaily.NetCalories < 0 ? Theme.emerald : Theme.amber}
+                >
+                  <Text style={[styles.energyValue, { color: latestDaily.NetCalories < 0 ? Theme.emerald : Theme.amber }]}>
+                    {latestDaily.NetCalories}
+                  </Text>
+                  <Text style={styles.energyLabel}>NET CALORIES</Text>
+                </CircularProgress>
+              </View>
+
+              {/* Calorie Cards */}
+              <View style={styles.calorieGrid}>
+                <View style={styles.calorieCard}>
+                  <View style={styles.calorieCardHeader}>
+                    <View style={[styles.calorieIcon, { backgroundColor: "rgba(59, 130, 246, 0.2)" }]}>
+                      <Ionicons name="add" size={18} color={Theme.blue} />
+                    </View>
+                    <Text style={styles.calorieCardLabel}>Calories Intake</Text>
+                    <TouchableOpacity
+                      style={styles.editBtn}
+                      onPress={() => setEditModalVisible(true)}
+                      activeOpacity={0.7}
                     >
-                      <Text style={styles.statLabelWithBg}>Current Weight</Text>
-                      <Text style={styles.statValueWithBg}>{latestDaily.Weight_lbs.toFixed(1)} lbs</Text>
-                      <Text style={styles.statSubLabelWithBg}>BMI: {latestDaily.BMI.toFixed(1)}</Text>
-                    </LinearGradient>
-                  </ImageBackground>
+                      <MaterialCommunityIcons name="pencil" size={14} color={Theme.textMuted} />
+                    </TouchableOpacity>
+                  </View>
+                  <Text style={styles.calorieCardValue}>
+                    {latestDaily.CaloriesIntake.Total.toLocaleString()}
+                    <Text style={styles.calorieCardUnit}> cal</Text>
+                  </Text>
+                  {/* Intake Breakdown */}
+                  <View style={styles.calorieBreakdown}>
+                    <View style={styles.breakdownItem}>
+                      <View style={[styles.breakdownDot, { backgroundColor: Theme.amber }]} />
+                      <Text style={styles.breakdownLabel}>Breakfast</Text>
+                      <Text style={styles.breakdownValue}>{latestDaily.CaloriesIntake.Breakfast} cal</Text>
+                    </View>
+                    <View style={styles.breakdownItem}>
+                      <View style={[styles.breakdownDot, { backgroundColor: Theme.orange }]} />
+                      <Text style={styles.breakdownLabel}>Lunch</Text>
+                      <Text style={styles.breakdownValue}>{latestDaily.CaloriesIntake.Lunch} cal</Text>
+                    </View>
+                    <View style={styles.breakdownItem}>
+                      <View style={[styles.breakdownDot, { backgroundColor: Theme.purple }]} />
+                      <Text style={styles.breakdownLabel}>Dinner</Text>
+                      <Text style={styles.breakdownValue}>{latestDaily.CaloriesIntake.Dinner} cal</Text>
+                    </View>
+                    <View style={styles.breakdownItem}>
+                      <View style={[styles.breakdownDot, { backgroundColor: Theme.emerald }]} />
+                      <Text style={styles.breakdownLabel}>Snacks</Text>
+                      <Text style={styles.breakdownValue}>{latestDaily.CaloriesIntake.Snacks} cal</Text>
+                    </View>
+                  </View>
                 </View>
-                <View style={styles.statCard}>
-                  <ImageBackground
-                    source={{ uri: "https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=400&q=80" }}
-                    style={styles.statImageBg}
-                    imageStyle={styles.statImageStyle}
-                  >
-                    <LinearGradient
-                      colors={["rgba(236, 72, 153, 0.65)", "rgba(251, 146, 60, 0.60)"]}
-                      style={styles.statOverlay}
-                    >
-                      <Text style={styles.statLabelWithBg}>Net Calories</Text>
-                      <Text style={styles.statValueWithBg}>{latestDaily.NetCalories}</Text>
-                      <Text style={styles.statSubLabelWithBg}>Calorie Deficit</Text>
-                    </LinearGradient>
-                  </ImageBackground>
+
+                {/* Net Calories Summary */}
+                <View style={styles.netCaloriesBox}>
+                  <View style={styles.netCaloriesContent}>
+                    <Text style={styles.netCaloriesLabel}>Net Calories</Text>
+                    <Text style={[
+                      styles.netCaloriesValue,
+                      { color: latestDaily.NetCalories < 0 ? Theme.emerald : Theme.red }
+                    ]}>
+                      {latestDaily.NetCalories}
+                    </Text>
+                    <Text style={styles.netCaloriesUnit}>cal</Text>
+                  </View>
+                  <View style={styles.netCaloriesIndicator}>
+                    <Text style={styles.netCaloriesStatus}>
+                      {latestDaily.NetCalories < 0 ? "Calorie Deficit" : "Calorie Surplus"}
+                    </Text>
+                    <Ionicons
+                      name={latestDaily.NetCalories < 0 ? "arrow-down" : "arrow-up"}
+                      size={14}
+                      color={latestDaily.NetCalories < 0 ? Theme.emerald : Theme.red}
+                    />
+                  </View>
                 </View>
-                <View style={styles.statCard}>
-                  <ImageBackground
-                    source={{ uri: "https://images.unsplash.com/photo-1484480974693-6ca0a78fb36b?w=400&q=80" }}
-                    style={styles.statImageBg}
-                    imageStyle={styles.statImageStyle}
-                  >
-                    <LinearGradient
-                      colors={["rgba(16, 185, 129, 0.65)", "rgba(20, 184, 166, 0.60)"]}
-                      style={styles.statOverlay}
+
+                <View style={styles.calorieCard}>
+                  <View style={styles.calorieCardHeader}>
+                    <View style={[styles.calorieIcon, { backgroundColor: "rgba(249, 115, 22, 0.2)" }]}>
+                      <Ionicons name="flame" size={18} color={Theme.orange} />
+                    </View>
+                    <Text style={styles.calorieCardLabel}>Calories Burned</Text>
+                    <TouchableOpacity
+                      style={styles.editBtn}
+                      onPress={() => setEditModalVisible(true)}
+                      activeOpacity={0.7}
                     >
-                      <Text style={styles.statLabelWithBg}>Status</Text>
-                      <Text style={styles.statValueSmallWithBg}>{latestDaily.WeightGoalProgress.GoalStatus}</Text>
-                      <Text style={styles.statSubLabelWithBg}>Expected Δ: {latestDaily.WeightGoalProgress.ExpectedWeightChange_lbs} lbs</Text>
-                    </LinearGradient>
-                  </ImageBackground>
+                      <MaterialCommunityIcons name="pencil" size={14} color={Theme.textMuted} />
+                    </TouchableOpacity>
+                  </View>
+                  <Text style={styles.calorieCardValue}>
+                    {latestDaily.CaloriesBurned.Total.toLocaleString()}
+                    <Text style={styles.calorieCardUnit}> cal</Text>
+                  </Text>
+                  {/* Burned Breakdown */}
+                  <View style={styles.calorieBreakdown}>
+                    <View style={styles.breakdownItem}>
+                      <MaterialCommunityIcons name="run-fast" size={12} color={Theme.emerald} />
+                      <Text style={styles.breakdownLabel}>Exercise</Text>
+                      <Text style={styles.breakdownValue}>{latestDaily.CaloriesBurned.Exercise}</Text>
+                    </View>
+                    <View style={styles.breakdownItem}>
+                      <MaterialCommunityIcons name="fire" size={12} color={Theme.orange} />
+                      <Text style={styles.breakdownLabel}>BMR</Text>
+                      <Text style={styles.breakdownValue}>{latestDaily.CaloriesBurned.BMR}</Text>
+                    </View>
+                  </View>
                 </View>
               </View>
             </View>
 
-            <View style={styles.rowTwoColumn}>
-              <View style={[styles.cardSection, { flex: 1 }]}>
-                <Text style={styles.sectionHeader}>Calories Intake</Text>
-                <View style={styles.listRowBetween}>
-                  <Text style={styles.metricLabel}>Breakfast</Text>
-                  <Text style={styles.metricValue}>{latestDaily.CaloriesIntake.Breakfast} cal</Text>
-                </View>
-                <View style={styles.listRowBetween}>
-                  <Text style={styles.metricLabel}>Lunch</Text>
-                  <Text style={styles.metricValue}>{latestDaily.CaloriesIntake.Lunch} cal</Text>
-                </View>
-                <View style={styles.listRowBetween}>
-                  <Text style={styles.metricLabel}>Dinner</Text>
-                  <Text style={styles.metricValue}>{latestDaily.CaloriesIntake.Dinner} cal</Text>
-                </View>
-                <View style={styles.listRowBetween}>
-                  <Text style={styles.metricLabel}>Snacks</Text>
-                  <Text style={styles.metricValue}>{latestDaily.CaloriesIntake.Snacks} cal</Text>
-                </View>
-                <View style={styles.listRowDivider} />
-                <View style={styles.listRowBetween}>
-                  <Text style={styles.metricLabelBold}>Total</Text>
-                  <Text style={styles.metricValueHighlight}>{latestDaily.CaloriesIntake.Total} cal</Text>
-                </View>
+            {/* Macros Card */}
+            <View style={styles.glassCard}>
+              <Text style={styles.sectionLabel}>MACRONUTRIENTS</Text>
+              <View style={styles.macrosContainer}>
+                <MacroBar label="Protein" current={95} goal={120} color={Theme.blue} />
+                <MacroBar label="Carbohydrates" current={180} goal={200} color={Theme.amber} />
+                <MacroBar label="Fat" current={65} goal={70} color={Theme.pink} />
               </View>
+            </View>
 
-              <View style={[styles.cardSection, { flex: 1 }]}>
-                <Text style={styles.sectionHeader}>Calories Burned</Text>
-                <View style={styles.listRowBetween}>
-                  <Text style={styles.metricLabel}>BMR</Text>
-                  <Text style={styles.metricValue}>{latestDaily.CaloriesBurned.BMR} cal</Text>
-                </View>
-                <View style={styles.listRowBetween}>
-                  <View style={styles.rowInlineCenter}>
-                    <MaterialCommunityIcons
-                      name="dumbbell"
-                      size={14}
-                      color="#16a34a"
-                      style={{ marginRight: 4 }}
-                    />
-                    <Text style={styles.metricLabel}>Exercise</Text>
+            {/* Meals Section */}
+            <View style={styles.sectionContainer}>
+              <Text style={styles.sectionTitle}>TODAY'S MEALS</Text>
+              {meals.map((meal) => (
+                <TouchableOpacity key={meal.id} style={styles.mealCard} activeOpacity={0.7}>
+                  <View style={styles.mealInfo}>
+                    <View style={styles.mealIcon}>
+                      <Text style={styles.mealEmoji}>{meal.emoji}</Text>
+                    </View>
+                    <View>
+                      <Text style={styles.mealName}>{meal.name}</Text>
+                      <Text style={styles.mealTime}>{meal.time}</Text>
+                    </View>
                   </View>
-                  <Text style={styles.metricValue}>{latestDaily.CaloriesBurned.Exercise} cal</Text>
-                </View>
-                <View style={styles.listRowDivider} />
-                <View style={styles.listRowBetween}>
-                  <Text style={styles.metricLabelBold}>Total</Text>
-                  <Text style={[styles.metricValueHighlight, { color: "#16a34a" }]}>
-                    {latestDaily.CaloriesBurned.Total} cal
-                  </Text>
+                  <View style={styles.mealCalories}>
+                    <Text style={styles.mealCaloriesValue}>{meal.calories}</Text>
+                    <Text style={styles.mealCaloriesUnit}>cal</Text>
+                  </View>
+                </TouchableOpacity>
+              ))}
+            </View>
+
+            {/* Activities Section */}
+            <View style={styles.sectionContainer}>
+              <Text style={styles.sectionTitle}>ACTIVITIES</Text>
+              <View style={styles.activityGrid}>
+                {activities.map((activity, index) => (
+                  <View key={index} style={styles.activityCard}>
+                    <Text style={styles.activityEmoji}>{activity.emoji}</Text>
+                    <Text style={styles.activityName}>{activity.name}</Text>
+                    <Text style={styles.activityDuration}>{activity.duration}</Text>
+                    <Text style={styles.activityCalories}>-{activity.calories}<Text style={styles.activityCaloriesUnit}> cal</Text></Text>
+                  </View>
+                ))}
+              </View>
+            </View>
+
+            {/* Status Card */}
+            <View style={styles.statusCard}>
+              <View style={styles.statusHeader}>
+                <Text style={styles.sectionLabel}>GOAL STATUS</Text>
+                <View style={styles.statusBadge}>
+                  <Text style={styles.statusBadgeText}>{latestDaily.WeightGoalProgress.GoalStatus}</Text>
                 </View>
               </View>
+              <Text style={styles.statusExpected}>
+                Expected Δ: {latestDaily.WeightGoalProgress.ExpectedWeightChange_lbs} lbs today
+              </Text>
             </View>
           </View>
         )}
 
-        {/* Weekly tab */}
+        {/* Weekly Tab */}
         {activeTab === "weekly" && (
-          <View style={styles.sectionSpace}>
-            <View style={styles.cardSection}>
-              <Text style={styles.sectionHeader}>
-                Week: {weekly.WeekStart} to {weekly.WeekEnd}
-              </Text>
-              <View style={styles.statGridRow}>
-                <View style={styles.statCard}>
-                  <ImageBackground
-                    source={{ uri: "https://images.unsplash.com/photo-1611672585731-fa10603fb9e0?w=400&q=80" }}
-                    style={styles.statImageBg}
-                    imageStyle={styles.statImageStyle}
-                  >
-                    <LinearGradient
-                      colors={["rgba(139, 92, 246, 0.65)", "rgba(99, 102, 241, 0.60)"]}
-                      style={styles.statOverlay}
-                    >
-                      <Text style={styles.statLabelWithBg}>Avg Weight</Text>
-                      <Text style={styles.statValueWithBg}>{weekly.AverageWeight_lbs.toFixed(1)} lbs</Text>
-                      <Text style={styles.statSubLabelWithBg}>BMI: {weekly.BMI_Average}</Text>
-                    </LinearGradient>
-                  </ImageBackground>
+          <View style={styles.tabContent}>
+            <View style={styles.glassCard}>
+              <Text style={styles.sectionLabel}>WEEKLY SUMMARY</Text>
+              <Text style={styles.dateRange}>{weekly.WeekStart} to {weekly.WeekEnd}</Text>
+
+              <View style={styles.weeklyStatsGrid}>
+                <View style={styles.weeklyStatCard}>
+                  <Text style={styles.weeklyStatLabel}>Avg Weight</Text>
+                  <Text style={styles.weeklyStatValue}>{weekly.AverageWeight_lbs.toFixed(1)}<Text style={styles.weeklyStatUnit}> lbs</Text></Text>
+                  <Text style={styles.weeklyStatSub}>BMI: {weekly.BMI_Average}</Text>
                 </View>
-                <View style={styles.statCard}>
-                  <ImageBackground
-                    source={{ uri: "https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=400&q=80" }}
-                    style={styles.statImageBg}
-                    imageStyle={styles.statImageStyle}
-                  >
-                    <LinearGradient
-                      colors={["rgba(236, 72, 153, 0.65)", "rgba(251, 146, 60, 0.60)"]}
-                      style={styles.statOverlay}
-                    >
-                      <Text style={styles.statLabelWithBg}>Avg Intake</Text>
-                      <Text style={styles.statValueWithBg}>{weekly.AverageCaloriesIntake}</Text>
-                      <Text style={styles.statSubLabelWithBg}>per day</Text>
-                    </LinearGradient>
-                  </ImageBackground>
+                <View style={styles.weeklyStatCard}>
+                  <Text style={styles.weeklyStatLabel}>Avg Intake</Text>
+                  <Text style={styles.weeklyStatValue}>{weekly.AverageCaloriesIntake.toLocaleString()}<Text style={styles.weeklyStatUnit}> cal</Text></Text>
+                  <Text style={styles.weeklyStatSub}>per day</Text>
                 </View>
-                <View style={styles.statCard}>
-                  <ImageBackground
-                    source={{ uri: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&q=80" }}
-                    style={styles.statImageBg}
-                    imageStyle={styles.statImageStyle}
-                  >
-                    <LinearGradient
-                      colors={["rgba(16, 185, 129, 0.65)", "rgba(20, 184, 166, 0.60)"]}
-                      style={styles.statOverlay}
-                    >
-                      <Text style={styles.statLabelWithBg}>Avg Burned</Text>
-                      <Text style={styles.statValueWithBg}>{weekly.AverageCaloriesBurned}</Text>
-                      <Text style={styles.statSubLabelWithBg}>per day</Text>
-                    </LinearGradient>
-                  </ImageBackground>
+                <View style={styles.weeklyStatCard}>
+                  <Text style={styles.weeklyStatLabel}>Avg Burned</Text>
+                  <Text style={styles.weeklyStatValue}>{weekly.AverageCaloriesBurned.toLocaleString()}<Text style={styles.weeklyStatUnit}> cal</Text></Text>
+                  <Text style={styles.weeklyStatSub}>per day</Text>
                 </View>
               </View>
             </View>
 
-            <View style={styles.cardSection}>
-              <Text style={styles.sectionHeader}>Weekly Progress</Text>
-              <View style={styles.rowTwoColumnSimple}>
-                <View>
-                  <Text style={styles.metricLabel}>Expected Weight Loss</Text>
-                  <Text style={styles.statValue}>{weekly.WeightGoalProgress.ExpectedWeightLoss_lbs} lbs</Text>
+            <View style={styles.glassCard}>
+              <Text style={styles.sectionLabel}>WEEKLY PROGRESS</Text>
+
+              <View style={styles.progressComparison}>
+                <View style={styles.progressCompareItem}>
+                  <Text style={styles.progressCompareLabel}>Expected Loss</Text>
+                  <Text style={styles.progressCompareValue}>{weekly.WeightGoalProgress.ExpectedWeightLoss_lbs} lbs</Text>
                 </View>
-                <View>
-                  <Text style={styles.metricLabel}>Actual Weight Loss</Text>
-                  <Text style={styles.statValueAccent}>
+                <View style={styles.progressCompareItem}>
+                  <Text style={styles.progressCompareLabel}>Actual Loss</Text>
+                  <Text style={[styles.progressCompareValue, { color: Theme.emerald }]}>
                     {weekly.WeightGoalProgress.ActualWeightLoss_lbs} lbs
                   </Text>
                 </View>
               </View>
 
-              <View style={styles.progressRow}>
-                <View style={styles.progressHeaderRow}>
-                  <Text style={styles.metricLabelBold}>Progress</Text>
-                  <Text style={styles.metricValueHighlight}>
-                    {weekly.WeightGoalProgress.ProgressPercent}%
-                  </Text>
+              <View style={styles.progressBarContainer}>
+                <View style={styles.progressBarHeader}>
+                  <Text style={styles.progressBarLabel}>Progress</Text>
+                  <Text style={styles.progressBarPercent}>{weekly.WeightGoalProgress.ProgressPercent}%</Text>
                 </View>
-                <View style={styles.progressTrack}>
-                  <View
-                    style={[
-                      styles.progressFill,
-                      {
-                        width: `${Math.min(
-                          weekly.WeightGoalProgress.ProgressPercent,
-                          100
-                        )}%`,
-                      },
-                    ]}
-                  />
+                <View style={styles.progressBarTrack}>
+                  <View style={[styles.progressBarFill, { width: `${Math.min(weekly.WeightGoalProgress.ProgressPercent, 100)}%` }]} />
                 </View>
               </View>
 
-              <View style={styles.statusPillRow}>
-                <View style={styles.statusPillNeutral}>
-                  <Text style={styles.statusPillText}>{weekly.WeightGoalProgress.GoalStatus}</Text>
-                </View>
+              <View style={styles.statusBadgeLarge}>
+                <Text style={styles.statusBadgeLargeText}>{weekly.WeightGoalProgress.GoalStatus}</Text>
               </View>
             </View>
           </View>
         )}
 
-        {/* Monthly tab */}
+        {/* Monthly Tab */}
         {activeTab === "monthly" && (
-          <View style={styles.sectionSpace}>
-            <View style={styles.cardSection}>
-              <Text style={styles.sectionHeader}>{monthly.Month}</Text>
-              <View style={styles.rowTwoColumnSimple}>
-                <View>
-                  <Text style={styles.metricLabel}>Start Weight</Text>
-                  <Text style={styles.statValue}>{monthly.StartWeight_lbs} lbs</Text>
-                  <Text style={styles.statSubLabel}>BMI: {monthly.BMI_Start}</Text>
+          <View style={styles.tabContent}>
+            <View style={styles.glassCard}>
+              <Text style={styles.sectionLabel}>{monthly.Month.toUpperCase()}</Text>
+
+              <View style={styles.monthlyWeightRow}>
+                <View style={styles.monthlyWeightItem}>
+                  <Text style={styles.monthlyWeightLabel}>Start Weight</Text>
+                  <Text style={styles.monthlyWeightValue}>{monthly.StartWeight_lbs}<Text style={styles.monthlyWeightUnit}> lbs</Text></Text>
+                  <Text style={styles.monthlyWeightBmi}>BMI: {monthly.BMI_Start}</Text>
                 </View>
-                <View>
-                  <Text style={styles.metricLabel}>End Weight</Text>
-                  <Text style={styles.statValueAccent}>{monthly.EndWeight_lbs} lbs</Text>
-                  <Text style={styles.statSubLabel}>BMI: {monthly.BMI_End}</Text>
+                <View style={styles.monthlyWeightArrow}>
+                  <Ionicons name="arrow-forward" size={24} color={Theme.emerald} />
+                </View>
+                <View style={styles.monthlyWeightItem}>
+                  <Text style={styles.monthlyWeightLabel}>End Weight</Text>
+                  <Text style={[styles.monthlyWeightValue, { color: Theme.emerald }]}>{monthly.EndWeight_lbs}<Text style={styles.monthlyWeightUnit}> lbs</Text></Text>
+                  <Text style={styles.monthlyWeightBmi}>BMI: {monthly.BMI_End}</Text>
                 </View>
               </View>
             </View>
 
-            <View style={styles.statGridRow}>
-              <View style={styles.statCard}>
-                <ImageBackground
-                  source={{ uri: "https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=400&q=80" }}
-                  style={styles.statImageBg}
-                  imageStyle={styles.statImageStyle}
-                >
-                  <LinearGradient
-                    colors={["rgba(236, 72, 153, 0.30)", "rgba(251, 146, 60, 0.25)"]}
-                    style={styles.statOverlay}
-                  >
-                    <Text style={styles.statLabelWithBg}>Avg Daily Intake</Text>
-                    <Text style={styles.statValueWithBg}>{monthly.AverageCaloriesIntake}</Text>
-                    <Text style={styles.statSubLabelWithBg}>calories</Text>
-                  </LinearGradient>
-                </ImageBackground>
+            <View style={styles.insightGrid}>
+              <View style={styles.insightCard}>
+                <Text style={styles.insightLabel}>AVG DAILY INTAKE</Text>
+                <Text style={styles.insightValue}>{monthly.AverageCaloriesIntake.toLocaleString()}</Text>
+                <Text style={styles.insightUnit}>calories</Text>
               </View>
-              <View style={styles.statCard}>
-                <ImageBackground
-                  source={{ uri: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&q=80" }}
-                  style={styles.statImageBg}
-                  imageStyle={styles.statImageStyle}
-                >
-                  <LinearGradient
-                    colors={["rgba(16, 185, 129, 0.30)", "rgba(20, 184, 166, 0.25)"]}
-                    style={styles.statOverlay}
-                  >
-                    <Text style={styles.statLabelWithBg}>Avg Daily Burned</Text>
-                    <Text style={styles.statValueWithBg}>{monthly.AverageCaloriesBurned}</Text>
-                    <Text style={styles.statSubLabelWithBg}>calories</Text>
-                  </LinearGradient>
-                </ImageBackground>
+              <View style={styles.insightCard}>
+                <Text style={styles.insightLabel}>AVG DAILY BURNED</Text>
+                <Text style={styles.insightValue}>{monthly.AverageCaloriesBurned.toLocaleString()}</Text>
+                <Text style={styles.insightUnit}>calories</Text>
               </View>
-              <View style={styles.statCard}>
-                <ImageBackground
-                  source={{ uri: "https://images.unsplash.com/photo-1484480974693-6ca0a78fb36b?w=400&q=80" }}
-                  style={styles.statImageBg}
-                  imageStyle={styles.statImageStyle}
-                >
-                  <LinearGradient
-                    colors={["rgba(59, 130, 246, 0.65)", "rgba(99, 102, 241, 0.60)"]}
-                    style={styles.statOverlay}
-                  >
-                    <Text style={styles.statLabelWithBg}>Avg Net Calories</Text>
-                    <Text style={styles.statValueWithBg}>{monthly.AverageNetCalories}</Text>
-                    <Text style={styles.statSubLabelWithBg}>deficit</Text>
-                  </LinearGradient>
-                </ImageBackground>
+              <View style={[styles.insightCard, styles.insightCardWide]}>
+                <Text style={styles.insightLabel}>AVG NET CALORIES</Text>
+                <Text style={[styles.insightValue, { color: Theme.emerald }]}>{monthly.AverageNetCalories}</Text>
+                <Text style={styles.insightUnit}>deficit per day</Text>
               </View>
             </View>
 
-            <View style={styles.cardSection}>
-              <Text style={styles.sectionHeader}>Monthly Progress</Text>
-              <View style={styles.rowTwoColumnSimple}>
-                <View>
-                  <Text style={styles.metricLabel}>Expected Weight Loss</Text>
-                  <Text style={styles.statValue}>{monthly.WeightGoalProgress.ExpectedWeightLoss_lbs} lbs</Text>
+            <View style={styles.glassCard}>
+              <Text style={styles.sectionLabel}>MONTHLY PROGRESS</Text>
+
+              <View style={styles.progressComparison}>
+                <View style={styles.progressCompareItem}>
+                  <Text style={styles.progressCompareLabel}>Expected Loss</Text>
+                  <Text style={styles.progressCompareValue}>{monthly.WeightGoalProgress.ExpectedWeightLoss_lbs} lbs</Text>
                 </View>
-                <View>
-                  <Text style={styles.metricLabel}>Actual Weight Loss</Text>
-                  <Text style={styles.statValueAccent}>
+                <View style={styles.progressCompareItem}>
+                  <Text style={styles.progressCompareLabel}>Actual Loss</Text>
+                  <Text style={[styles.progressCompareValue, { color: Theme.amber }]}>
                     {monthly.WeightGoalProgress.ActualWeightLoss_lbs} lbs
                   </Text>
                 </View>
               </View>
 
-              <View style={styles.progressRow}>
-                <View style={styles.progressHeaderRow}>
-                  <Text style={styles.metricLabelBold}>Goal Progress</Text>
-                  <Text style={styles.metricValueHighlight}>
-                    {monthly.WeightGoalProgress.ProgressPercent}%
-                  </Text>
+              <View style={styles.progressBarContainer}>
+                <View style={styles.progressBarHeader}>
+                  <Text style={styles.progressBarLabel}>Goal Progress</Text>
+                  <Text style={styles.progressBarPercent}>{monthly.WeightGoalProgress.ProgressPercent}%</Text>
                 </View>
-                <View style={styles.progressTrack}>
-                  <View
-                    style={[
-                      styles.progressFill,
-                      {
-                        width: `${monthly.WeightGoalProgress.ProgressPercent}%`,
-                      },
-                    ]}
-                  />
+                <View style={styles.progressBarTrack}>
+                  <View style={[styles.progressBarFill, styles.progressBarFillAmber, { width: `${monthly.WeightGoalProgress.ProgressPercent}%` }]} />
                 </View>
               </View>
 
-              <View style={styles.statusPillRow}>
-                <View style={styles.statusPillNeutral}>
-                  <Text style={styles.statusPillText}>{monthly.WeightGoalProgress.GoalStatus}</Text>
-                </View>
+              <View style={[styles.statusBadgeLarge, styles.statusBadgeAmber]}>
+                <Text style={styles.statusBadgeLargeTextAmber}>{monthly.WeightGoalProgress.GoalStatus}</Text>
               </View>
             </View>
           </View>
         )}
 
-        {/* Additional info */}
-        <View style={[styles.cardSection, { marginTop: 8, marginBottom: 24 }]}> 
-          <Text style={styles.sectionHeader}>Additional Information</Text>
-          <View style={styles.headerInfoRow}>
-            <View style={styles.headerInfoItem}>
-              <Text style={styles.headerInfoLabel}>Diet Type</Text>
-              <Text style={styles.headerInfoValue}>{patient.Diet}</Text>
+        {/* Additional Info */}
+        <View style={styles.glassCard}>
+          <Text style={styles.sectionLabel}>ADDITIONAL INFORMATION</Text>
+          <View style={styles.infoGrid}>
+            <View style={styles.infoItem}>
+              <Text style={styles.infoLabel}>Diet Type</Text>
+              <Text style={styles.infoValue}>{patient.Diet}</Text>
             </View>
-            <View style={styles.headerInfoItem}>
-              <Text style={styles.headerInfoLabel}>Exercise Routine</Text>
-              <Text style={styles.headerInfoValue}>{patient.ExerciseRoutine}</Text>
+            <View style={styles.infoItem}>
+              <Text style={styles.infoLabel}>Exercise</Text>
+              <Text style={styles.infoValue}>{patient.ExerciseRoutine}</Text>
             </View>
-            <View style={styles.headerInfoItem}>
-              <Text style={styles.headerInfoLabel}>Health App</Text>
-              <Text style={styles.headerInfoValue}>{patient.HealthApp}</Text>
+            <View style={styles.infoItem}>
+              <Text style={styles.infoLabel}>Health App</Text>
+              <Text style={styles.infoValue}>{patient.HealthApp}</Text>
             </View>
-            <View style={styles.headerInfoItem}>
-              <Text style={styles.headerInfoLabel}>Tracking Frequency</Text>
-              <Text style={styles.headerInfoValue}>{patient.TrackingFrequency}</Text>
+            <View style={styles.infoItem}>
+              <Text style={styles.infoLabel}>Tracking</Text>
+              <Text style={styles.infoValue}>{patient.TrackingFrequency}</Text>
             </View>
           </View>
         </View>
       </ScrollView>
+
+      {/* Edit Modal */}
+      <EditCaloriesModal
+        visible={editModalVisible}
+        onClose={() => setEditModalVisible(false)}
+        onSave={handleSaveCalories}
+        caloriesIntake={latestDaily.CaloriesIntake}
+        caloriesBurned={latestDaily.CaloriesBurned}
+      />
     </View>
   );
 };
 
+// ============================================
+// STYLES
+// ============================================
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.gray100,
-      paddingBottom: verticalScale(60),
+    backgroundColor: Theme.bgPrimary,
   },
   scrollArea: {
     flex: 1,
-      // paddingBottom: verticalScale(60),
-    
   },
-  menuBar: {
-  position: "absolute",
-  top: 10,
-  right: 10,
-  flexDirection: "row",
-  gap: 10,
-  zIndex: 20,
-},
-
-menuButton: {
-  padding: 8,
-  backgroundColor: "rgba(255,255,255,0.20)",
-  borderRadius: 12,
-  backdropFilter: "blur(8px)",
-  borderWidth: 1,
-  borderColor: "rgba(255,255,255,0.25)",
-  justifyContent: "center",
-  alignItems: "center",
-
-  // Shadow for modern look
-  shadowColor: "#000",
-  shadowOpacity: 0.2,
-  shadowRadius: 4,
-  shadowOffset: { width: 0, height: 2 },
-},
-
   content: {
-    padding: 16,
-    paddingBottom: 32,
+    paddingHorizontal: 20,
+    paddingBottom: verticalScale(100),
   },
-  title: {
-    fontSize: 22,
-    fontWeight: "800",
-    color: Colors.black,
-    marginBottom: 4,
-  },
-  subtitle: {
-    fontSize: 14,
-    color: Colors.gray600,
-    marginBottom: 16,
-  },
-  headerCard: {
-    borderRadius: 16,
-    marginBottom: 16,
-    shadowColor: "#000",
-    shadowOpacity: 0.2,
-    shadowRadius: 8,
-    shadowOffset: { width: 0, height: 3 },
-    elevation: 5,
+
+  // Ambient Background
+  ambientBg: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
     overflow: "hidden",
   },
-  headerImageBg: {
-    width: "100%",
+  ambientOrb1: {
+    position: "absolute",
+    top: -60,
+    right: -40,
+    width: 200,
+    height: 200,
+    borderRadius: 100,
   },
-  headerImageStyle: {
-    borderRadius: 16,
+  ambientOrb2: {
+    position: "absolute",
+    top: 350,
+    left: -70,
+    width: 160,
+    height: 160,
+    borderRadius: 80,
   },
-  headerOverlay: {
-    padding: 16,
-  },
-  headerTopRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    marginBottom: 12,
-  },
-  headerUserBox: {
-    alignItems: "flex-end",
-  },
-  headerUserLabel: {
-    fontSize: 12,
-    color: Colors.gray600,
-  },
-  headerUserValue: {
-    fontSize: 18,
-    fontWeight: "700",
-    color: Colors.primary,
-  },
-  headerUserLabelWithBg: {
-    fontSize: 12,
-    color: "rgba(255,255,255,0.9)",
-  },
-  headerUserValueWithBg: {
-    fontSize: 18,
-    fontWeight: "700",
-    color: "#fff",
-    textShadowColor: "rgba(0, 0, 0, 0.3)",
-    textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 3,
-  },
-  headerInfoRow: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    justifyContent: "space-between",
-    marginTop: 4,
-  },
-  headerInfoItem: {
-    width: "48%",
-    marginTop: 8,
-  },
-  headerInfoLabel: {
-    fontSize: 12,
-    color: Colors.gray600,
-  },
-  headerInfoValue: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: Colors.black,
-  },
-  headerInfoLabelWithBg: {
-    fontSize: 12,
-    color: "rgba(255,255,255,0.85)",
-  },
-  headerInfoValueWithBg: {
-    fontSize: 16,
-    fontWeight: "700",
-    color: "#fff",
-    textShadowColor: "rgba(0, 0, 0, 0.3)",
-    textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 2,
-  },
-  titleWithBg: {
-    fontSize: 22,
-    fontWeight: "800",
-    color: "#fff",
-    marginBottom: 4,
-    textShadowColor: "rgba(0, 0, 0, 0.3)",
-    textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 3,
-  },
-  subtitleWithBg: {
-    fontSize: 14,
-    color: "rgba(255,255,255,0.9)",
-    marginBottom: 16,
-  },
-  goalCard: {
-    borderRadius: 16,
-    padding: 16,
-    marginBottom: 16,
-  },
-  goalHeaderRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 12,
-  },
-  goalTitle: {
-    fontSize: 20,
-    fontWeight: "700",
-    color: "#374151",
-  },
-  goalGridRow: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    justifyContent: "space-between",
-  },
-  goalItem: {
-    width: "48%",
-    marginTop: 8,
-  },
-  goalLabel: {
-    fontSize: 12,
-    color: "#6B7280",
-  },
-  goalValue: {
-    fontSize: 18,
-    fontWeight: "700",
-    color: "#1F2937",
-  },
-  cardSection: {
-    backgroundColor: Colors.white,
-    borderRadius: 16,
-    padding: 16,
-    marginBottom: 16,
-  },
-  cardSectionSmall: {
-    backgroundColor: Colors.white,
-    borderRadius: 16,
-    padding: 12,
-    marginBottom: 0,
-    flex: 1,
-    marginHorizontal: 4,
-  },
-  cardTitle: {
-    fontSize: 16,
-    fontWeight: "700",
-    color: Colors.white,
-    marginBottom: 4,
-  },
-  cardText: {
-    fontSize: 14,
-    color: Colors.white,
-  },
-  cardMetaLight: {
-    fontSize: 12,
-    color: "rgba(255,255,255,0.9)",
-    marginTop: 4,
-  },
-  cardMeta: {
-    fontSize: 12,
-    color: Colors.gray600,
-    marginTop: 4,
-  },
-  sectionHeader: {
-    fontSize: 16,
-    fontWeight: "700",
-    color: Colors.black,
-    marginBottom: 4,
-  },
-  tabsCard: {
-    backgroundColor: Colors.white,
-    borderRadius: 16,
-    marginBottom: 16,
-    paddingHorizontal: 8,
-    paddingTop: 4,
-  },
-  tabBarRow: {
-    flexDirection: "row",
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: Colors.gray200,
-  },
-  tabBarButton: {
-    flex: 1,
-    paddingVertical: 10,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  tabBarLabel: {
-    fontSize: 14,
-    fontWeight: "600",
-    color: Colors.gray600,
-  },
-  tabBarLabelActive: {
-    color: Colors.primary,
-  },
-  tabBarUnderline: {
-    marginTop: 6,
-    height: 2,
-    width: "60%",
-    backgroundColor: Colors.primary,
-    borderRadius: 999,
-  },
-  sectionSpace: {
-    marginBottom: 12,
-  },
-  statGridRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginTop: 12,
-  },
-  statCard: {
-    width: "32%",
+  ambientOrb3: {
+    position: "absolute",
+    bottom: 180,
+    right: -50,
+    width: 140,
     height: 140,
-    backgroundColor: Colors.gray100,
-    borderRadius: 12,
+    borderRadius: 70,
+  },
+
+
+  // Header
+  header: {
+    paddingTop: 60,
+    paddingBottom: 20,
+  },
+  headerTop: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 16,
+  },
+  headerLeft: {
+    flex: 1,
+  },
+  greeting: {
+    fontSize: 11,
+    letterSpacing: 2,
+    color: Theme.textMuted,
+    marginBottom: 4,
+  },
+  userName: {
+    fontSize: 26,
+    fontWeight: "300",
+    color: Theme.textPrimary,
+    letterSpacing: -0.5,
+  },
+  headerRight: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+  },
+  iconBtn: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: Theme.bgCard,
+    borderWidth: 1,
+    borderColor: Theme.border,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  avatar: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: Theme.emerald,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  avatarText: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: Theme.textPrimary,
+  },
+  streakBadge: {
+    flexDirection: "row",
+    alignItems: "center",
+    alignSelf: "flex-start",
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    borderRadius: 50,
+    backgroundColor: "rgba(245, 158, 11, 0.15)",
+    borderWidth: 1,
+    borderColor: "rgba(245, 158, 11, 0.2)",
+    gap: 8,
+  },
+  streakEmoji: {
+    fontSize: 16,
+  },
+  streakText: {
+    fontSize: 14,
+    fontWeight: "500",
+    color: "#FCD34D",
+  },
+
+  // Glass Card
+  glassCard: {
+    backgroundColor: Theme.bgCard,
+    borderRadius: 24,
+    borderWidth: 1,
+    borderColor: Theme.border,
+    padding: 20,
+    marginBottom: 16,
     overflow: "hidden",
   },
-  statLabel: {
-    fontSize: 12,
-    color: Colors.gray600,
+  glassCardGlow: {
+    position: "absolute",
+    top: 0,
+    right: 0,
+    width: 150,
+    height: 150,
+    backgroundColor: "rgba(16, 185, 129, 0.1)",
+    borderRadius: 75,
+    transform: [{ translateX: 50 }, { translateY: -50 }],
   },
-  statValue: {
-    marginTop: 4,
-    fontSize: 20,
-    fontWeight: "700",
-    color: Colors.black,
+
+  // Weight Card
+  weightCardContent: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
-  statValueSmall: {
-    marginTop: 4,
-    fontSize: 16,
-    fontWeight: "700",
-    color: Colors.black,
-  },
-  statSubLabel: {
-    marginTop: 4,
-    fontSize: 12,
-    color: Colors.gray500,
-  },
-  statImageBg: {
-    width: "100%",
-    height: "100%",
-  },
-  statImageStyle: {
-    borderRadius: 12,
-  },
-  statOverlay: {
-    padding: 12,
+  weightInfo: {
     flex: 1,
+  },
+  sectionLabel: {
+    fontSize: 10,
+    letterSpacing: 2,
+    color: Theme.textMuted,
+    marginBottom: 12,
+  },
+  weightValueRow: {
+    flexDirection: "row",
+    alignItems: "baseline",
+    gap: 6,
+  },
+  weightNumber: {
+    fontSize: 44,
+    fontWeight: "200",
+    color: Theme.textPrimary,
+    letterSpacing: -2,
+  },
+  weightUnit: {
+    fontSize: 18,
+    color: Theme.textMuted,
+  },
+  weightChange: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: 10,
+    gap: 8,
+  },
+  changePositive: {
+    fontSize: 14,
+    fontWeight: "500",
+    color: Theme.emerald,
+  },
+  changeLabel: {
+    fontSize: 14,
+    color: Theme.textMuted,
+  },
+
+  // Circular Progress
+  circularCenter: {
     justifyContent: "center",
-  },
-  statLabelWithBg: {
-    fontSize: 13,
-    color: "rgba(255,255,255,1)",
-    fontWeight: "700",
-    textShadowColor: "rgba(0, 0, 0, 0.5)",
-    textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 3,
-  },
-  statValueWithBg: {
-    marginTop: 4,
-    fontSize: 26,
-    fontWeight: "900",
-    color: "#fff",
-    textShadowColor: "rgba(0, 0, 0, 0.6)",
-    textShadowOffset: { width: 0, height: 2 },
-    textShadowRadius: 6,
-    letterSpacing: 0.5,
-  },
-  statValueSmallWithBg: {
-    marginTop: 4,
-    fontSize: 20,
-    fontWeight: "900",
-    color: "#fff",
-    textShadowColor: "rgba(0, 0, 0, 0.6)",
-    textShadowOffset: { width: 0, height: 2 },
-    textShadowRadius: 6,
-    letterSpacing: 0.5,
-  },
-  statSubLabelWithBg: {
-    marginTop: 4,
-    fontSize: 12,
-    color: "rgba(255,255,255,1)",
-    fontWeight: "600",
-    textShadowColor: "rgba(0, 0, 0, 0.5)",
-    textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 3,
-  },
-  cardHeaderRow: {
-    flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-between",
   },
-  rowTwoColumn: {
-    flexDirection: "row",
-    gap: 12,
-    marginTop: 12,
+  progressPercent: {
+    fontSize: 22,
+    fontWeight: "300",
+    color: Theme.textPrimary,
   },
-  rowTwoColumnSimple: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginTop: 12,
+  progressLabel: {
+    fontSize: 8,
+    letterSpacing: 1,
+    color: Theme.textMuted,
+    marginTop: 2,
   },
-  rowThreeColumn: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginTop: 12,
-  },
-  listRowBetween: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    marginTop: 8,
-  },
-  listRowDivider: {
-    height: StyleSheet.hairlineWidth,
-    backgroundColor: Colors.gray200,
-    marginVertical: 8,
-  },
-  metricLabelBold: {
-    fontSize: 13,
-    fontWeight: "600",
-    color: Colors.gray800,
-  },
-  metricValueHighlight: {
+  chartCenterValue: {
     fontSize: 18,
     fontWeight: "700",
-    color: Colors.primary,
+    color: Theme.textPrimary,
   },
-  statValueAccent: {
-    marginTop: 4,
-    fontSize: 20,
-    fontWeight: "700",
-    color: Colors.primary,
+  chartCenterLabel: {
+    fontSize: 9,
+    color: Theme.textMuted,
+    marginTop: 2,
   },
-  rowInlineCenter: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  progressRow: {
-    marginTop: 16,
-  },
-  progressHeaderRow: {
+
+  // Stats Row
+  statsRow: {
     flexDirection: "row",
     justifyContent: "space-between",
-    alignItems: "center",
+    marginTop: 20,
+    paddingTop: 20,
+    borderTopWidth: 1,
+    borderTopColor: Theme.borderLight,
+  },
+  statItem: {},
+  statLabel: {
+    fontSize: 9,
+    letterSpacing: 1.5,
+    color: Theme.textMuted,
     marginBottom: 6,
   },
-  progressTrack: {
-    width: "100%",
-    height: 8,
-    borderRadius: 999,
-    backgroundColor: Colors.gray200,
-    overflow: "hidden",
+  statValue: {
+    fontSize: 18,
+    fontWeight: "300",
+    color: Theme.textPrimary,
   },
-  progressFill: {
-    height: "100%",
-    backgroundColor: "#16a34a",
-    borderRadius: 999,
+  statUnit: {
+    fontSize: 12,
+    color: Theme.textMuted,
   },
-  statusPillRow: {
-    marginTop: 12,
+
+  // Tabs
+  tabsContainer: {
     flexDirection: "row",
+    backgroundColor: Theme.bgCard,
+    borderRadius: 16,
+    padding: 6,
+    marginBottom: 20,
+    borderWidth: 1,
+    borderColor: Theme.borderLight,
   },
-  statusPillNeutral: {
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 999,
-    backgroundColor: "#e0f2fe",
+  tab: {
+    flex: 1,
+    paddingVertical: 12,
+    alignItems: "center",
+    borderRadius: 12,
   },
-  statusPillText: {
-    fontSize: 13,
-    fontWeight: "600",
-    color: "#0369a1",
+  tabActive: {
+    backgroundColor: Theme.textPrimary,
   },
-  row: {
+  tabText: {
+    fontSize: 14,
+    fontWeight: "500",
+    color: Theme.textMuted,
+  },
+  tabTextActive: {
+    color: Theme.bgPrimary,
+  },
+
+  // Tab Content
+  tabContent: {},
+
+  // Energy Card
+  energyHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginTop: 8,
+    alignItems: "center",
+    marginBottom: 20,
   },
-  metricBox: {
-    flex: 1,
-    padding: 8,
+  dateText: {
+    fontSize: 14,
+    color: Theme.textMuted,
   },
-  metricBoxFull: {
+  energyRingContainer: {
+    alignItems: "center",
+    marginBottom: 24,
+  },
+  energyValue: {
+    fontSize: 36,
+    fontWeight: "300",
+  },
+  energyLabel: {
+    fontSize: 10,
+    letterSpacing: 1.5,
+    color: Theme.textMuted,
+    marginTop: 4,
+  },
+
+  // Calorie Grid
+  calorieGrid: {
+    flexDirection: "column",
+    gap: 12,
+  },
+  calorieCard: {
+    backgroundColor: Theme.bgCard,
+    borderRadius: 16,
+    padding: 16,
+    borderWidth: 1,
+    borderColor: Theme.borderLight,
+  },
+  calorieCardHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    marginBottom: 10,
+  },
+  calorieIcon: {
+    width: 32,
+    height: 32,
+    borderRadius: 10,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  calorieCardLabel: {
+    fontSize: 12,
+    color: Theme.textMuted,
     flex: 1,
-    padding: 8,
+  },
+  calorieCardValue: {
+    fontSize: 24,
+    fontWeight: "300",
+    color: Theme.textPrimary,
+  },
+  calorieCardUnit: {
+    fontSize: 14,
+    color: Theme.textMuted,
+  },
+  editBtn: {
+    padding: 6,
+    backgroundColor: Theme.bgCardHover,
+    borderRadius: 8,
+    marginLeft: "auto",
+  },
+  calorieBreakdown: {
+    marginTop: 12,
+    paddingTop: 12,
+    borderTopWidth: 1,
+    borderTopColor: Theme.borderLight,
+  },
+  breakdownItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: 4,
+    gap: 8,
+  },
+  breakdownDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+  },
+  breakdownLabel: {
+    fontSize: 12,
+    color: Theme.textMuted,
+    flex: 1,
+  },
+  breakdownValue: {
+    fontSize: 12,
+    fontWeight: "600",
+    color: Theme.textSecondary,
+  },
+
+  // Net Calories Box
+  netCaloriesBox: {
+    backgroundColor: Theme.bgCardHover,
+    borderRadius: 16,
+    padding: 16,
+    borderWidth: 1,
+    borderColor: Theme.border,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  netCaloriesContent: {
     alignItems: "flex-start",
   },
-  metricLabel: {
-    fontSize: 12,
-    color: Colors.gray600,
+  netCaloriesLabel: {
+    fontSize: 11,
+    color: Theme.textMuted,
+    letterSpacing: 0.5,
+    marginBottom: 4,
   },
-  metricValue: {
+  netCaloriesValue: {
+    fontSize: 28,
+    fontWeight: "300",
+  },
+  netCaloriesUnit: {
+    fontSize: 12,
+    color: Theme.textMuted,
+    marginTop: 2,
+  },
+  netCaloriesIndicator: {
+    alignItems: "center",
+    gap: 4,
+  },
+  netCaloriesStatus: {
+    fontSize: 11,
+    color: Theme.emerald,
+    fontWeight: "500",
+  },
+
+  // Macros
+  macrosContainer: {
+    gap: 16,
+  },
+  macroItem: {},
+  macroHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "baseline",
+    marginBottom: 8,
+  },
+  macroLabel: {
+    fontSize: 14,
+    color: Theme.textSecondary,
+  },
+  macroValue: {
+    fontSize: 14,
+    fontWeight: "500",
+    color: Theme.textPrimary,
+  },
+  macroGoal: {
+    color: Theme.textMuted,
+  },
+  macroTrack: {
+    height: 8,
+    backgroundColor: Theme.bgCard,
+    borderRadius: 10,
+    overflow: "hidden",
+  },
+  macroFill: {
+    height: "100%",
+    borderRadius: 10,
+  },
+
+  // Meals Section
+  sectionContainer: {
+    marginBottom: 16,
+  },
+  sectionTitle: {
+    fontSize: 10,
+    letterSpacing: 2,
+    color: Theme.textMuted,
+    marginBottom: 12,
+  },
+  mealCard: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    backgroundColor: Theme.bgCard,
+    borderRadius: 16,
+    padding: 14,
+    marginBottom: 10,
+    borderWidth: 1,
+    borderColor: Theme.borderLight,
+  },
+  mealInfo: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 14,
+  },
+  mealIcon: {
+    width: 48,
+    height: 48,
+    borderRadius: 14,
+    backgroundColor: Theme.bgCardHover,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  mealEmoji: {
+    fontSize: 22,
+  },
+  mealName: {
+    fontSize: 15,
+    fontWeight: "500",
+    color: Theme.textPrimary,
+    marginBottom: 2,
+  },
+  mealTime: {
+    fontSize: 13,
+    color: Theme.textMuted,
+  },
+  mealCalories: {
+    alignItems: "flex-end",
+  },
+  mealCaloriesValue: {
+    fontSize: 20,
+    fontWeight: "300",
+    color: Theme.textPrimary,
+  },
+  mealCaloriesUnit: {
+    fontSize: 12,
+    color: Theme.textMuted,
+  },
+
+  // Activities
+  activityGrid: {
+    flexDirection: "row",
+    gap: 12,
+  },
+  activityCard: {
+    flex: 1,
+    backgroundColor: "rgba(16, 185, 129, 0.1)",
+    borderRadius: 16,
+    padding: 16,
+    borderWidth: 1,
+    borderColor: "rgba(16, 185, 129, 0.15)",
+  },
+  activityEmoji: {
+    fontSize: 22,
+    marginBottom: 8,
+  },
+  activityName: {
+    fontSize: 14,
+    fontWeight: "500",
+    color: Theme.textPrimary,
+    marginBottom: 2,
+  },
+  activityDuration: {
+    fontSize: 12,
+    color: Theme.textMuted,
+    marginBottom: 10,
+  },
+  activityCalories: {
+    fontSize: 18,
+    fontWeight: "300",
+    color: Theme.emerald,
+  },
+  activityCaloriesUnit: {
+    fontSize: 12,
+  },
+
+  // Status Card
+  statusCard: {
+    backgroundColor: "rgba(16, 185, 129, 0.1)",
+    borderRadius: 20,
+    padding: 20,
+    borderWidth: 1,
+    borderColor: "rgba(16, 185, 129, 0.15)",
+  },
+  statusHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 8,
+  },
+  statusBadge: {
+    backgroundColor: "rgba(16, 185, 129, 0.2)",
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    borderRadius: 50,
+  },
+  statusBadgeText: {
+    fontSize: 12,
+    fontWeight: "600",
+    color: Theme.emerald,
+  },
+  statusExpected: {
+    fontSize: 14,
+    color: Theme.textSecondary,
+  },
+
+  // Weekly Tab Styles
+  dateRange: {
+    fontSize: 14,
+    color: Theme.textSecondary,
+    marginBottom: 20,
+  },
+  weeklyStatsGrid: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 12,
+  },
+  weeklyStatCard: {
+    flex: 1,
+    minWidth: "30%",
+    backgroundColor: Theme.bgCard,
+    borderRadius: 14,
+    padding: 14,
+    borderWidth: 1,
+    borderColor: Theme.borderLight,
+  },
+  weeklyStatLabel: {
+    fontSize: 11,
+    color: Theme.textMuted,
+    marginBottom: 6,
+  },
+  weeklyStatValue: {
+    fontSize: 18,
+    fontWeight: "300",
+    color: Theme.textPrimary,
+  },
+  weeklyStatUnit: {
+    fontSize: 12,
+    color: Theme.textMuted,
+  },
+  weeklyStatSub: {
+    fontSize: 11,
+    color: Theme.textMuted,
+    marginTop: 4,
+  },
+
+  // Progress Comparison
+  progressComparison: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: 20,
+  },
+  progressCompareItem: {},
+  progressCompareLabel: {
+    fontSize: 12,
+    color: Theme.textMuted,
+    marginBottom: 4,
+  },
+  progressCompareValue: {
+    fontSize: 20,
+    fontWeight: "300",
+    color: Theme.textPrimary,
+  },
+
+  // Progress Bar
+  progressBarContainer: {
+    marginBottom: 16,
+  },
+  progressBarHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 8,
+  },
+  progressBarLabel: {
+    fontSize: 13,
+    fontWeight: "500",
+    color: Theme.textSecondary,
+  },
+  progressBarPercent: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: Theme.emerald,
+  },
+  progressBarTrack: {
+    height: 8,
+    backgroundColor: Theme.bgCard,
+    borderRadius: 10,
+    overflow: "hidden",
+  },
+  progressBarFill: {
+    height: "100%",
+    backgroundColor: Theme.emerald,
+    borderRadius: 10,
+  },
+  progressBarFillAmber: {
+    backgroundColor: Theme.amber,
+  },
+
+  // Status Badge Large
+  statusBadgeLarge: {
+    alignSelf: "flex-start",
+    backgroundColor: "rgba(16, 185, 129, 0.15)",
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 50,
+  },
+  statusBadgeLargeText: {
+    fontSize: 14,
+    fontWeight: "600",
+    color: Theme.emerald,
+  },
+  statusBadgeAmber: {
+    backgroundColor: "rgba(245, 158, 11, 0.15)",
+  },
+  statusBadgeLargeTextAmber: {
+    fontSize: 14,
+    fontWeight: "600",
+    color: Theme.amber,
+  },
+
+  // Monthly Tab Styles
+  monthlyWeightRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginTop: 8,
+  },
+  monthlyWeightItem: {
+    flex: 1,
+  },
+  monthlyWeightLabel: {
+    fontSize: 12,
+    color: Theme.textMuted,
+    marginBottom: 4,
+  },
+  monthlyWeightValue: {
+    fontSize: 22,
+    fontWeight: "300",
+    color: Theme.textPrimary,
+  },
+  monthlyWeightUnit: {
+    fontSize: 14,
+    color: Theme.textMuted,
+  },
+  monthlyWeightBmi: {
+    fontSize: 12,
+    color: Theme.textMuted,
+    marginTop: 4,
+  },
+  monthlyWeightArrow: {
+    paddingHorizontal: 16,
+  },
+
+  // Insight Grid
+  insightGrid: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 12,
+    marginBottom: 16,
+  },
+  insightCard: {
+    flex: 1,
+    minWidth: "45%",
+    backgroundColor: Theme.bgCard,
+    borderRadius: 16,
+    padding: 16,
+    borderWidth: 1,
+    borderColor: Theme.border,
+  },
+  insightCardWide: {
+    minWidth: "100%",
+  },
+  insightLabel: {
+    fontSize: 9,
+    letterSpacing: 1,
+    color: Theme.textMuted,
+    marginBottom: 8,
+  },
+  insightValue: {
+    fontSize: 24,
+    fontWeight: "300",
+    color: Theme.textPrimary,
+  },
+  insightUnit: {
+    fontSize: 12,
+    color: Theme.textMuted,
+    marginTop: 4,
+  },
+
+  // Info Grid
+  infoGrid: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+  },
+  infoItem: {
+    width: "50%",
+    marginTop: 12,
+  },
+  infoLabel: {
+    fontSize: 12,
+    color: Theme.textMuted,
+    marginBottom: 4,
+  },
+  infoValue: {
+    fontSize: 15,
+    fontWeight: "500",
+    color: Theme.textPrimary,
+  },
+
+  // Modal Styles - Dark Theme
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0, 0, 0, 0.7)",
+    justifyContent: "flex-end",
+  },
+  modalContainer: {
+    backgroundColor: "#1A1A1E",
+    borderTopLeftRadius: 28,
+    borderTopRightRadius: 28,
+    paddingTop: 12,
+    paddingHorizontal: 20,
+    paddingBottom: 34,
+    maxHeight: "85%",
+  },
+  modalDragHandle: {
+    width: 40,
+    height: 4,
+    backgroundColor: Theme.textMuted,
+    borderRadius: 2,
+    alignSelf: "center",
+    marginBottom: 16,
+  },
+  modalHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 20,
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: "600",
+    color: Theme.textPrimary,
+  },
+  modalCloseBtn: {
+    padding: 4,
+  },
+  modalScrollView: {
+    maxHeight: 400,
+  },
+  modalSectionHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 12,
+    marginTop: 4,
+    gap: 10,
+  },
+  modalSectionTitle: {
+    fontSize: 15,
+    fontWeight: "600",
+    color: Theme.textSecondary,
+  },
+  modalInputRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: Theme.bgCard,
+    borderRadius: 14,
+    paddingHorizontal: 12,
+    paddingVertical: 12,
+    marginBottom: 10,
+    borderWidth: 1,
+    borderColor: Theme.border,
+  },
+  modalIconBox: {
+    width: 44,
+    height: 44,
+    borderRadius: 12,
+    justifyContent: "center",
+    alignItems: "center",
+    marginRight: 12,
+  },
+  modalInputLabel: {
+    fontSize: 15,
+    color: Theme.textSecondary,
+    fontWeight: "500",
+    flex: 1,
+  },
+  modalInputContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: Theme.bgCardHover,
+    borderRadius: 10,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderWidth: 1,
+    borderColor: Theme.border,
+  },
+  modalInput: {
+    backgroundColor: "transparent",
+    color: Theme.textPrimary,
+    fontSize: 16,
+    fontWeight: "600",
+    textAlign: "right",
+    minWidth: 50,
+    paddingVertical: 0,
+  },
+  modalInputUnit: {
+    fontSize: 13,
+    color: Theme.textMuted,
+    marginLeft: 4,
+  },
+  modalTotalRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: 14,
+    paddingHorizontal: 12,
+    marginBottom: 4,
+    backgroundColor: Theme.bgCardHover,
+    borderRadius: 12,
+    marginTop: 4,
+  },
+  modalTotalLabel: {
+    fontSize: 15,
+    fontWeight: "600",
+    color: Theme.textSecondary,
+    flex: 1,
+  },
+  modalTotalValue: {
+    fontSize: 17,
+    fontWeight: "700",
+  },
+  modalDivider: {
+    height: 1,
+    backgroundColor: Theme.border,
+    marginVertical: 16,
+  },
+  modalActions: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginTop: 20,
+    gap: 12,
+  },
+  modalCancelBtn: {
+    flex: 1,
+    backgroundColor: Theme.bgCard,
+    paddingVertical: 14,
+    borderRadius: 14,
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: Theme.border,
+  },
+  modalCancelBtnText: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: Theme.textSecondary,
+  },
+  modalSaveBtn: {
+    flex: 1,
+    borderRadius: 14,
+    overflow: "hidden",
+  },
+  modalSaveBtnGradient: {
+    paddingVertical: 14,
+    alignItems: "center",
+  },
+  modalSaveBtnText: {
     fontSize: 16,
     fontWeight: "700",
-    color: Colors.black,
+    color: Theme.textPrimary,
+  },
+  modalSyncText: {
+    fontSize: 11,
+    color: Theme.textMuted,
+    textAlign: "center",
+    marginTop: 16,
   },
 });
 

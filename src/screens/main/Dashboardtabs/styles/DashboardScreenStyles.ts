@@ -6,7 +6,7 @@ export const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: Colors.white,
-   paddingBottom: verticalScale(60), // responsive bottom padding
+    paddingBottom: verticalScale(60),
     paddingTop: Platform.OS === "android" ? 0 : 0,
   },
   content: {

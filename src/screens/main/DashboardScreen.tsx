@@ -49,6 +49,8 @@ const DashboardScreen = ({ route }: any) => {
             mealType={mealType}
             surpriseMode={surpriseMode}
             fromLanding={fromLanding}
+            activeTab={activeHeaderTab}
+            onTabChange={setActiveHeaderTab}
           />
         );
       case "go-shop":
@@ -66,13 +68,18 @@ const DashboardScreen = ({ route }: any) => {
     }
   };
 
+  // Show DashboardHeader only for non-make-it tabs (HomeScreen has its own header with tabs)
+  const showDashboardHeader = activeHeaderTab !== "make-it";
+
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="dark-content" />
-      <DashboardHeader
-        activeTab={activeHeaderTab}
-        onTabChange={setActiveHeaderTab}
-      />
+      <StatusBar barStyle="light-content" />
+      {showDashboardHeader && (
+        <DashboardHeader
+          activeTab={activeHeaderTab}
+          onTabChange={setActiveHeaderTab}
+        />
+      )}
       {renderScreen()}
     </View>
   );
