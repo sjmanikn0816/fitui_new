@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 
 import Modal from 'react-native-modal';
+import { Colors } from '@/constants/Colors';
 
 
 
@@ -138,31 +139,34 @@ const styles = StyleSheet.create({
   },
   modalContainer: {
     width: SCREEN_WIDTH * 0.8,
-    backgroundColor: 'white',
+    backgroundColor: Colors.bgCard,
     padding: 20,
     alignItems: 'center',
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: Colors.borderDark,
   },
   title: {
     fontSize: 20,
     fontWeight: 'bold',
     marginBottom: 10,
-    color: '#333',
+    color: Colors.textPrimary,
     textAlign: 'center',
   },
   message: {
     fontSize: 18,
-    fontWeight: 'regular',
+    fontWeight: 'normal',
     marginBottom: 20,
-    color: '#555',
+    color: Colors.textSecondary,
     textAlign: 'center',
   },
   button: {
     paddingVertical: 10,
     paddingHorizontal: 90,
-    borderRadius: 5,
+    borderRadius: 8,
   },
   buttonText: {
-    color: 'white',
+    color: Colors.bgPrimary,
     fontSize: 16,
     textAlign: 'center',
   },
@@ -176,7 +180,6 @@ const styles = StyleSheet.create({
     top: 20,
     left: 20,
   },
-
 });
 
 export default StatusModal;
