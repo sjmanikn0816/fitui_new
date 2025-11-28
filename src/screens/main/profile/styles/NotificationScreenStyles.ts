@@ -3,7 +3,7 @@ import { verticalScale } from "@/utils/responsive";
 import { StyleSheet } from "react-native";
 
 export const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: Colors.background , paddingBottom: verticalScale(60)}, // responsive bottom padding,
+  container: { flex: 1, backgroundColor: Colors.gray100 , paddingBottom: verticalScale(60)}, // responsive bottom padding,
   scrollView: { flex: 1 },
   section: { marginTop: 24 },
   sectionHeader: { paddingHorizontal: 16, marginBottom: 8 },

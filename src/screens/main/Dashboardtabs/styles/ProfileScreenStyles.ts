@@ -7,24 +7,24 @@ import { StyleSheet } from "react-native";
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.white,
+    backgroundColor: Colors.gray100,
  paddingBottom: verticalScale(60), // responsive bottom padding
-    
+
   },
 
 
  scrollView: {
     flex: 1,
-  
+
   },
-  
+
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: Spacing.lg,
     paddingVertical: Spacing.md,
-    backgroundColor: Colors.white,
+    backgroundColor: Colors.gray100,
   },
   title: {
     ...Typography.h3,

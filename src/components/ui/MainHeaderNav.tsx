@@ -24,7 +24,7 @@ const MainHeader: React.FC<HeaderProps> = ({
         {/* Back Button (optional) */}
         {showBackButton && (
           <TouchableOpacity onPress={onBackPress} style={styles.backButton}>
-            <MaterialIcons name="arrow-back" size={24} color={Colors.textSecondary} />
+            <MaterialIcons name="arrow-back" size={24} color={Colors.white} />
           </TouchableOpacity>
         )}
 
@@ -47,15 +47,15 @@ const MainHeader: React.FC<HeaderProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: Colors.white,
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.border,
+    backgroundColor: Colors.gray800,
+    borderBottomWidth: 0,
+    borderBottomColor: 'transparent',
     paddingTop: 40,
   },
   content: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between', 
+    justifyContent: 'space-between',
     paddingHorizontal: 16,
     paddingVertical: 12,
   },
@@ -69,11 +69,11 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 18,
     fontWeight: '600',
-    color: Colors.text,
+    color: Colors.white,
   },
   subtitle: {
     fontSize: 14,
-    color: Colors.textSecondary,
+    color: 'rgba(255,255,255,0.8)',
     marginTop: 2,
   },
   skipButton: {
@@ -83,7 +83,7 @@ const styles = StyleSheet.create({
   skipText: {
     fontSize: 16,
     fontWeight: '500',
-    color: Colors.primary, 
+    color: Colors.primary,
   },
 });
 

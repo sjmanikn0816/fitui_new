@@ -17,7 +17,7 @@ const HeaderNav: React.FC<HeaderNavProps> = ({ onBack, title, showLogo = true, o
     <View style={styles.header}>
       {onBack && (
         <TouchableOpacity style={styles.backButton} onPress={onBack}>
-          <Ionicons name="arrow-back" size={24} color={Colors.black} />
+          <Ionicons name="arrow-back" size={24} color={Colors.white} />
         </TouchableOpacity>
       )}
 
@@ -40,14 +40,14 @@ export default HeaderNav;
 const styles = StyleSheet.create({
   header: {
     flexDirection: "row",
-    alignItems: "center", 
+    alignItems: "center",
     justifyContent: "center",
     height: Platform.OS === "ios" ? 90 : 70,
     paddingHorizontal: 16,
     paddingTop: Platform.OS === "ios" ? 30 : 0,
-    backgroundColor: Colors.white,
-    borderBottomColor: Colors.background,
-    borderBottomWidth: 1,
+    backgroundColor: Colors.gray800,
+    borderBottomColor: "transparent",
+    borderBottomWidth: 0,
     width: "100%",
     position: "absolute",
     top: 0,
@@ -70,7 +70,7 @@ const styles = StyleSheet.create({
   },
   title: {
     ...Typography.h3,
-    color: Colors.black,
+    color: Colors.white,
     fontWeight: "600",
     textAlign: "center",
   },

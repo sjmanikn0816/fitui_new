@@ -7,7 +7,7 @@ const { width } = Dimensions.get('window');
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f8f9fa',
+    backgroundColor: Colors.gray100,
       paddingBottom: verticalScale(60), // responsive bottom padding
   },
   header: {

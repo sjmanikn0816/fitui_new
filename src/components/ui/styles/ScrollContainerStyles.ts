@@ -5,7 +5,7 @@ import { verticalScale } from "@/utils/responsive";
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.white,
+    backgroundColor: Colors.gray100,
   },
   scrollContent: {
     flexGrow: 1,

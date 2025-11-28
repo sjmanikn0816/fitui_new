@@ -4,7 +4,7 @@ import { scale, verticalScale, moderateScale } from "@/utils/responsive";
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f8fafc",
+    backgroundColor: "#F7F7F7",
   },
 
   scrollContent: {

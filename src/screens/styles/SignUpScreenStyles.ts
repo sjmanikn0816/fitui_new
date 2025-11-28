@@ -10,14 +10,14 @@ import {
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background,
+    backgroundColor: Colors.gray100,
   },
   scrollContent: {
     flexGrow: 1,
     paddingBottom: responsiveHeight(3), // extra bottom padding for safe scroll
   },
   header: {
-    backgroundColor:Colors.white,
+    backgroundColor: Colors.gray100,
     alignItems: "center",
     paddingTop: responsiveHeight(5),
     marginTop: responsiveHeight(4),

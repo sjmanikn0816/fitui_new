@@ -8,7 +8,7 @@ const cardWidth = (width - cardSpacing * 3 - 40) / 2;
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.white,
+    backgroundColor: Colors.gray100,
   },
   header: {
     backgroundColor: Colors.primary,

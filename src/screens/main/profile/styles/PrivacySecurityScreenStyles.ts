@@ -3,7 +3,7 @@ import { StyleSheet } from "react-native";
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#ffffffff',
+    backgroundColor: '#F7F7F7',
   },
   scrollView: {
     flex: 1,
@@ -12,7 +12,7 @@ export const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingTop: 16,
     paddingBottom: 8,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#F7F7F7',
   },
   backButton: {
     flexDirection: 'row',

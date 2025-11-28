@@ -9,7 +9,7 @@ const scaleFont = (size) => (width / 375) * size;
 export const styles = StyleSheet.create({
   content: {
     flex: 1,
-    backgroundColor: Colors.white,
+    backgroundColor: Colors.gray100,
   },
 
   section: {

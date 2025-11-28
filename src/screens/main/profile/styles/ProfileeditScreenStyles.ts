@@ -4,7 +4,7 @@ import { Dimensions, StyleSheet } from "react-native";
 const { width } = Dimensions.get("window");
 
 export const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: Colors.white ,paddingBottom:80 },
+  container: { flex: 1, backgroundColor: Colors.gray100 ,paddingBottom:80 },
   content: { flex: 1, padding: 12, },
 
   profilePhotoSection: {
