@@ -5,8 +5,7 @@ import { StyleSheet } from "react-native";
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background,
- 
+    backgroundColor: Colors.bgPrimary,
   },
   scrollArea: {
     flex: 1,
@@ -18,7 +17,7 @@ export const styles = StyleSheet.create({
   headerCard: {
     borderRadius: 16,
     marginBottom: 16,
-    shadowColor: "#000",
+    shadowColor: Colors.emerald,
     shadowOpacity: 0.2,
     shadowRadius: 8,
     shadowOffset: { width: 0, height: 3 },
@@ -46,7 +45,7 @@ export const styles = StyleSheet.create({
   titleWithBg: {
     fontSize: 22,
     fontWeight: "800",
-    color: "#fff",
+    color: Colors.textPrimary,
     marginBottom: 4,
     textShadowColor: "rgba(0, 0, 0, 0.3)",
     textShadowOffset: { width: 0, height: 1 },
@@ -54,13 +53,13 @@ export const styles = StyleSheet.create({
   },
   subtitleWithBg: {
     fontSize: 16,
-    color: "rgba(255,255,255,0.95)",
+    color: Colors.textSecondary,
     fontWeight: "600",
     marginBottom: 4,
   },
   descriptionWithBg: {
     fontSize: 13,
-    color: "rgba(255,255,255,0.9)",
+    color: Colors.textMuted,
     lineHeight: 18,
   },
   // Instructions card
@@ -68,6 +67,9 @@ export const styles = StyleSheet.create({
     borderRadius: 16,
     padding: 16,
     marginBottom: 16,
+    backgroundColor: Colors.bgCard,
+    borderWidth: 1,
+    borderColor: Colors.borderDark,
   },
   instructionRow: {
     flexDirection: "row",
@@ -77,7 +79,7 @@ export const styles = StyleSheet.create({
   instructionTitle: {
     fontSize: 18,
     fontWeight: "700",
-    color: "#374151",
+    color: Colors.textPrimary,
   },
   methodList: {
     gap: 10,
@@ -89,7 +91,7 @@ export const styles = StyleSheet.create({
   },
   methodText: {
     fontSize: 14,
-    color: "#6B7280",
+    color: Colors.textMuted,
     flex: 1,
     lineHeight: 20,
   },
@@ -102,13 +104,13 @@ export const styles = StyleSheet.create({
   dividerLine: {
     flex: 1,
     height: 1,
-    backgroundColor: "#E5E7EB",
+    backgroundColor: Colors.borderDark,
   },
   dividerText: {
     paddingHorizontal: 16,
     fontSize: 14,
     fontWeight: "700",
-    color: "#9CA3AF",
+    color: Colors.textMuted,
   },
   voiceTextContainer: {
     gap: 0,
