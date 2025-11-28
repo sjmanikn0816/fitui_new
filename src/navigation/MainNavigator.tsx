@@ -79,7 +79,7 @@ const MainNavigator: React.FC = () => {
         },
       })}
     >
-      
+
   <Tab.Screen name="FoodAnalysis" component={FoodAnalysisStackNavigator} />
       <Tab.Screen name="HealthTrack" component={HealthTrackMonitorScreen} />
      <Tab.Screen name="Landing" component={LandingStackNavigator} />

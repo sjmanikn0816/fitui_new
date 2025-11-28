@@ -1,24 +1,31 @@
-// HomeScreen.tsx - Meal plan display with HealthTrackMonitorScreen-style header
-import React from "react";
+// HomeScreen.tsx - Redesigned with smart meal suggestions and fixed alignment
+import React, { useEffect, useRef, useMemo } from "react";
 import {
   View,
   Text,
   ScrollView,
   StyleSheet,
   TouchableOpacity,
-  ImageBackground,
+  Image,
   Dimensions,
+  Platform,
+  StatusBar,
+  Animated,
+  Easing,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
+import { Ionicons, MaterialCommunityIcons, Feather } from "@expo/vector-icons";
 import { Meal, MealPlan } from "@/types/types";
 import NutritionTargets from "./NutritionTargets";
 import MedicalBanner from "./AiRecomendationBanner";
 import { useNavigation } from "@react-navigation/native";
+import { Colors } from "@/constants/Colors";
+import Svg, { Circle, Defs, LinearGradient as SvgGradient, Stop } from "react-native-svg";
 
 const { width: screenWidth } = Dimensions.get("window");
 
 type TabId = "make-it" | "go-shop" | "dine-in" | "mom-it";
+type MealType = "Breakfast" | "Lunch" | "Dinner" | "Snack";
 
 interface HomeScreenProps {
   mealPlan: MealPlan;
@@ -29,40 +36,227 @@ interface HomeScreenProps {
   onTabChange?: (tab: TabId) => void;
 }
 
-// Meal type configurations
-const MEAL_CONFIG = {
-  Breakfast: {
-    icon: "sunny-outline" as const,
-    color: "#F59E0B",
-    bgColor: "rgba(245, 158, 11, 0.1)",
-    time: "7:00 - 9:00 AM",
-  },
-  Lunch: {
-    icon: "partly-sunny-outline" as const,
-    color: "#10B981",
-    bgColor: "rgba(16, 185, 129, 0.1)",
-    time: "12:00 - 2:00 PM",
-  },
-  Dinner: {
-    icon: "moon-outline" as const,
-    color: "#8B5CF6",
-    bgColor: "rgba(139, 92, 246, 0.1)",
-    time: "6:00 - 8:00 PM",
-  },
-  Snack: {
-    icon: "cafe-outline" as const,
-    color: "#EC4899",
-    bgColor: "rgba(236, 72, 153, 0.1)",
-    time: "Anytime",
-  },
+// Action Hub Tabs Configuration
+const TABS: { id: TabId; label: string; icon: string; colors: string[]; textColor: string; isOutlined?: boolean }[] = [
+  { id: "make-it", label: "Make it", icon: "pencil", colors: ["#FFFFFF", "#FFFFFF"], textColor: "#059669", isOutlined: true },
+  { id: "go-shop", label: "Go Shop", icon: "cart-outline", colors: ["#10B981", "#059669"], textColor: "#FFFFFF" },
+  { id: "dine-in", label: "Dine-In", icon: "restaurant-outline", colors: ["#8B5CF6", "#7C3AED"], textColor: "#FFFFFF" },
+  { id: "mom-it", label: "Mom It", icon: "home-outline", colors: ["#F97316", "#EA580C"], textColor: "#FFFFFF" },
+];
+
+// Grafana-inspired color palette
+const GRAFANA_COLORS = {
+  teal: "#00D4AA",
+  cyan: "#00A3CC",
+  purple: "#7C4DFF",
+  lightPurple: "#B388FF",
+  orange: "#FF9830",
+  green: "#73BF69",
 };
 
-const TABS: { id: TabId; label: string }[] = [
-  { id: "make-it", label: "Make It" },
-  { id: "go-shop", label: "Go Shop" },
-  { id: "dine-in", label: "Dine-In" },
-  { id: "mom-it", label: "Mom It" },
-];
+// Circular Progress Component with Grafana gradient
+const CircularProgress = ({
+  current,
+  total,
+  size = 180,
+  strokeWidth = 14,
+}: {
+  current: number;
+  total: number;
+  size?: number;
+  strokeWidth?: number;
+}) => {
+  const radius = (size - strokeWidth) / 2;
+  const circumference = radius * 2 * Math.PI;
+  const progress = Math.min(current / total, 1);
+  const strokeDashoffset = circumference * (1 - progress);
+
+  // Calculate position for the indicator dot
+  const angle = (progress * 360 - 90) * (Math.PI / 180);
+  const dotX = size / 2 + radius * Math.cos(angle);
+  const dotY = size / 2 + radius * Math.sin(angle);
+
+  return (
+    <View style={{ width: size, height: size, justifyContent: "center", alignItems: "center" }}>
+      <Svg width={size} height={size}>
+        <Defs>
+          <SvgGradient id="grafanaGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+            <Stop offset="0%" stopColor={GRAFANA_COLORS.teal} />
+            <Stop offset="33%" stopColor={GRAFANA_COLORS.cyan} />
+            <Stop offset="66%" stopColor={GRAFANA_COLORS.purple} />
+            <Stop offset="100%" stopColor={GRAFANA_COLORS.lightPurple} />
+          </SvgGradient>
+        </Defs>
+
+        {/* Background circle */}
+        <Circle
+          cx={size / 2}
+          cy={size / 2}
+          r={radius}
+          stroke="#E5E7EB"
+          strokeWidth={strokeWidth}
+          fill="transparent"
+        />
+
+        {/* Progress circle */}
+        <Circle
+          cx={size / 2}
+          cy={size / 2}
+          r={radius}
+          stroke="url(#grafanaGradient)"
+          strokeWidth={strokeWidth}
+          fill="transparent"
+          strokeDasharray={circumference}
+          strokeDashoffset={strokeDashoffset}
+          strokeLinecap="round"
+          transform={`rotate(-90 ${size / 2} ${size / 2})`}
+        />
+
+        {/* Indicator dot */}
+        <Circle
+          cx={dotX}
+          cy={dotY}
+          r={7}
+          fill={GRAFANA_COLORS.cyan}
+          stroke="#FFFFFF"
+          strokeWidth={2}
+        />
+      </Svg>
+
+      {/* Center Text */}
+      <View style={styles.progressCenterText}>
+        <Text style={styles.caloriesValue}>{current}</Text>
+        <Text style={styles.caloriesTotal}>/ {total} kcal</Text>
+      </View>
+    </View>
+  );
+};
+
+// Macro Progress Bar Component
+const MacroProgressBar = ({
+  label,
+  current,
+  total,
+  color,
+}: {
+  label: string;
+  current: number;
+  total: number;
+  color: string;
+}) => {
+  const progress = Math.min(current / total, 1);
+
+  return (
+    <View style={styles.macroContainer}>
+      <Text style={styles.macroLabel}>{label}</Text>
+      <View style={styles.macroBarBackground}>
+        <LinearGradient
+          colors={[color, color]}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 0 }}
+          style={[styles.macroBarFill, { width: `${progress * 100}%` }]}
+        />
+      </View>
+      <Text style={styles.macroValue}>{current} kal</Text>
+    </View>
+  );
+};
+
+// Meal Card Component
+const MealCard = ({
+  meal,
+  mealType,
+  isLogged,
+  onPress,
+  onEdit,
+}: {
+  meal: Meal;
+  mealType: string;
+  isLogged: boolean;
+  onPress: () => void;
+  onEdit?: () => void;
+}) => {
+  const getMealImage = () => {
+    if (meal.image_url) return meal.image_url;
+    const placeholders: Record<string, string> = {
+      Breakfast: "https://images.unsplash.com/photo-1525351484163-7529414344d8?w=400&q=80",
+      Lunch: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&q=80",
+      Dinner: "https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=400&q=80",
+      Snack: "https://images.unsplash.com/photo-1553530666-ba11a7da3888?w=400&q=80",
+    };
+    return placeholders[mealType] || placeholders.Lunch;
+  };
+
+  return (
+    <TouchableOpacity style={styles.mealCard} onPress={onPress} activeOpacity={0.9}>
+      <View style={styles.mealImageContainer}>
+        <Image source={{ uri: getMealImage() }} style={styles.mealImage} />
+        {isLogged && (
+          <View style={styles.loggedBadge}>
+            <Text style={styles.loggedBadgeText}>Logged</Text>
+          </View>
+        )}
+      </View>
+
+      <Text style={styles.mealType}>{mealType}</Text>
+      <Text style={styles.mealName} numberOfLines={2}>{meal.name}</Text>
+
+      <View style={styles.mealFooter}>
+        <Text style={styles.mealCalories}>{meal.nutrition?.calories || 0} kcal</Text>
+        {onEdit && (
+          <TouchableOpacity onPress={onEdit} style={styles.editButton}>
+            <Feather name="edit-2" size={14} color="#9CA3AF" />
+          </TouchableOpacity>
+        )}
+      </View>
+    </TouchableOpacity>
+  );
+};
+
+// Smart Next Meal Helper
+const getNextMealSuggestion = (
+  loggedMeals: { breakfast: boolean; lunch: boolean; dinner: boolean }
+): { mealType: MealType; message: string } => {
+  const hour = new Date().getHours();
+
+  // Morning (6am - 11am)
+  if (hour >= 6 && hour < 11) {
+    if (!loggedMeals.breakfast) {
+      return { mealType: "Breakfast", message: "What's for Breakfast?" };
+    }
+    if (!loggedMeals.lunch) {
+      return { mealType: "Lunch", message: "Plan your Lunch" };
+    }
+  }
+
+  // Midday (11am - 3pm)
+  if (hour >= 11 && hour < 15) {
+    if (!loggedMeals.lunch) {
+      return { mealType: "Lunch", message: "What's for Lunch?" };
+    }
+    if (!loggedMeals.dinner) {
+      return { mealType: "Dinner", message: "Plan your Dinner" };
+    }
+  }
+
+  // Afternoon/Evening (3pm - 9pm)
+  if (hour >= 15 && hour < 21) {
+    if (!loggedMeals.dinner) {
+      return { mealType: "Dinner", message: "What's for Dinner?" };
+    }
+    if (!loggedMeals.lunch) {
+      return { mealType: "Lunch", message: "Log your Lunch" };
+    }
+  }
+
+  // Night (9pm - 6am)
+  if (!loggedMeals.dinner) {
+    return { mealType: "Dinner", message: "Log your Dinner" };
+  }
+
+  // All meals logged - suggest snack
+  return { mealType: "Snack", message: "Add a Snack" };
+};
 
 const HomeScreen: React.FC<HomeScreenProps> = ({
   mealPlan,
@@ -73,9 +267,29 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
   onTabChange,
 }) => {
   const plan = mealPlan ? (mealPlan[`${planType}_plan`] as any) : null;
-  const navigation = useNavigation();
+  const navigation = useNavigation<any>();
 
-  // Empty refresh handler - placeholder for future
+  // Animation values
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+  const slideAnim = useRef(new Animated.Value(20)).current;
+
+  useEffect(() => {
+    Animated.parallel([
+      Animated.timing(fadeAnim, {
+        toValue: 1,
+        duration: 500,
+        useNativeDriver: true,
+      }),
+      Animated.timing(slideAnim, {
+        toValue: 0,
+        duration: 500,
+        easing: Easing.out(Easing.cubic),
+        useNativeDriver: true,
+      }),
+    ]).start();
+  }, []);
+
+  // Navigation handlers
   const handleRefresh = () => {
     console.log("Refresh pressed");
   };
@@ -84,12 +298,17 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
     navigation.navigate("AllScreensMenu");
   };
 
-  // Calculate total nutrition from all meals
+  const handleSharePress = () => {
+    navigation.navigate("MealPlanEmail", { mealPlan });
+  };
+
+  // Calculate nutrition from meal plan data
   const calculateTotalNutrition = () => {
+    const activePlan = suggestionData || plan;
     const meals = [
-      ...(plan?.breakfast_options || suggestionData?.breakfast_options || []),
-      ...(plan?.lunch_options || suggestionData?.lunch_options || []),
-      ...(plan?.dinner_options || suggestionData?.dinner_options || []),
+      ...(activePlan?.breakfast_options || []),
+      ...(activePlan?.lunch_options || []),
+      ...(activePlan?.dinner_options || []),
     ];
 
     return {
@@ -102,553 +321,609 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
 
   const totalNutrition = calculateTotalNutrition();
 
-  const groupByWeek = (dailyPlans: any[]) => {
-    const weeks: any[] = [];
-    let currentWeek: any[] = [];
-    let weekStartDate = dailyPlans[0]?.date;
-
-    dailyPlans.forEach((dayPlan, index) => {
-      currentWeek.push(dayPlan);
-      if ((index + 1) % 7 === 0 || index === dailyPlans.length - 1) {
-        weeks.push({
-          weekNumber: weeks.length + 1,
-          startDate: weekStartDate,
-          endDate: dayPlan.date,
-          days: currentWeek,
-        });
-        currentWeek = [];
-        weekStartDate = dailyPlans[index + 1]?.date;
-      }
-    });
-    return weeks;
-  };
-
-  // Single Meal Item Component
-  const MealItem = ({ meal, type, index }: { meal: Meal; type: string; index: number }) => {
-    const config = MEAL_CONFIG[type as keyof typeof MEAL_CONFIG] || MEAL_CONFIG.Lunch;
-
-    return (
-      <TouchableOpacity
-        style={styles.mealItem}
-        onPress={() => onSelectMeal(type, meal)}
-        activeOpacity={0.7}
-      >
-        <View style={[styles.mealItemIndex, { backgroundColor: config.bgColor }]}>
-          <Text style={[styles.mealItemIndexText, { color: config.color }]}>
-            {index + 1}
-          </Text>
-        </View>
-        <View style={styles.mealItemContent}>
-          <Text style={styles.mealItemName} numberOfLines={1}>{meal.name}</Text>
-          <View style={styles.mealItemMeta}>
-            <Ionicons name="time-outline" size={12} color="#9CA3AF" />
-            <Text style={styles.mealItemMetaText}>{meal.prep_time_minutes || 15} min</Text>
-            <View style={styles.metaDot} />
-            <Text style={styles.mealItemMetaText}>{meal.difficulty || "Easy"}</Text>
-          </View>
-        </View>
-        <View style={styles.mealItemCalories}>
-          <Text style={styles.calorieValue}>{meal.nutrition?.calories || 0}</Text>
-          <Text style={styles.calorieUnit}>kcal</Text>
-        </View>
-        <Ionicons name="chevron-forward" size={18} color="#D1D5DB" />
-      </TouchableOpacity>
-    );
-  };
-
-  // Meal Section Component
-  const MealSection = ({ type, meals }: { type: string; meals: Meal[] }) => {
-    const config = MEAL_CONFIG[type as keyof typeof MEAL_CONFIG] || MEAL_CONFIG.Lunch;
-
-    return (
-      <View style={styles.mealSection}>
-        <View style={styles.sectionHeader}>
-          <View style={styles.sectionHeaderLeft}>
-            <View style={[styles.sectionIcon, { backgroundColor: config.bgColor }]}>
-              <Ionicons name={config.icon} size={18} color={config.color} />
-            </View>
-            <View>
-              <Text style={styles.sectionTitle}>{type}</Text>
-              <Text style={styles.sectionTime}>{config.time}</Text>
-            </View>
-          </View>
-          <TouchableOpacity style={styles.refreshBtn} onPress={handleRefresh}>
-            <Ionicons name="refresh" size={16} color={config.color} />
-          </TouchableOpacity>
-        </View>
-
-        {meals.map((meal, idx) => (
-          <MealItem key={`${type}-${idx}`} meal={meal} type={type} index={idx} />
-        ))}
-
-        <View style={styles.sectionFooter}>
-          <View style={styles.footerStat}>
-            <Ionicons name="flame-outline" size={14} color="#F59E0B" />
-            <Text style={styles.footerStatText}>
-              {meals.reduce((sum, m) => sum + (m.nutrition?.calories || 0), 0)} kcal
-            </Text>
-          </View>
-          <View style={styles.footerStat}>
-            <MaterialCommunityIcons name="food-drumstick-outline" size={14} color="#10B981" />
-            <Text style={styles.footerStatText}>
-              {meals.reduce((sum, m) => sum + (m.nutrition?.protein || 0), 0)}g protein
-            </Text>
-          </View>
-        </View>
-      </View>
-    );
-  };
-
-  const renderWeeklyPlan = () => {
-    if (!plan?.daily_plans) return null;
-    const weeks = groupByWeek(plan.daily_plans);
-
-    return (
-      <View>
-        {plan?.daily_nutrition_target && !suggestionData && (
-          <View style={styles.nutritionTargetContainer}>
-            <NutritionTargets nutritionTargets={plan.daily_nutrition_target} />
-          </View>
-        )}
-
-        {weeks.map((week, weekIdx) => (
-          <View key={`week-${weekIdx}`} style={styles.weekBlock}>
-            <View style={styles.weekHeaderBar}>
-              <MaterialCommunityIcons name="calendar-week" size={18} color="#fff" />
-              <Text style={styles.weekHeaderText}>
-                Week {week.weekNumber} • {new Date(week.startDate).toLocaleDateString("en-US", { month: "short", day: "numeric" })} - {new Date(week.endDate).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
-              </Text>
-            </View>
-
-            {week.days.map((dayPlan: any, dayIdx: number) => (
-              <View key={dayIdx} style={styles.dayBlock}>
-                <View style={styles.dayHeaderRow}>
-                  <View style={styles.dayIndicator} />
-                  <Text style={styles.dayTitle}>
-                    {new Date(dayPlan.date).toLocaleDateString("en-US", { weekday: "long", month: "short", day: "numeric" })}
-                  </Text>
-                </View>
-                {dayPlan.breakfast_options?.length > 0 && <MealSection type="Breakfast" meals={dayPlan.breakfast_options} />}
-                {dayPlan.lunch_options?.length > 0 && <MealSection type="Lunch" meals={dayPlan.lunch_options} />}
-                {dayPlan.dinner_options?.length > 0 && <MealSection type="Dinner" meals={dayPlan.dinner_options} />}
-              </View>
-            ))}
-          </View>
-        ))}
-      </View>
-    );
+  // Daily goals
+  const dailyGoals = plan?.daily_nutrition_target || {
+    calories: 1800,
+    protein: 150,
+    carbs: 300,
+    fat: 90,
   };
 
   const activePlan = suggestionData || plan;
 
+  // Get current date formatted
+  const getCurrentDate = () => {
+    const now = new Date();
+    const options: Intl.DateTimeFormatOptions = { weekday: "long", month: "short", day: "numeric" };
+    return now.toLocaleDateString("en-US", options);
+  };
+
+  // Get AI suggestion based on nutrition progress
+  const getAISuggestion = () => {
+    const proteinPercent = (totalNutrition.protein / dailyGoals.protein) * 100;
+    if (proteinPercent >= 60) {
+      return "Evening check-in! Great job on hitting your protein goal.";
+    }
+    return "Keep going! You're making great progress today.";
+  };
+
+  // Get meals - simulating logged status based on available data
+  const breakfastMeal = activePlan?.breakfast_options?.[0] || null;
+  const lunchMeal = activePlan?.lunch_options?.[0] || null;
+  const dinnerMeal = activePlan?.dinner_options?.[0] || null;
+
+  // Determine logged status (in real app, this would come from user data)
+  const loggedMeals = useMemo(() => ({
+    breakfast: !!breakfastMeal,
+    lunch: false, // Simulating lunch not logged yet
+    dinner: false, // Simulating dinner not logged yet
+  }), [breakfastMeal]);
+
+  // Get smart next meal suggestion
+  const nextMealSuggestion = useMemo(() =>
+    getNextMealSuggestion(loggedMeals),
+    [loggedMeals]
+  );
+
+  // Get the meal to suggest for logging
+  const getNextMealToLog = (): Meal | null => {
+    switch (nextMealSuggestion.mealType) {
+      case "Breakfast":
+        return breakfastMeal;
+      case "Lunch":
+        return lunchMeal;
+      case "Dinner":
+        return dinnerMeal;
+      default:
+        return lunchMeal || dinnerMeal;
+    }
+  };
+
+  const nextMealToLog = getNextMealToLog();
+
   return (
-    <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-      {/* Header - HealthTrackMonitorScreen Style */}
-      <View style={styles.headerCard}>
-        <ImageBackground
-          source={{ uri: "https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=600&q=80" }}
-          style={styles.headerImageBg}
-          imageStyle={styles.headerImageStyle}
+    <View style={styles.container}>
+      <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
+
+      <ScrollView
+        style={styles.scrollView}
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+      >
+        {/* Header with Share Icons */}
+        <Animated.View
+          style={[
+            styles.header,
+            { opacity: fadeAnim, transform: [{ translateY: slideAnim }] },
+          ]}
         >
-          <LinearGradient
-            colors={["rgba(16, 185, 129, 0.93)", "rgba(5, 150, 105, 0.90)"]}
-            style={styles.headerOverlay}
-          >
-            <View style={styles.headerTopRow}>
-              <View>
-                <Text style={styles.headerTitle}>
-                  {planType === "weekly" ? "Weekly Plan" : "Today's Meals"}
-                </Text>
-                <Text style={styles.headerSubtitle}>
-                  {planType === "weekly"
-                    ? "Your meal schedule for the week"
-                    : new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })
-                  }
-                </Text>
-              </View>
-
-              <View style={styles.headerActions}>
-                <TouchableOpacity style={styles.headerBtn} onPress={handleRefresh}>
-                  <Ionicons name="refresh" size={20} color="#fff" />
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.headerBtn} onPress={() => navigation.navigate("MealPlanEmail", { mealPlan })}>
-                  <Ionicons name="share-outline" size={20} color="#fff" />
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.headerBtn} onPress={handleMenuPress}>
-                  <Ionicons name="ellipsis-horizontal" size={20} color="#fff" />
-                </TouchableOpacity>
-              </View>
+          <View style={styles.headerTop}>
+            <Text style={styles.headerTitle}>Daily Fuel Overview</Text>
+            <View style={styles.headerActions}>
+              <TouchableOpacity style={styles.headerIconBtn} onPress={handleRefresh}>
+                <Ionicons name="refresh" size={20} color="#6B7280" />
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.headerIconBtn} onPress={handleSharePress}>
+                <Ionicons name="share-outline" size={20} color="#6B7280" />
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.headerIconBtn} onPress={handleMenuPress}>
+                <Ionicons name="ellipsis-horizontal" size={20} color="#6B7280" />
+              </TouchableOpacity>
             </View>
+          </View>
 
-            {/* Nutrition Summary Row */}
-            <View style={styles.headerInfoRow}>
-              <View style={styles.headerInfoItem}>
-                <Text style={styles.headerInfoLabel}>Calories</Text>
-                <Text style={styles.headerInfoValue}>{totalNutrition.calories}</Text>
-              </View>
-              <View style={styles.headerInfoItem}>
-                <Text style={styles.headerInfoLabel}>Protein</Text>
-                <Text style={styles.headerInfoValue}>{totalNutrition.protein}g</Text>
-              </View>
-              <View style={styles.headerInfoItem}>
-                <Text style={styles.headerInfoLabel}>Carbs</Text>
-                <Text style={styles.headerInfoValue}>{totalNutrition.carbs}g</Text>
-              </View>
-              <View style={styles.headerInfoItem}>
-                <Text style={styles.headerInfoLabel}>Fat</Text>
-                <Text style={styles.headerInfoValue}>{totalNutrition.fat}g</Text>
-              </View>
-            </View>
+          <View style={styles.dateBadge}>
+            <Text style={styles.dateBadgeText}>{getCurrentDate()}</Text>
+          </View>
+        </Animated.View>
 
-            {/* Tabs */}
-            <ScrollView
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              style={styles.tabsContainer}
-              contentContainerStyle={styles.tabsContent}
-            >
-              {TABS.map((tab) => {
-                const isActive = activeTab === tab.id;
-                return (
-                  <TouchableOpacity
-                    key={tab.id}
-                    style={[styles.tab, isActive && styles.activeTab]}
-                    onPress={() => onTabChange?.(tab.id)}
-                    activeOpacity={0.8}
-                  >
-                    <Text style={[styles.tabText, isActive && styles.activeTabText]}>
-                      {tab.label}
-                    </Text>
-                  </TouchableOpacity>
-                );
-              })}
-            </ScrollView>
-          </LinearGradient>
-        </ImageBackground>
-      </View>
-
-      {/* Nutrition Targets Card */}
-      {activePlan?.daily_nutrition_target && planType === "daily" && (
-        <View style={styles.nutritionTargetContainer}>
-          <NutritionTargets nutritionTargets={activePlan.daily_nutrition_target} />
+        {/* Circular Progress */}
+        <View style={styles.progressSection}>
+          <CircularProgress
+            current={totalNutrition.calories || 1250}
+            total={dailyGoals.calories || 1800}
+            size={180}
+            strokeWidth={14}
+          />
         </View>
-      )}
 
-      {/* Content */}
-      <View style={styles.content}>
-        {planType === "weekly" ? (
-          renderWeeklyPlan()
-        ) : (
-          <>
-            {activePlan?.breakfast_options?.length > 0 && (
-              <MealSection type="Breakfast" meals={activePlan.breakfast_options} />
+        {/* Macro Progress Bars */}
+        <View style={styles.macrosRow}>
+          <MacroProgressBar
+            label="Protein"
+            current={totalNutrition.protein || 120}
+            total={dailyGoals.protein || 150}
+            color={GRAFANA_COLORS.teal}
+          />
+          <MacroProgressBar
+            label="Carbs"
+            current={totalNutrition.carbs || 330}
+            total={dailyGoals.carbs || 300}
+            color={GRAFANA_COLORS.purple}
+          />
+          <MacroProgressBar
+            label="Fats"
+            current={totalNutrition.fat || 230}
+            total={dailyGoals.fat || 90}
+            color={GRAFANA_COLORS.orange}
+          />
+        </View>
+
+        {/* AI Suggestion Banner */}
+        <View style={styles.suggestionBanner}>
+          <View style={styles.suggestionIcon}>
+            <MaterialCommunityIcons name="robot-happy-outline" size={20} color={GRAFANA_COLORS.teal} />
+          </View>
+          <Text style={styles.suggestionText}>{getAISuggestion()}</Text>
+        </View>
+
+        {/* Action Hub */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Action Hub</Text>
+          <View style={styles.actionHubRow}>
+            {TABS.map((tab) => {
+              const isOutlined = tab.isOutlined;
+
+              return (
+                <TouchableOpacity
+                  key={tab.id}
+                  style={styles.actionButton}
+                  onPress={() => onTabChange?.(tab.id)}
+                  activeOpacity={0.8}
+                >
+                  {isOutlined ? (
+                    <View style={styles.actionButtonOutlined}>
+                      <Feather name={tab.icon as any} size={12} color="#059669" />
+                      <Text style={styles.actionButtonTextOutlined}>{tab.label}</Text>
+                    </View>
+                  ) : (
+                    <LinearGradient
+                      colors={tab.colors}
+                      start={{ x: 0, y: 0 }}
+                      end={{ x: 1, y: 0 }}
+                      style={styles.actionButtonGradient}
+                    >
+                      <Ionicons name={tab.icon as any} size={12} color={tab.textColor} />
+                      <Text style={[styles.actionButtonText, { color: tab.textColor }]}>
+                        {tab.label}
+                      </Text>
+                    </LinearGradient>
+                  )}
+                </TouchableOpacity>
+              );
+            })}
+          </View>
+        </View>
+
+        {/* Meal Timeline */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Meal Timeline</Text>
+
+          <View style={styles.mealTimelineRow}>
+            {/* Breakfast Card */}
+            {breakfastMeal && (
+              <MealCard
+                meal={breakfastMeal}
+                mealType="Breakfast"
+                isLogged={loggedMeals.breakfast}
+                onPress={() => onSelectMeal("Breakfast", breakfastMeal)}
+                onEdit={() => onSelectMeal("Breakfast", breakfastMeal)}
+              />
             )}
-            {activePlan?.lunch_options?.length > 0 && (
-              <MealSection type="Lunch" meals={activePlan.lunch_options} />
-            )}
-            {activePlan?.dinner_options?.length > 0 && (
-              <MealSection type="Dinner" meals={activePlan.dinner_options} />
-            )}
-          </>
+
+            {/* Lunch Card - show if available, otherwise show dinner */}
+            {lunchMeal ? (
+              <MealCard
+                meal={lunchMeal}
+                mealType="Lunch"
+                isLogged={loggedMeals.lunch}
+                onPress={() => onSelectMeal("Lunch", lunchMeal)}
+              />
+            ) : dinnerMeal ? (
+              <MealCard
+                meal={dinnerMeal}
+                mealType="Dinner"
+                isLogged={loggedMeals.dinner}
+                onPress={() => onSelectMeal("Dinner", dinnerMeal)}
+              />
+            ) : null}
+
+            {/* Smart Next Meal Section */}
+            <View style={styles.nextMealSection}>
+              <Text style={styles.nextMealTitle}>{nextMealSuggestion.message}</Text>
+              <Text style={styles.nextMealSubtitle}>(planned)</Text>
+
+              <TouchableOpacity
+                style={styles.logMealButton}
+                onPress={() => nextMealToLog && onSelectMeal(nextMealSuggestion.mealType, nextMealToLog)}
+              >
+                <LinearGradient
+                  colors={[GRAFANA_COLORS.teal, "#059669"]}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 0 }}
+                  style={styles.logMealGradient}
+                >
+                  <Text style={styles.logMealButtonText}>Log{"\n"}Meal</Text>
+                </LinearGradient>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={styles.viewRecipeButton}
+                onPress={() => nextMealToLog && onSelectMeal(nextMealSuggestion.mealType, nextMealToLog)}
+              >
+                <Text style={styles.viewRecipeButtonText}>View{"\n"}Recipe</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+
+          {/* Add Snack / Quick Log */}
+          <TouchableOpacity
+            style={styles.addSnackRow}
+            onPress={() => navigation.navigate("FoodAnalysis")}
+          >
+            <Ionicons name="add" size={18} color="#6B7280" />
+            <Text style={styles.addSnackText}>Add Snack / Quick Log</Text>
+          </TouchableOpacity>
+        </View>
+
+        {/* Nutrition Targets (if available) */}
+        {activePlan?.daily_nutrition_target && (
+          <View style={styles.nutritionTargetContainer}>
+            <NutritionTargets nutritionTargets={activePlan.daily_nutrition_target} />
+          </View>
         )}
-      </View>
 
-      <View style={styles.bannerContainer}>
-        <MedicalBanner />
-      </View>
-      <View style={{ height: 24 }} />
-    </ScrollView>
+        {/* Medical/AI Banner */}
+        <View style={styles.bannerContainer}>
+          <MedicalBanner />
+        </View>
+
+        <View style={{ height: 40 }} />
+      </ScrollView>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F3F4F6",
+    backgroundColor: "#FFFFFF",
+  },
+  scrollView: {
+    flex: 1,
+  },
+  scrollContent: {
+    paddingBottom: 20,
   },
 
-  // Header - HealthTrackMonitorScreen Style
-  headerCard: {
-    marginHorizontal: 16,
-    marginTop: 16,
-    marginBottom: 16,
-    borderRadius: 16,
-    overflow: "hidden",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.15,
-    shadowRadius: 12,
-    elevation: 6,
+  // Header
+  header: {
+    paddingTop: Platform.OS === "ios" ? 60 : (StatusBar.currentHeight || 0) + 16,
+    paddingHorizontal: 20,
+    paddingBottom: 8,
   },
-  headerImageBg: {
-    width: "100%",
-  },
-  headerImageStyle: {
-    borderRadius: 16,
-  },
-  headerOverlay: {
-    padding: 16,
-    borderRadius: 16,
-  },
-  headerTopRow: {
+  headerTop: {
     flexDirection: "row",
     justifyContent: "space-between",
-    alignItems: "flex-start",
-    marginBottom: 12,
+    alignItems: "center",
   },
   headerTitle: {
     fontSize: 22,
-    fontWeight: "800",
-    color: "#fff",
-    textShadowColor: "rgba(0, 0, 0, 0.3)",
-    textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 3,
-  },
-  headerSubtitle: {
-    fontSize: 14,
-    color: "rgba(255,255,255,0.9)",
-    marginTop: 4,
+    fontWeight: "700",
+    color: "#1F2937",
   },
   headerActions: {
     flexDirection: "row",
-    gap: 8,
-  },
-  headerBtn: {
-    padding: 8,
-    backgroundColor: "rgba(255,255,255,0.15)",
-    borderRadius: 50,
-    borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.25)",
-  },
-  headerInfoRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    backgroundColor: "rgba(255,255,255,0.15)",
-    borderRadius: 12,
-    padding: 12,
-  },
-  headerInfoItem: {
     alignItems: "center",
+    gap: 4,
   },
-  headerInfoLabel: {
-    fontSize: 11,
-    color: "rgba(255,255,255,0.85)",
-    marginBottom: 2,
-  },
-  headerInfoValue: {
-    fontSize: 16,
-    fontWeight: "700",
-    color: "#fff",
-    textShadowColor: "rgba(0, 0, 0, 0.2)",
-    textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 2,
-  },
-
-  // Tabs
-  tabsContainer: {
-    marginTop: 12,
-  },
-  tabsContent: {
-    flexDirection: "row",
-    gap: 8,
-  },
-  tab: {
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    borderRadius: 20,
-    backgroundColor: "rgba(255,255,255,0.2)",
-  },
-  activeTab: {
-    backgroundColor: "#fff",
-  },
-  tabText: {
-    color: "#fff",
-    fontSize: 14,
-    fontWeight: "500",
-  },
-  activeTabText: {
-    color: "#10B981",
-    fontWeight: "600",
-  },
-
-  // Content
-  content: {
-    paddingHorizontal: 16,
-  },
-  nutritionTargetContainer: {
-    paddingHorizontal: 16,
-    marginBottom: 12,
-  },
-  bannerContainer: {
-    paddingHorizontal: 16,
-    marginTop: 8,
-  },
-
-  // Meal Section
-  mealSection: {
-    backgroundColor: "#fff",
-    borderRadius: 16,
-    marginBottom: 12,
-    overflow: "hidden",
-  },
-  sectionHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingHorizontal: 16,
-    paddingVertical: 14,
-    borderBottomWidth: 1,
-    borderBottomColor: "#F3F4F6",
-  },
-  sectionHeaderLeft: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  sectionIcon: {
+  headerIconBtn: {
     width: 36,
     height: 36,
-    borderRadius: 10,
-    justifyContent: "center",
-    alignItems: "center",
-    marginRight: 12,
-  },
-  sectionTitle: {
-    fontSize: 16,
-    fontWeight: "700",
-    color: "#111827",
-  },
-  sectionTime: {
-    fontSize: 12,
-    color: "#9CA3AF",
-    marginTop: 1,
-  },
-  refreshBtn: {
-    width: 32,
-    height: 32,
-    borderRadius: 8,
-    backgroundColor: "#F9FAFB",
+    borderRadius: 18,
     justifyContent: "center",
     alignItems: "center",
   },
-
-  // Meal Item
-  mealItem: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingVertical: 12,
+  dateBadge: {
+    alignSelf: "center",
+    backgroundColor: "#F3F4F6",
     paddingHorizontal: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: "#F9FAFB",
+    paddingVertical: 8,
+    borderRadius: 20,
+    marginTop: 12,
   },
-  mealItemIndex: {
-    width: 28,
-    height: 28,
-    borderRadius: 8,
-    justifyContent: "center",
-    alignItems: "center",
-    marginRight: 12,
-  },
-  mealItemIndexText: {
+  dateBadgeText: {
     fontSize: 13,
-    fontWeight: "700",
-  },
-  mealItemContent: {
-    flex: 1,
-  },
-  mealItemName: {
-    fontSize: 15,
-    fontWeight: "600",
-    color: "#1F2937",
-    marginBottom: 3,
-  },
-  mealItemMeta: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  mealItemMetaText: {
-    fontSize: 12,
-    color: "#9CA3AF",
-    marginLeft: 4,
-  },
-  metaDot: {
-    width: 3,
-    height: 3,
-    borderRadius: 2,
-    backgroundColor: "#D1D5DB",
-    marginHorizontal: 8,
-  },
-  mealItemCalories: {
-    alignItems: "flex-end",
-    marginRight: 8,
-  },
-  calorieValue: {
-    fontSize: 15,
-    fontWeight: "700",
-    color: "#F59E0B",
-  },
-  calorieUnit: {
-    fontSize: 10,
-    color: "#9CA3AF",
-  },
-
-  // Section Footer
-  sectionFooter: {
-    flexDirection: "row",
-    gap: 16,
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-    backgroundColor: "#F9FAFB",
-  },
-  footerStat: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  footerStatText: {
-    fontSize: 12,
     color: "#6B7280",
-    marginLeft: 4,
     fontWeight: "500",
   },
 
-  // Weekly Styles
-  weekBlock: {
-    marginBottom: 20,
-  },
-  weekHeaderBar: {
-    flexDirection: "row",
+  // Progress Section
+  progressSection: {
     alignItems: "center",
-    backgroundColor: "#10B981",
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    borderRadius: 12,
-    marginBottom: 12,
+    paddingVertical: 20,
   },
-  weekHeaderText: {
-    fontSize: 15,
+  progressCenterText: {
+    position: "absolute",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  caloriesValue: {
+    fontSize: 42,
+    fontWeight: "700",
+    color: "#1F2937",
+  },
+  caloriesTotal: {
+    fontSize: 14,
+    color: "#9CA3AF",
+    marginTop: -4,
+  },
+
+  // Macros Row
+  macrosRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    paddingHorizontal: 24,
+    marginBottom: 24,
+  },
+  macroContainer: {
+    flex: 1,
+    alignItems: "center",
+    paddingHorizontal: 8,
+  },
+  macroLabel: {
+    fontSize: 13,
+    color: "#374151",
     fontWeight: "600",
-    color: "#fff",
-    marginLeft: 8,
-  },
-  dayBlock: {
-    marginBottom: 12,
-  },
-  dayHeaderRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingVertical: 8,
     marginBottom: 8,
   },
-  dayIndicator: {
-    width: 4,
-    height: 18,
-    backgroundColor: "#10B981",
-    borderRadius: 2,
-    marginRight: 10,
+  macroBarBackground: {
+    width: "100%",
+    height: 10,
+    backgroundColor: "#E5E7EB",
+    borderRadius: 5,
+    overflow: "hidden",
   },
-  dayTitle: {
+  macroBarFill: {
+    height: "100%",
+    borderRadius: 5,
+  },
+  macroValue: {
+    fontSize: 11,
+    color: "#9CA3AF",
+    marginTop: 6,
+  },
+
+  // Suggestion Banner
+  suggestionBanner: {
+    marginHorizontal: 20,
+    marginBottom: 28,
+    backgroundColor: "#F9FAFB",
+    borderRadius: 14,
+    padding: 14,
+    flexDirection: "row",
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: "#E5E7EB",
+  },
+  suggestionIcon: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: "#D1FAE5",
+    justifyContent: "center",
+    alignItems: "center",
+    marginRight: 12,
+  },
+  suggestionText: {
+    flex: 1,
     fontSize: 14,
-    fontWeight: "600",
     color: "#374151",
+    lineHeight: 20,
+  },
+
+  // Section
+  section: {
+    marginBottom: 28,
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: "700",
+    color: "#1F2937",
+    marginBottom: 14,
+    paddingHorizontal: 20,
+  },
+
+  // Action Hub - Flex Row
+  actionHubRow: {
+    flexDirection: "row",
+    paddingHorizontal: 16,
+    gap: 8,
+  },
+  actionButton: {
+    flex: 1,
+  },
+  actionButtonOutlined: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 10,
+    borderRadius: 22,
+    borderWidth: 2,
+    borderColor: "#10B981",
+    backgroundColor: "#FFFFFF",
+    gap: 4,
+  },
+  actionButtonGradient: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 10,
+    borderRadius: 22,
+    gap: 4,
+  },
+  actionButtonText: {
+    fontSize: 11,
+    fontWeight: "600",
+  },
+  actionButtonTextOutlined: {
+    fontSize: 11,
+    fontWeight: "600",
+    color: "#059669",
+  },
+
+  // Meal Timeline
+  mealTimelineRow: {
+    flexDirection: "row",
+    paddingHorizontal: 20,
+    gap: 12,
+  },
+  mealCard: {
+    flex: 1,
+    backgroundColor: "#FFFFFF",
+    borderRadius: 16,
+    padding: 12,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 8,
+    elevation: 3,
+    borderWidth: 1,
+    borderColor: "#F3F4F6",
+  },
+  mealImageContainer: {
+    position: "relative",
+    alignItems: "center",
+    marginBottom: 10,
+  },
+  mealImage: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    borderWidth: 3,
+    borderColor: "#F3F4F6",
+  },
+  loggedBadge: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    backgroundColor: "#10B981",
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 12,
+  },
+  loggedBadgeText: {
+    fontSize: 10,
+    fontWeight: "700",
+    color: "#FFFFFF",
+  },
+  mealType: {
+    fontSize: 15,
+    fontWeight: "700",
+    color: "#1F2937",
+    marginBottom: 2,
+  },
+  mealName: {
+    fontSize: 12,
+    color: "#6B7280",
+    marginBottom: 8,
+    lineHeight: 16,
+  },
+  mealFooter: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  mealCalories: {
+    fontSize: 12,
+    color: "#9CA3AF",
+    fontWeight: "500",
+  },
+  editButton: {
+    width: 26,
+    height: 26,
+    borderRadius: 13,
+    backgroundColor: "#F3F4F6",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+
+  // Next Meal Section (Smart Suggestion)
+  nextMealSection: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "flex-start",
+    paddingTop: 4,
+  },
+  nextMealTitle: {
+    fontSize: 13,
+    fontWeight: "600",
+    color: "#1F2937",
+    textAlign: "center",
+    marginBottom: 2,
+  },
+  nextMealSubtitle: {
+    fontSize: 11,
+    color: "#9CA3AF",
+    marginBottom: 12,
+  },
+  logMealButton: {
+    borderRadius: 16,
+    overflow: "hidden",
+    marginBottom: 8,
+  },
+  logMealGradient: {
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    alignItems: "center",
+  },
+  logMealButtonText: {
+    fontSize: 13,
+    fontWeight: "600",
+    color: "#FFFFFF",
+    textAlign: "center",
+    lineHeight: 16,
+  },
+  viewRecipeButton: {
+    borderWidth: 1,
+    borderColor: "#E5E7EB",
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 14,
+  },
+  viewRecipeButtonText: {
+    fontSize: 11,
+    color: "#6B7280",
+    fontWeight: "500",
+    textAlign: "center",
+    lineHeight: 14,
+  },
+  addSnackRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 6,
+    marginTop: 16,
+    paddingVertical: 8,
+  },
+  addSnackText: {
+    fontSize: 13,
+    color: "#6B7280",
+    fontWeight: "500",
+  },
+
+  // Nutrition Targets
+  nutritionTargetContainer: {
+    paddingHorizontal: 20,
+    marginBottom: 16,
+  },
+
+  // Banner
+  bannerContainer: {
+    paddingHorizontal: 20,
+    marginTop: 8,
   },
 });
 

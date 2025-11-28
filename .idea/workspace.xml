@@ -6,6 +6,14 @@
   <component name="ChangeListManager">
     <list default="true" id="c4e97291-b7b6-4217-a01d-0fc0826d50a7" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/mealplan/HomeScreen.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/mealplan/HomeScreen.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/mealplan/MealPlannerScreen.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/mealplan/MealPlannerScreen.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/navigation/MainNavigator.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/navigation/MainNavigator.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/screens/main/Dashboardtabs/styles/DashboardScreenStyles.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/screens/main/Dashboardtabs/styles/DashboardScreenStyles.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/screens/main/FoodAnalysisScreen.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/screens/main/FoodAnalysisScreen.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/screens/main/HealthTrackMonitorScreen.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/screens/main/HealthTrackMonitorScreen.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/screens/main/LandinScreen.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/screens/main/LandinScreen.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/screens/main/PatientNutritionOverviewScreen.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/screens/main/PatientNutritionOverviewScreen.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -28,15 +36,15 @@
   </component>
   <component name="PropertiesComponent">{
   &quot;keyToString&quot;: {
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.readMode.enableVisualFormatting&quot;: &quot;true&quot;,
-    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
     &quot;cf.first.check.clang-format&quot;: &quot;false&quot;,
     &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;claude/fix-account-creation-error-01HgMZybFLk3LemUd54mR2FW&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;claude/remove-email-validation-019f1buSrNRbhZFpWeCi7unx&quot;,
     &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
     &quot;last_opened_file_path&quot;: &quot;C:/Users/sjman/StudioProjects/fitui_new&quot;
   }
