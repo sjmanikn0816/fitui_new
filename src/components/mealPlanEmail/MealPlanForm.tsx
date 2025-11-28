@@ -1,5 +1,6 @@
 import React from "react";
 import { View, Text, TextInput, StyleSheet } from "react-native";
+import { Colors } from "@/constants/Colors";
 
 interface Props {
   customerName: string;
@@ -65,16 +66,16 @@ const EmailForm: React.FC<Props> = ({
 
 const styles = StyleSheet.create({
   section: { marginBottom: 20 },
-  label: { fontSize: 16, fontWeight: "600", marginBottom: 8, color: "#374151" },
+  label: { fontSize: 16, fontWeight: "600", marginBottom: 8, color: Colors.textSecondary },
   input: {
     borderWidth: 1,
-    borderColor: "#d1d5db",
+    borderColor: Colors.borderDark,
     borderRadius: 12,
     paddingHorizontal: 16,
     paddingVertical: 14,
     fontSize: 16,
-    color: "#111827",
-    backgroundColor: "#f9fafb",
+    color: Colors.textPrimary,
+    backgroundColor: Colors.bgCard,
   },
 });
 
