@@ -273,15 +273,14 @@ const styles = StyleSheet.create({
     width: 48,
     height: 48,
     borderRadius: 24,
-    backgroundColor: "rgba(52, 211, 153, 0.1)",
+    backgroundColor: "transparent",
     alignItems: "center",
     justifyContent: "center",
-    borderWidth: 1,
-    borderColor: "rgba(52, 211, 153, 0.2)",
   },
   centerButtonActive: {
-    backgroundColor: "rgba(52, 211, 153, 0.18)",
-    borderColor: "rgba(52, 211, 153, 0.4)",
+    backgroundColor: "rgba(52, 211, 153, 0.15)",
+    borderWidth: 1,
+    borderColor: "rgba(52, 211, 153, 0.3)",
   },
 });
 
