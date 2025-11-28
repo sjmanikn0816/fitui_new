@@ -1074,7 +1074,7 @@ const LandingScreen: React.FC = () => {
       imageStyle={styles.backgroundImageStyle}
     >
       <BlurView
-        intensity={50}
+        intensity={25}
         tint="dark"
         style={StyleSheet.absoluteFillObject}
       />

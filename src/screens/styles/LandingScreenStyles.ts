@@ -13,7 +13,7 @@ export const styles = StyleSheet.create({
   },
   backgroundImageStyle: {
     resizeMode: "cover",
-    opacity: 0.4,
+    opacity: 0.85,
   },
   mainContent: {
     flex: 1,
