@@ -45,7 +45,7 @@ const ResponseLevelSection: React.FC<ResponseLevelSectionProps> = ({ responseLev
               <Ionicons
                 name={level.icon}
                 size={24}
-                color={responseLevel === level.key ? '#FF6B35' : '#666'}
+                color={responseLevel === level.key ? Colors.emerald : Colors.textMuted}
               />
               <Text
                 style={[
@@ -59,7 +59,7 @@ const ResponseLevelSection: React.FC<ResponseLevelSectionProps> = ({ responseLev
             </View>
             {responseLevel === level.key && (
               <View style={styles.checkmark}>
-                <Ionicons name="checkmark-circle" size={24} color="#FF6B35" />
+                <Ionicons name="checkmark-circle" size={24} color={Colors.emerald} />
               </View>
             )}
           </TouchableOpacity>
@@ -71,22 +71,22 @@ const ResponseLevelSection: React.FC<ResponseLevelSectionProps> = ({ responseLev
 
 const styles = StyleSheet.create({
   section: { paddingHorizontal: 20, marginTop: 24 },
-  sectionTitle: { fontSize: 18, fontWeight: '600', color: '#333', marginBottom: 12 },
-  detailDescription: { fontSize: 13, color: '#666', marginBottom: 12, lineHeight: 18 },
-  responseLevelContainer: { gap: 12 ,paddingBottom:verticalScale(60)},
+  sectionTitle: { fontSize: 18, fontWeight: '600', color: Colors.textPrimary, marginBottom: 12 },
+  detailDescription: { fontSize: 13, color: Colors.textSecondary, marginBottom: 12, lineHeight: 18 },
+  responseLevelContainer: { gap: 12, paddingBottom: verticalScale(60) },
   responseLevelButton: {
-    backgroundColor: '#FFF',
+    backgroundColor: Colors.bgCard,
     borderRadius: 12,
     padding: 16,
     borderWidth: 2,
-    borderColor: '#E8E8E8',
+    borderColor: Colors.borderDark,
     position: 'relative',
   },
-  responseLevelButtonActive: { borderColor: '#FF6B35', backgroundColor: '#FFF5F2' },
+  responseLevelButtonActive: { borderColor: Colors.emerald, backgroundColor: 'rgba(52, 211, 153, 0.1)' },
   responseLevelContent: { flexDirection: 'row', alignItems: 'center', gap: 12 },
-  responseLevelTitle: { fontSize: 16, fontWeight: '700', color: '#333', flex: 1 },
-  responseLevelTitleActive: { color: '#FF6B35' },
-  responseLevelSubtitle: { fontSize: 12, color: '#666', position: 'absolute', bottom: -18, left: 48 },
+  responseLevelTitle: { fontSize: 16, fontWeight: '700', color: Colors.textPrimary, flex: 1 },
+  responseLevelTitleActive: { color: Colors.emerald },
+  responseLevelSubtitle: { fontSize: 12, color: Colors.textSecondary, position: 'absolute', bottom: -18, left: 48 },
   checkmark: { position: 'absolute', right: 16, top: '50%', transform: [{ translateY: -12 }] },
 });
 

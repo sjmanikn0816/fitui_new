@@ -33,7 +33,7 @@ const FoodAnalysisResultsScreen: React.FC<FoodAnalysisResultsScreenProps> = ({
 }) => {
   const { analysisData, foodName, inputType } = route.params || {};
 
-  const headerBg = "#FF6B35";
+  const headerBg = Colors.bgPrimary;
 
   useEffect(() => {
     if (Platform.OS === "android") {
@@ -103,7 +103,7 @@ const FoodAnalysisResultsScreen: React.FC<FoodAnalysisResultsScreenProps> = ({
           imageStyle={styles.headerImageStyle}
         >
           <LinearGradient
-            colors={["rgba(255, 107, 53, 0.93)", "rgba(251, 146, 60, 0.90)"]}
+            colors={["rgba(5, 150, 105, 0.95)", "rgba(52, 211, 153, 0.90)"]}
             style={styles.headerOverlay}
           >
             <View style={styles.headerTopRow}>
@@ -150,7 +150,7 @@ const FoodAnalysisResultsScreen: React.FC<FoodAnalysisResultsScreenProps> = ({
                 <Ionicons
                   name={inputType === "voice" ? "mic" : "chatbubble-ellipses"}
                   size={14}
-                  color="#666"
+                  color={Colors.textMuted}
                   style={styles.queryIcon}
                 />
                 <Text style={styles.userQueryText}>"{foodName}"</Text>
@@ -194,7 +194,7 @@ const FoodAnalysisResultsScreen: React.FC<FoodAnalysisResultsScreenProps> = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.white,
+    backgroundColor: Colors.bgPrimary,
     paddingBottom: verticalScale(60),
   },
   menuIcon: {
@@ -213,16 +213,16 @@ const styles = StyleSheet.create({
   errorText: {
     textAlign: "center",
     fontSize: 16,
-    color: "#999",
+    color: Colors.textMuted,
     marginTop: 40,
   },
   inputTypeContainer: {
     paddingHorizontal: 16,
     paddingTop: 12,
     paddingBottom: 16,
-    backgroundColor: Colors.white,
+    backgroundColor: Colors.bgPrimary,
     borderBottomWidth: 1,
-    borderBottomColor: "#f0f0f0",
+    borderBottomColor: Colors.borderDark,
   },
   inputTypeBadge: {
     flexDirection: "row",
@@ -236,7 +236,7 @@ const styles = StyleSheet.create({
   inputTypeText: {
     fontSize: 13,
     fontWeight: "600",
-    color: Colors.white,
+    color: Colors.textPrimary,
   },
 
   userQueryContainer: {
@@ -245,7 +245,7 @@ const styles = StyleSheet.create({
   userQueryLabel: {
     fontSize: 12,
     fontWeight: "600",
-    color: "#666",
+    color: Colors.textMuted,
     marginBottom: 6,
     textTransform: "uppercase",
     letterSpacing: 0.5,
@@ -253,12 +253,12 @@ const styles = StyleSheet.create({
   queryBubble: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#F5F5F5",
+    backgroundColor: Colors.bgCard,
     paddingHorizontal: 14,
     paddingVertical: 10,
     borderRadius: 12,
     borderLeftWidth: 3,
-    borderLeftColor: "#FF6B35",
+    borderLeftColor: Colors.emerald,
   },
   queryIcon: {
     marginRight: 8,
@@ -266,7 +266,7 @@ const styles = StyleSheet.create({
   userQueryText: {
     flex: 1,
     fontSize: 14,
-    color: Colors.darkGray,
+    color: Colors.textSecondary,
     fontStyle: "italic",
     lineHeight: 20,
   },
@@ -277,7 +277,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
     fontWeight: "600",
-    color: Colors.darkGray,
+    color: Colors.textPrimary,
     marginBottom: 12,
   },
   headerCard: {
@@ -286,9 +286,9 @@ const styles = StyleSheet.create({
     marginTop: 20,
     borderRadius: 20,
     overflow: "hidden",
-    backgroundColor: "#000",
+    backgroundColor: Colors.bgCard,
     elevation: 6,
-    shadowColor: "#000",
+    shadowColor: Colors.emerald,
     shadowOpacity: 0.25,
     shadowRadius: 10,
     shadowOffset: { width: 0, height: 3 },
