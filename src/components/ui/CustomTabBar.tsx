@@ -83,7 +83,6 @@ const CustomTabBar: React.FC<BottomTabBarProps> = ({
                 width: 28,
                 height: 28,
                 resizeMode: "contain",
-                tintColor: focused ? Colors.emerald : Colors.textMuted,
               }}
             />
           </Animated.View>
