@@ -4,12 +4,12 @@ import { Dimensions, StyleSheet } from "react-native";
 
 const { width, height } = Dimensions.get("window");
 
-const scaleFont = (size) => (width / 375) * size;
+const scaleFont = (size: number) => (width / 375) * size;
 
 export const styles = StyleSheet.create({
   content: {
     flex: 1,
-    backgroundColor: Colors.white,
+    backgroundColor: Colors.bgPrimary,
   },
 
   section: {
@@ -20,19 +20,21 @@ export const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: scaleFont(18),
     fontWeight: "bold",
-    color: Colors.gray700,
+    color: Colors.textPrimary,
     marginBottom: height * 0.02,
   },
 
   restaurantCard: {
     width: width * 0.7,
-    backgroundColor: Colors.white,
+    backgroundColor: Colors.bgCard,
     borderRadius: 15,
     overflow: "hidden",
     marginBottom: height * 0.02,
-    shadowColor: Colors.black,
+    borderWidth: 1,
+    borderColor: Colors.borderDark,
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
+    shadowOpacity: 0.15,
     shadowRadius: 3.84,
     elevation: 5,
   },
@@ -40,7 +42,7 @@ export const styles = StyleSheet.create({
   restaurantImage: {
     width: "100%",
     height: width * 0.4,
-    backgroundColor: Colors.gray100,
+    backgroundColor: Colors.bgCardHover,
   },
 
   restaurantContent: {
@@ -50,7 +52,7 @@ export const styles = StyleSheet.create({
   restaurantName: {
     fontSize: scaleFont(18),
     fontWeight: "bold",
-    color: Colors.gray700,
+    color: Colors.textPrimary,
     marginBottom: height * 0.01,
   },
 
@@ -64,7 +66,7 @@ export const styles = StyleSheet.create({
   },
 
   badgeText: {
-    color: Colors.white,
+    color: Colors.bgPrimary,
     fontSize: scaleFont(12),
     fontWeight: "600",
   },
@@ -78,7 +80,7 @@ export const styles = StyleSheet.create({
 
   infoText: {
     fontSize: scaleFont(12),
-    color: Colors.gray500,
+    color: Colors.textMuted,
   },
 
   restaurantGrid: {
@@ -90,24 +92,26 @@ export const styles = StyleSheet.create({
 
   smallRestaurantCard: {
     width: width * 0.45,
-    backgroundColor: Colors.white,
+    backgroundColor: Colors.bgCard,
     borderRadius: 15,
     overflow: "hidden",
     marginBottom: height * 0.02,
-    shadowColor: Colors.black,
+    borderWidth: 1,
+    borderColor: Colors.borderDark,
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
+    shadowOpacity: 0.15,
     shadowRadius: 3.84,
     elevation: 5,
   },
 
-smallRestaurantImage: {
-  width: "100%",
-  height: width * 0.3,
-  borderRadius:scale(10),             
-  overflow: "hidden",            
-  backgroundColor: Colors.gray100,
-},
+  smallRestaurantImage: {
+    width: "100%",
+    height: width * 0.3,
+    borderRadius: scale(10),
+    overflow: "hidden",
+    backgroundColor: Colors.bgCardHover,
+  },
 
   smallRestaurantContent: {
     padding: width * 0.03,
@@ -116,7 +120,7 @@ smallRestaurantImage: {
   smallRestaurantName: {
     fontSize: scaleFont(14),
     fontWeight: "bold",
-    color: Colors.gray700,
+    color: Colors.textPrimary,
     marginBottom: height * 0.008,
   },
 
@@ -130,24 +134,26 @@ smallRestaurantImage: {
   },
 
   smallBadgeText: {
-    color: Colors.white,
+    color: Colors.bgPrimary,
     fontSize: scaleFont(10),
     fontWeight: "600",
   },
 
   smallRestaurantInfo: {
     fontSize: scaleFont(11),
-    color: Colors.gray500,
+    color: Colors.textMuted,
   },
 
   reservationCard: {
-    backgroundColor: Colors.white,
+    backgroundColor: Colors.bgCard,
     borderRadius: 15,
     padding: width * 0.04,
     marginBottom: height * 0.02,
-    shadowColor: Colors.black,
+    borderWidth: 1,
+    borderColor: Colors.borderDark,
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
+    shadowOpacity: 0.15,
     shadowRadius: 3.84,
     elevation: 5,
   },
@@ -162,7 +168,7 @@ smallRestaurantImage: {
   reservationRestaurant: {
     fontSize: scaleFont(16),
     fontWeight: "bold",
-    color: Colors.gray700,
+    color: Colors.textPrimary,
   },
 
   statusBadge: {
@@ -172,7 +178,7 @@ smallRestaurantImage: {
   },
 
   statusText: {
-    color: Colors.white,
+    color: Colors.bgPrimary,
     fontSize: scaleFont(12),
     fontWeight: "600",
   },
@@ -183,7 +189,7 @@ smallRestaurantImage: {
 
   reservationInfo: {
     fontSize: scaleFont(14),
-    color: Colors.gray500,
+    color: Colors.textMuted,
   },
 
   analyticsGrid: {
@@ -193,14 +199,16 @@ smallRestaurantImage: {
   },
 
   analyticsCard: {
-    backgroundColor: Colors.white,
+    backgroundColor: Colors.bgCard,
     borderRadius: 15,
     padding: width * 0.04,
     flex: 1,
     alignItems: "center",
-    shadowColor: Colors.black,
+    borderWidth: 1,
+    borderColor: Colors.borderDark,
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
+    shadowOpacity: 0.15,
     shadowRadius: 3.84,
     elevation: 5,
   },
@@ -208,18 +216,18 @@ smallRestaurantImage: {
   analyticsNumber: {
     fontSize: scaleFont(24),
     fontWeight: "bold",
-    color: Colors.gray700,
+    color: Colors.textPrimary,
     marginBottom: height * 0.005,
   },
 
   analyticsLabel: {
     fontSize: scaleFont(12),
-    color: Colors.gray500,
+    color: Colors.textMuted,
     textAlign: "center",
   },
 
   aiCardInside: {
-    backgroundColor: Colors.white,
+    backgroundColor: Colors.bgCardHover,
     borderRadius: 10,
     padding: width * 0.03,
     marginTop: height * 0.01,
@@ -230,7 +238,7 @@ smallRestaurantImage: {
 
   dietBadge: {
     alignSelf: "flex-start",
-    backgroundColor: Colors.successLight,
+    backgroundColor: "rgba(52, 211, 153, 0.15)",
     borderRadius: 8,
     paddingHorizontal: width * 0.02,
     paddingVertical: height * 0.003,
@@ -240,13 +248,14 @@ smallRestaurantImage: {
   dietBadgeText: {
     fontSize: scaleFont(12),
     fontWeight: "600",
+    color: Colors.emerald,
   },
 
   aiTitleInside: {
     fontWeight: "bold",
     fontSize: scaleFont(14),
     marginBottom: height * 0.008,
-    color: Colors.gray700,
+    color: Colors.textPrimary,
   },
 
   aiColumn: {
@@ -256,7 +265,7 @@ smallRestaurantImage: {
 
   aiLine: {
     fontSize: scaleFont(13),
-    color: Colors.gray600,
+    color: Colors.textSecondary,
     flexWrap: "wrap",
     marginBottom: height * 0.004,
   },

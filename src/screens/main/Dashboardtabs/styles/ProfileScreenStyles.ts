@@ -7,49 +7,46 @@ import { StyleSheet } from "react-native";
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.white,
- paddingBottom: verticalScale(60), // responsive bottom padding
-    
+    backgroundColor: Colors.bgPrimary,
+    paddingBottom: verticalScale(60),
   },
 
-
- scrollView: {
+  scrollView: {
     flex: 1,
-  
   },
-  
+
   header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     paddingHorizontal: Spacing.lg,
     paddingVertical: Spacing.md,
-    backgroundColor: Colors.white,
+    backgroundColor: Colors.bgPrimary,
   },
   title: {
     ...Typography.h3,
-    color: Colors.text,
+    color: Colors.textPrimary,
   },
   scrollContent: {
     paddingBottom: Spacing.xl,
   },
   profileHeader: {
-    alignItems: 'center',
+    alignItems: "center",
     paddingVertical: Spacing.xl,
     paddingHorizontal: Spacing.lg,
   },
   avatar: {
     width: 80,
     height: 80,
-    backgroundColor: Colors.primary,
+    backgroundColor: Colors.emerald,
     borderRadius: 40,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     marginBottom: Spacing.md,
   },
   userName: {
     ...Typography.h3,
-    color: Colors.text,
+    color: Colors.textPrimary,
     marginBottom: Spacing.xs,
   },
   userEmail: {
@@ -62,33 +59,33 @@ export const styles = StyleSheet.create({
   },
   sectionTitle: {
     ...Typography.h4,
-    color: Colors.text,
+    color: Colors.textPrimary,
     marginBottom: Spacing.md,
   },
   profileItem: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     paddingVertical: Spacing.md,
   },
   profileItemBorder: {
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border,
+    borderBottomColor: Colors.borderDark,
   },
   profileLabel: {
     ...Typography.body,
-    color: Colors.text,
+    color: Colors.textPrimary,
   },
   profileValue: {
     ...Typography.body,
     color: Colors.textSecondary,
     flex: 1,
-    textAlign: 'right',
+    textAlign: "right",
   },
   editButton: {
     marginBottom: Spacing.md,
   },
   logoutButton: {
-    backgroundColor: Colors.error,
+    backgroundColor: Colors.red,
   },
 });
