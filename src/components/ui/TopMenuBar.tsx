@@ -36,7 +36,7 @@ const TopMenuBar = () => {
         onPress={() => navigation.navigate("AllScreensMenu" as never)}
         style={styles.iconButton}
       >
-        <MaterialIcons name="menu" size={26} color="#222" />
+        <MaterialIcons name="menu" size={26} color={Colors.textPrimary} />
       </TouchableOpacity>
     </View>
   );
@@ -49,9 +49,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     paddingHorizontal: 18,
-    backgroundColor: Colors.white,
-    shadowColor: "#000",
-    shadowOpacity: 0.05,
+    backgroundColor: Colors.bgPrimary,
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.borderDark,
+    shadowColor: Colors.emerald,
+    shadowOpacity: 0.1,
     shadowOffset: { width: 0, height: 2 },
     shadowRadius: 4,
     elevation: 4,
@@ -59,7 +61,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 20,
     fontWeight: "600",
-    color: "#111",
+    color: Colors.textPrimary,
   },
   iconButton: {
     padding: 5,
