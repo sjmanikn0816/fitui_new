@@ -1,9 +1,10 @@
+import { Colors } from "@/constants/Colors";
 import { StyleSheet } from "react-native";
 
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: Colors.bgPrimary,
   },
   headerContainer: {
     flexDirection: "row",
@@ -12,22 +13,24 @@ export const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingTop: 60,
     paddingBottom: 20,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: Colors.bgPrimary,
     borderBottomWidth: 1,
-    borderBottomColor: "#F3F4F6",
+    borderBottomColor: Colors.borderDark,
   },
   backButton: {
     width: 40,
     height: 40,
     borderRadius: 12,
-    backgroundColor: "#F9FAFB",
+    backgroundColor: Colors.bgCard,
     justifyContent: "center",
     alignItems: "center",
+    borderWidth: 1,
+    borderColor: Colors.borderDark,
   },
   header: {
     fontSize: 20,
     fontWeight: "700",
-    color: "#111827",
+    color: Colors.textPrimary,
     letterSpacing: -0.5,
   },
   placeholder: {
@@ -38,19 +41,20 @@ export const styles = StyleSheet.create({
     paddingBottom: 40,
   },
   card: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: Colors.bgCard,
     borderRadius: 16,
     marginBottom: 12,
-    borderWidth: 1.5,
-    borderColor: "#F3F4F6",
+    borderWidth: 1,
+    borderColor: Colors.borderDark,
     overflow: "hidden",
   },
   activeCard: {
-    borderColor: "#E5E7EB",
-    shadowColor: "#000",
+    borderColor: Colors.emerald,
+    backgroundColor: "rgba(52, 211, 153, 0.08)",
+    shadowColor: Colors.emerald,
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
+    shadowOpacity: 0.15,
+    shadowRadius: 12,
     elevation: 5,
   },
   cardContent: {
@@ -65,9 +69,11 @@ export const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     marginRight: 16,
+    backgroundColor: Colors.bgCardHover,
   },
   activeIconContainer: {
     transform: [{ scale: 1.05 }],
+    backgroundColor: "rgba(52, 211, 153, 0.15)",
   },
   textContainer: {
     flex: 1,
@@ -75,13 +81,13 @@ export const styles = StyleSheet.create({
   cardTitle: {
     fontSize: 17,
     fontWeight: "700",
-    color: "#111827",
+    color: Colors.textPrimary,
     marginBottom: 4,
     letterSpacing: -0.3,
   },
   cardDescription: {
     fontSize: 14,
-    color: "#6B7280",
+    color: Colors.textMuted,
     lineHeight: 20,
   },
   arrowContainer: {
@@ -89,19 +95,18 @@ export const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "flex-end",
   },
-
   arrowIcon: {
     marginLeft: 6,
   },
-
   modernArrow: {
     width: 28,
     height: 28,
     borderRadius: 14,
     borderWidth: 1,
+    borderColor: Colors.borderDark,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#F9FAFB", // subtle background
+    backgroundColor: Colors.bgCardHover,
   },
   activeIndicator: {
     marginRight: 8,
@@ -111,12 +116,14 @@ export const styles = StyleSheet.create({
     marginHorizontal: 16,
     paddingVertical: 14,
     borderRadius: 12,
-    backgroundColor: "#FEE2E2",
+    backgroundColor: "rgba(239, 68, 68, 0.15)",
+    borderWidth: 1,
+    borderColor: "rgba(239, 68, 68, 0.3)",
     alignItems: "center",
     justifyContent: "center",
   },
   deleteButtonText: {
-    color: "#B91C1C",
+    color: Colors.red,
     fontSize: 16,
     fontWeight: "600",
   },
