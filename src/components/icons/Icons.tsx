@@ -1,6 +1,7 @@
 import { Colors } from "@/constants/Colors";
 import { Text, View } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+
 export const KcalIcon = ({
   size,
   color,
@@ -17,14 +18,16 @@ export const KcalIcon = ({
       width: size,
       height: size,
       borderRadius: 8,
-      backgroundColor: focused ? Colors.primary : "#000",
+      backgroundColor: focused ? "rgba(52, 211, 153, 0.2)" : "rgba(255, 255, 255, 0.08)",
+      borderWidth: focused ? 1 : 0,
+      borderColor: focused ? Colors.emerald : "transparent",
     }}
   >
     <Text
       style={{
-        fontSize: size * 0.4,
+        fontSize: size * 0.35,
         fontWeight: "bold",
-        color: "#fff",
+        color: focused ? Colors.emerald : Colors.textMuted,
       }}
     >
       kcal
@@ -48,13 +51,15 @@ export const FoodAnalysisIcon = ({
       width: size,
       height: size,
       borderRadius: size * 0.3,
-      backgroundColor: focused ? Colors.primary : "#000",
+      backgroundColor: focused ? "rgba(52, 211, 153, 0.2)" : "rgba(255, 255, 255, 0.08)",
+      borderWidth: focused ? 1 : 0,
+      borderColor: focused ? Colors.emerald : "transparent",
     }}
   >
     <MaterialCommunityIcons
       name="food-apple"
       size={size * 0.6}
-      color="#fff"
+      color={focused ? Colors.emerald : Colors.textMuted}
     />
   </View>
 );
