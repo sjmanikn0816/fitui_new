@@ -94,40 +94,40 @@ const MealPlannerScreen: React.FC<MealPlannerProps> = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.white,
+    backgroundColor: Colors.bgPrimary,
   },
   loadingContainer: {
     flex: 1,
-    backgroundColor: Colors.white,
+    backgroundColor: Colors.bgPrimary,
     justifyContent: "center",
     alignItems: "center",
   },
   errorContainer: {
     flex: 1,
-    backgroundColor: Colors.white,
+    backgroundColor: Colors.bgPrimary,
     justifyContent: "center",
     alignItems: "center",
     padding: 20,
   },
   errorText: {
-    color: "#EF4444",
+    color: "#F87171",
     textAlign: "center",
     marginBottom: 10,
     fontSize: 14,
   },
   errorType: {
-    color: "#6B7280",
+    color: Colors.textMuted,
     fontSize: 12,
   },
   emptyContainer: {
     flex: 1,
-    backgroundColor: Colors.white,
+    backgroundColor: Colors.bgPrimary,
     justifyContent: "center",
     alignItems: "center",
     paddingVertical: 20,
   },
   emptyText: {
-    color: "#6B7280",
+    color: Colors.textMuted,
     fontSize: 14,
   },
 });

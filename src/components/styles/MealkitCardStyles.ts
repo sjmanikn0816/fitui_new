@@ -3,11 +3,13 @@ import { Dimensions, StyleSheet } from "react-native";
 const { width } = Dimensions.get("window");
 export const styles = StyleSheet.create({
   mealKitCard: {
-    backgroundColor: Colors.white,
+    backgroundColor: Colors.bgCard,
     borderRadius: 15,
     width: (width - 60) / 2,
     marginBottom: 15,
-    shadowColor: Colors.shadow,
+    borderWidth: 1,
+    borderColor: Colors.borderDark,
+    shadowColor: Colors.emerald,
     shadowOffset: {
       width: 0,
       height: 2,
@@ -20,7 +22,7 @@ export const styles = StyleSheet.create({
     height: width > 400 ? 120 : 100,
     borderTopLeftRadius: 15,
     borderTopRightRadius: 15,
-    backgroundColor: Colors.gray300,
+    backgroundColor: Colors.bgCardHover,
   },
   mealKitContent: {
     padding: 15,
@@ -28,7 +30,7 @@ export const styles = StyleSheet.create({
   mealKitTitle: {
     fontSize: width > 400 ? 14 : 12,
     fontWeight: "bold",
-    color: Colors.text,
+    color: Colors.textPrimary,
     marginBottom: 5,
   },
   mealKitSubtitle: {
@@ -48,7 +50,7 @@ export const styles = StyleSheet.create({
     marginRight: 8,
   },
   ratingText: {
-    color: Colors.white,
+    color: Colors.bgPrimary,
     fontSize: width > 400 ? 12 : 10,
     fontWeight: "bold",
   },
@@ -64,12 +66,12 @@ export const styles = StyleSheet.create({
   price: {
     fontSize: width > 400 ? 16 : 14,
     fontWeight: "bold",
-    color: Colors.text,
+    color: Colors.textPrimary,
     marginRight: 8,
   },
   originalPrice: {
     fontSize: width > 400 ? 14 : 12,
-    color: Colors.textSecondary,
+    color: Colors.textMuted,
     textDecorationLine: "line-through",
   },
 });

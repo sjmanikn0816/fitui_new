@@ -69,7 +69,7 @@ const ImagePickerSection: React.FC<ImagePickerSectionProps> = ({ selectedImageUr
   return (
     <View style={styles.section}>
       <View style={styles.sectionHeader}>
-        <Ionicons name="camera" size={20} color="#FF6B35" />
+        <Ionicons name="camera" size={20} color={Colors.emerald} />
         <Text style={styles.sectionTitle}>Take or Upload Photo</Text>
       </View>
 
@@ -86,12 +86,12 @@ const ImagePickerSection: React.FC<ImagePickerSectionProps> = ({ selectedImageUr
       ) : (
         <View style={styles.imageButtonsContainer}>
           <TouchableOpacity style={styles.imageButton} onPress={handleTakePhoto}>
-            <Ionicons name="camera" size={32} color="#FF6B35" />
+            <Ionicons name="camera" size={32} color={Colors.emerald} />
             <Text style={styles.imageButtonText}>Take Photo</Text>
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.imageButton} onPress={handlePickImage}>
-            <Ionicons name="images" size={32} color="#FF6B35" />
+            <Ionicons name="images" size={32} color={Colors.emerald} />
             <Text style={styles.imageButtonText}>Choose from Gallery</Text>
           </TouchableOpacity>
         </View>
@@ -102,12 +102,14 @@ const ImagePickerSection: React.FC<ImagePickerSectionProps> = ({ selectedImageUr
 
 const styles = StyleSheet.create({
   section: {
-    backgroundColor: Colors.white,
+    backgroundColor: Colors.bgCard,
     borderRadius: 16,
     padding: 16,
     marginBottom: 16,
-    shadowColor: "#000",
-    shadowOpacity: 0.05,
+    borderWidth: 1,
+    borderColor: Colors.borderDark,
+    shadowColor: Colors.emerald,
+    shadowOpacity: 0.1,
     shadowRadius: 4,
     shadowOffset: { width: 0, height: 2 },
     elevation: 2,
@@ -121,7 +123,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
     fontWeight: '700',
-    color: '#1F2937',
+    color: Colors.textPrimary,
   },
   imageButtonsContainer: {
     flexDirection: 'row',
@@ -130,27 +132,27 @@ const styles = StyleSheet.create({
   },
   imageButton: {
     flex: 1,
-    backgroundColor: '#FFF',
+    backgroundColor: Colors.bgCardHover,
     borderRadius: 12,
     padding: 20,
     alignItems: 'center',
     borderWidth: 2,
-    borderColor: '#FF6B35',
+    borderColor: Colors.emerald,
     borderStyle: 'dashed',
   },
   imageButtonText: {
     marginTop: 8,
     fontSize: 14,
     fontWeight: '600',
-    color: '#374151',
+    color: Colors.textSecondary,
     textAlign: 'center',
   },
   imagePreviewContainer: {
     position: 'relative',
     borderRadius: 12,
     overflow: 'hidden',
-    shadowColor: "#000",
-    shadowOpacity: 0.1,
+    shadowColor: Colors.emerald,
+    shadowOpacity: 0.15,
     shadowRadius: 8,
     shadowOffset: { width: 0, height: 2 },
     elevation: 3,
@@ -164,7 +166,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 10,
     right: 10,
-    backgroundColor: '#FFF',
+    backgroundColor: Colors.bgCard,
     borderRadius: 16,
     shadowColor: "#000",
     shadowOpacity: 0.2,

@@ -38,10 +38,12 @@ const HelpOptionCard: React.FC<HelpOptionCardProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: Colors.white,
+    backgroundColor: Colors.bgCard,
     borderRadius: 12,
     padding: 16,
-    shadowColor: Colors.shadow,
+    borderWidth: 1,
+    borderColor: Colors.borderDark,
+    shadowColor: Colors.emerald,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 3,
@@ -62,7 +64,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 16,
     fontWeight: '600',
-    color: Colors.text,
+    color: Colors.textPrimary,
     marginBottom: 4,
   },
   description: {

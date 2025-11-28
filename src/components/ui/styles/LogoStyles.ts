@@ -42,8 +42,8 @@ export const styles = StyleSheet.create({
   },
   text: {
     ...Typography.h3,
-    color: Colors.black,
+    color: Colors.textPrimary,
     fontWeight: "600",
-    fontSize: responsiveFontSize(2.4), 
+    fontSize: responsiveFontSize(2.4),
   },
 });
