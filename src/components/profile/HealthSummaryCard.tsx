@@ -111,7 +111,7 @@ const HealthSummaryCard: React.FC<HealthSummaryCardProps> = ({
                   <MaterialIcons
                     name={section.icon}
                     size={16}
-                    color={Colors.primary}
+                    color={Colors.emerald}
                   />
                   <Text style={styles.sectionTitle}>{section.title}</Text>
                 </View>
@@ -120,7 +120,7 @@ const HealthSummaryCard: React.FC<HealthSummaryCardProps> = ({
                     <MaterialIcons
                       name="check-circle"
                       size={18}
-                      color={Colors.primary}
+                      color={Colors.emerald}
                     />
                     <Text style={styles.label}>{item}</Text>
                   </View>
@@ -148,14 +148,16 @@ const HealthSummaryCard: React.FC<HealthSummaryCardProps> = ({
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: Colors.white,
+    backgroundColor: Colors.bgCard,
     marginHorizontal: 16,
     marginTop: 16,
     borderRadius: 20,
     padding: 20,
+    borderWidth: 1,
+    borderColor: Colors.borderDark,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.12,
+    shadowOpacity: 0.3,
     shadowRadius: 6,
     elevation: 5,
   },
@@ -168,10 +170,10 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 18,
     fontWeight: "700",
-    color: Colors.text,
+    color: Colors.textPrimary,
   },
   badge: {
-    backgroundColor: Colors.primary,
+    backgroundColor: Colors.emerald,
     borderRadius: 12,
     minWidth: 24,
     height: 24,
@@ -195,7 +197,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 15,
     fontWeight: "600",
-    color: Colors.text,
+    color: Colors.textPrimary,
     marginLeft: 6,
   },
   item: {
@@ -219,7 +221,7 @@ const styles = StyleSheet.create({
   },
   noConditionText: {
     fontSize: 14,
-    color: Colors.textSecondary,
+    color: Colors.textMuted,
     marginLeft: 8,
   },
 });
