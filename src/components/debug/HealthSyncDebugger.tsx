@@ -260,17 +260,17 @@ const HealthSyncDebugger: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background,
+    backgroundColor: Colors.bgPrimary,
   },
   header: {
     padding: Spacing.lg,
-    backgroundColor: Colors.white,
+    backgroundColor: Colors.bgCard,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border,
+    borderBottomColor: Colors.borderDark,
   },
   title: {
     ...Typography.h2,
-    color: Colors.text,
+    color: Colors.textPrimary,
     marginBottom: Spacing.xs,
   },
   subtitle: {
@@ -280,9 +280,11 @@ const styles = StyleSheet.create({
   section: {
     margin: Spacing.lg,
     padding: Spacing.lg,
-    backgroundColor: Colors.white,
+    backgroundColor: Colors.bgCard,
     borderRadius: 8,
-    shadowColor: '#000',
+    borderWidth: 1,
+    borderColor: Colors.borderDark,
+    shadowColor: Colors.emerald,
     shadowOffset: {
       width: 0,
       height: 2,
@@ -293,7 +295,7 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     ...Typography.h3,
-    color: Colors.text,
+    color: Colors.textPrimary,
     marginBottom: Spacing.md,
   },
   infoText: {
@@ -316,7 +318,7 @@ const styles = StyleSheet.create({
   },
   logContainer: {
     maxHeight: 300,
-    backgroundColor: Colors.gray100,
+    backgroundColor: Colors.bgCardHover,
     borderRadius: 4,
     padding: Spacing.sm,
   },
@@ -329,7 +331,7 @@ const styles = StyleSheet.create({
   },
   logText: {
     ...Typography.caption,
-    color: Colors.text,
+    color: Colors.textPrimary,
     marginBottom: Spacing.xs,
     fontFamily: 'monospace',
   },
